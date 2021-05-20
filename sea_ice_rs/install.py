@@ -12,7 +12,7 @@ def pip_install(import_name, pkg):
 
 
 def install():
-
+    # Install pip
     try:
         import pip
     except ImportError:
@@ -22,4 +22,5 @@ def install():
     finally:
         import pip
 
+    # Install 3rd party packages
     pip_install("kaggle", "kaggle")
