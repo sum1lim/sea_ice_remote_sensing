@@ -21,3 +21,5 @@ def install():
         )
     finally:
         import pip
+
+    pip_install("kaggle", "kaggle")
