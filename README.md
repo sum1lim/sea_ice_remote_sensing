@@ -6,5 +6,5 @@ python -m venv venv
 source venv/bin/activate
 pip install [-e] .
 ```
-\* Parameters in [] are optional
+\* Parameters in [ ] are optional
 <br/>
