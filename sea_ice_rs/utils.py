@@ -4,15 +4,6 @@ import os
 import numpy as np
 
 
-def output(fileName, img):
-    try:
-        cv2.imwrite(fileName, img)
-    except TypeError:
-        cv2.imwrite(fileName, img.astype(np.uint8))
-    except SystemError:
-        print("tile cannot extend outside image")
-
-
 def output_to_window(name, image, boundaries=None):
     print(f"Image: {name}")
     image = np.array(image)
