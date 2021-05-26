@@ -2,6 +2,34 @@ import cv2
 import os
 
 
+def decompose_filepath(filepath):
+    """
+    decompose filepath into three components:
+    directory path, file name and extension
+    """
+    parent_directories = filepath.split("/")[:-1]
+    dir_path = "/".join(parent_directories)
+    File = filepath.split("/")[-1]
+    [filename, extension] = File.split(".")
+
+    return (dir_path, filename, extension)
+
+
+def output(output_name, image, split_rgb=False):
+    """
+    stores the image to the given path.
+    split_rgb option allows to store each band separately
+    """
+    if image.shape[2] == 1 or not split_rgb:
+        cv2.imwrite(output_name, image)
+    else:
+        for i in range(image.shape[2]):
+            (dir_path, filename, extension) = decompose_filepath(output_name)
+            cv2.imwrite(
+                os.path.join(dir_path, f"{filename}({i}).{extension}"), image[:, :, i]
+            )
+
+
 def output_to_window(name, image):
     """
     output image to an interactive window
@@ -22,20 +50,9 @@ def output_to_window(name, image):
             return
 
 
-def decompose_filepath(filepath):
-    """
-    decompose filepath into three components:
-    directory path, file name and extension
-    """
-    parent_directories = filepath.split("/")[:-1]
-    dir_path = "/".join(parent_directories)
-    File = filepath.split("/")[-1]
-    [filename, extension] = File.split(".")
-
-    return (dir_path, filename, extension)
-
-
-def mkdir_output(inFile_path, appending_tail_string, extension, outImage):
+def mkdir_output(
+    inFile_path, appending_tail_string, extension, outImage, split_rgb=False
+):
     """
     make a new diretory and store the image in it
     """
@@ -48,7 +65,11 @@ def mkdir_output(inFile_path, appending_tail_string, extension, outImage):
         None
 
     try:
-        cv2.imwrite(os.path.join(outDir, f"{filename}.{extension}"), outImage)
+        output(
+            os.path.join(outDir, f"{filename}.{extension}"),
+            outImage,
+            split_rgb=split_rgb,
+        )
 
     except ValueError:
         print("Not a valid file type")

@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from skimage import filters
 from tqdm import tqdm
-from sea_ice_rs.utils import output_to_window, mkdir_output
+from sea_ice_rs.utils import output_to_window, mkdir_output, output
 from sea_ice_rs.contrast import contrast
 
 
@@ -22,16 +22,14 @@ def main(args):
             filtered = contrast(filtered).astype(np.uint8)
 
         output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
-        output_to_window(output_name, filtered)
+        for i in range(filtered.shape[2]):
+            output_to_window(f"{output_name}(band {i})", filtered[:, :, i])
 
         if args.extension:
             outExtension = "." + args.extension
             outputFile = ".".join(args.input.split(".")[:-1]) + "_SOBEL" + outExtension
 
-            try:
-                cv2.imwrite(outputFile, filtered)
-            except ValueError:
-                print("Not a valid file type")
+            output(outputFile, filtered, split_rgb=True)
 
     elif os.path.isdir(args.input):
         for img_f in tqdm(os.listdir(args.input)):
@@ -43,7 +41,9 @@ def main(args):
                     filtered = contrast(filtered).astype(np.uint8)
 
                 if args.extension:
-                    mkdir_output(file_path, "SOBEL", args.extension, filtered)
+                    mkdir_output(
+                        file_path, "SOBEL", args.extension, filtered, split_rgb=True
+                    )
             except:
                 print(f"Error occurred when processing {img_f}")
 
