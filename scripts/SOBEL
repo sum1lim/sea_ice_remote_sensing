@@ -7,14 +7,15 @@ import argparse
 import os
 import sys
 import cv2
+from skimage import filters
 from tqdm import tqdm
 from sea_ice_rs.utils import output_to_window, mkdir_output
-from sea_ice_rs.SOBEL import generate_SOBEL
 
 
 def main(args):
     if os.path.isfile(args.input):
-        filtered = generate_SOBEL(args.input)
+        inImage = cv2.imread(args.input)
+        filtered = filters.sobel(inImage)
 
         output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
         output_to_window(output_name, filtered)
@@ -33,13 +34,16 @@ def main(args):
         for img_f in tqdm(os.listdir(args.input)):
             file_path = f"{args.input}/{img_f}"
             try:
-                filtered = generate_SOBEL(file_path)
+                inImage = cv2.imread(file_path)
+                filtered = filters.sobel(inImage)
 
                 if args.extension:
                     mkdir_output(file_path, "SOBEL", args.extension, filtered)
             except:
                 sys.exit(f"Error occurred when processing {img_f}")
 
+    else:
+        sys.exit(f"Provided input does not exist")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
