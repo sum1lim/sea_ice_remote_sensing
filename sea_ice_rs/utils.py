@@ -1,7 +1,5 @@
 import cv2
-import sys
 import os
-import numpy as np
 
 
 def output_to_window(name, image):
