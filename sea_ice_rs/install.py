@@ -24,3 +24,6 @@ def install():
 
     # Install 3rd party packages
     pip_install("kaggle", "kaggle")
+    pip_install("cv2", "opencv-python")
+    pip_install("skimage", "scikit-image")
+    pip_install("tqdm", "tqdm")

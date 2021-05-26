@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import os
+import sys
+import cv2
+from tqdm import tqdm
+from sea_ice_rs.utils import output_to_window, mkdir_output
+from sea_ice_rs.SOBEL import generate_SOBEL
+
+
+def main(args):
+    if os.path.isfile(args.input):
+        filtered = generate_SOBEL(args.input)
+
+        output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
+        output_to_window(output_name, filtered)
+
+        if args.extension:
+            outExtension = "." + args.extension
+            outputFile = ".".join(args.input.split(".")[:-1]) + "_SOBEL" + outExtension
+            print(filtered.shape)
+
+            try:
+                cv2.imwrite(outputFile, filtered)
+            except ValueError:
+                print("Not a valid file type")
+
+    elif os.path.isdir(args.input):
+        for img_f in tqdm(os.listdir(args.input)):
+            file_path = f"{args.input}/{img_f}"
+            try:
+                filtered = generate_SOBEL(file_path)
+
+                if args.extension:
+                    mkdir_output(file_path, "SOBEL", args.extension, filtered)
+            except:
+                sys.exit(f"Error occurred when processing {img_f}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input file/directoy path")
+    parser.add_argument(
+        "--extension",
+        type=str,
+        help="Output file extension(e.g. png, jpg, tiff)",
+        choices=["png", "jpg", "tiff"],
+    )
+
+    args = parser.parse_args()
+    main(args)
