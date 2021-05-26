@@ -1,9 +1,0 @@
-README.md
-setup.py
-./scripts/SOBEL
-sea_ice_rs/SOBEL.py
-sea_ice_rs/install.py
-sea_ice_rs.egg-info/PKG-INFO
-sea_ice_rs.egg-info/SOURCES.txt
-sea_ice_rs.egg-info/dependency_links.txt
-sea_ice_rs.egg-info/top_level.txt
