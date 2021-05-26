@@ -7,15 +7,19 @@ import argparse
 import os
 import sys
 import cv2
+import numpy as np
 from skimage import filters
 from tqdm import tqdm
 from sea_ice_rs.utils import output_to_window, mkdir_output
+from sea_ice_rs.contrast import contrast
 
 
 def main(args):
     if os.path.isfile(args.input):
         inImage = cv2.imread(args.input)
         filtered = filters.sobel(inImage)
+        if args.contrast:
+            filtered = contrast(filtered).astype(np.uint8)
 
         output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
         output_to_window(output_name, filtered)
@@ -23,7 +27,6 @@ def main(args):
         if args.extension:
             outExtension = "." + args.extension
             outputFile = ".".join(args.input.split(".")[:-1]) + "_SOBEL" + outExtension
-            print(filtered.shape)
 
             try:
                 cv2.imwrite(outputFile, filtered)
@@ -36,19 +39,23 @@ def main(args):
             try:
                 inImage = cv2.imread(file_path)
                 filtered = filters.sobel(inImage)
+                if args.contrast:
+                    filtered = contrast(filtered).astype(np.uint8)
 
                 if args.extension:
                     mkdir_output(file_path, "SOBEL", args.extension, filtered)
             except:
-                sys.exit(f"Error occurred when processing {img_f}")
+                print(f"Error occurred when processing {img_f}")
 
     else:
         sys.exit(f"Provided input does not exist")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--input", type=str, help="Input file/directoy path")
+    parser.add_argument("--contrast", action="store_true", help="Enhannces contrast")
     parser.add_argument(
         "--extension",
         type=str,
