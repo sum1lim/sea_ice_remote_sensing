@@ -15,36 +15,39 @@ from sea_ice_rs.contrast import contrast
 
 
 def main(args):
-    if os.path.isfile(args.input):
+    if os.path.isfile(args.input):  # Only one input image is provided
         inImage = cv2.imread(args.input)
         filtered = filters.sobel(inImage)
-        if args.contrast:
+        if args.contrast:  # enhances contrast of the output image
             filtered = contrast(filtered).astype(np.uint8)
 
         output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
-        for i in range(filtered.shape[2]):
+        for i in range(
+            filtered.shape[2]
+        ):  # for loop deals with multiple bands in the image
             output_to_window(f"{output_name}(band {i})", filtered[:, :, i])
 
-        if args.extension:
+        if args.extension:  # save to an output file if extension is given
             outExtension = "." + args.extension
             outputFile = ".".join(args.input.split(".")[:-1]) + "_SOBEL" + outExtension
 
             output(outputFile, filtered, split_rgb=True)
 
-    elif os.path.isdir(args.input):
+    elif os.path.isdir(args.input):  # A collection of input images
         for img_f in tqdm(os.listdir(args.input)):
             file_path = f"{args.input}/{img_f}"
-            try:
+            try:  # Valid image file
                 inImage = cv2.imread(file_path)
                 filtered = filters.sobel(inImage)
-                if args.contrast:
+                if args.contrast:  # enhances contrast of the output image
                     filtered = contrast(filtered).astype(np.uint8)
 
-                if args.extension:
+                if args.extension:  # save to an output file if extension is given
                     mkdir_output(
                         file_path, "SOBEL", args.extension, filtered, split_rgb=True
-                    )
-            except:
+                    )  # split_rgb option saves an image per band
+
+            except:  # non-image file
                 print(f"Error occurred when processing {img_f}")
 
     else:
