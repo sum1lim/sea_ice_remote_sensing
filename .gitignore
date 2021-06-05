@@ -3,3 +3,4 @@ sea_ice_rs.egg-info
 __pycache__
 venv
 data
+.vscode

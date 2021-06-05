@@ -27,3 +27,4 @@ def install():
     pip_install("cv2", "opencv-python")
     pip_install("skimage", "scikit-image")
     pip_install("tqdm", "tqdm")
+    pip_install("pandas", "pandas")
