@@ -6,3 +6,8 @@ To download using the Kaggle API:
 ```
 kaggle datasets download alexandersylvester/arctic-sea-ice-image-masking
 ```
+
+The reference image with patch locations can be found below:
+```
+curl https://raw.githubusercontent.com/asylve/Sea-Ice/main/Images/Region-Grid.png --output AOIs.png
+```
