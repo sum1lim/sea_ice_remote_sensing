@@ -33,46 +33,63 @@ def plot_pixels(df):
     plt.grid()
     plt.show()
 
-def export_to_csv(df):
-    df.to_csv('../data/pixel_values.csv', index=False)
+# Save a CSV file with a summary of pixel values
+def export_to_csv(df, input, file_name):
+    if os.path.isdir(input):  
+        output = os.path.normpath(os.path.join(input, file_name))
+        df.to_csv(output, index=False)  
+    elif os.path.isfile(input):  
+        dir = os.path.dirname(input)
+        output = os.path.normpath(os.path.join(dir, file_name))
+        df.to_csv(output, index=False)
+    
 
 def main(args):
-    if os.path.isfile(args.input): # Only one input image is provided
+    try:
+        if(os.path.isfile(args.input) == None):
+            raise TypeError
+        if os.path.isfile(args.input): # Only one input image is provided
 
-        dict_of_ppv = {}
+            dict_of_ppv = {}
 
-        inImage = cv2.imread(args.input, 0)
+            inImage = cv2.imread(args.input, 0)
 
-        get_count_of_pixel_classes(dict_of_ppv, inImage)
+            get_count_of_pixel_classes(dict_of_ppv, inImage)
 
-        df = pd.DataFrame([dict_of_ppv])
-        
-        plot_pixels(df)
+            df = pd.DataFrame([dict_of_ppv])
+            
+            plot_pixels(df)
 
-        export_to_csv(df)
+            file_name = 'pixel_values.csv'
 
-    elif os.path.isdir(args.input): # A collection of input images
-        dict_of_ppv = {}
+            export_to_csv(df, args.input, file_name)
 
-        for img_f in tqdm(os.listdir(args.input)):
+        elif os.path.isdir(args.input): # A collection of input images
+            dict_of_ppv = {}
 
-            file_path = f"{args.input}/{img_f}"
+            for img_f in tqdm(os.listdir(args.input)):
 
-            try: # Valid image file
-                inImage = cv2.imread(file_path, 0)
-                get_count_of_pixel_classes(dict_of_ppv, inImage)
-                
-            except: # non-image file
-                print(f"Error occurred when processing {img_f}")
+                file_path = f"{args.input}/{img_f}"
 
-        df = pd.DataFrame([dict_of_ppv])
-        
-        plot_pixels(df)
+                try: # Valid image file
+                    inImage = cv2.imread(file_path, 0)
+                    get_count_of_pixel_classes(dict_of_ppv, inImage)
+                    
+                except: # non-image file
+                    print(f"Error occurred when processing {img_f}")
 
-        export_to_csv(df)
+            df = pd.DataFrame([dict_of_ppv])
+            
+            plot_pixels(df)
 
-    else: 
-        sys.exit(f"Provided input does not exist")
+            file_name = 'pixel_values.csv'
+
+            export_to_csv(df, args.input, file_name)
+
+        else: 
+            sys.exit(f"Provided input does not exist")
+    except TypeError:
+        print("No input provided", file = sys.stderr)
 
 
 if __name__ == "__main__":
