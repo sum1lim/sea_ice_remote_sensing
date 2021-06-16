@@ -22,6 +22,8 @@ kaggle datasets download alexandersylvester/arctic-sea-ice-image-masking
 
 Once you have the zipped file, unzip it. 
 
+**Note**: You will need to have Kaggle already pip installed. 
+
 ### Install the Package in a Python Virtual Environment
 
 #### MacOS / Linux
@@ -41,6 +43,8 @@ pip install .
 ```
 
 ## Running Programs
+
+Make sure you are in the main Python working directory when running the scripts. 
 
 ### SOBEL
 
