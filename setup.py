@@ -12,5 +12,6 @@ setup(
     include_package_data=True,
     scripts="""
         ./scripts/SOBEL
+        ./scripts/threshold
     """.split(),
 )

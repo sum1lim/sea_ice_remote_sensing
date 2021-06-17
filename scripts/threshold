@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import cv2
+import sys
+from sea_ice_rs.threshold import threshold
+from sea_ice_rs.utils import output_to_window, decompose_filepath, output
+
+
+def main(args):
+    try:
+        img = cv2.imread(args.input)
+    except:
+        print("The file does not exist", file=sys.stderr)
+        exit(1)
+
+    threshold_img = threshold(img, args.max_val, args.min_val)
+
+    (inDir, filename, _) = decompose_filepath(args.input)
+    output_name = filename + "_thresh"
+    output_to_window(output_name, threshold_img)
+
+    if args.extension:
+        outputFile = f"{inDir}/{output_name}.{args.extension}"
+        print()
+
+        try:
+            output(outputFile, threshold_img)
+        except ValueError:
+            print("Not a valid file type")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input b/w file")
+    parser.add_argument("--max-val", type=float, help="Maximum threshold value")
+    parser.add_argument("--min-val", type=float, help="Minimum threshold value")
+    parser.add_argument(
+        "--extension",
+        type=str,
+        help="Please provide the output file extension(Ex. png, jpg, tiff)",
+        choices=["png", "jpg", "tiff"],
+    )
+
+    args = parser.parse_args()
+    main(args)
