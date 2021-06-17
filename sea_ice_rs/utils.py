@@ -1,5 +1,6 @@
 import cv2
 import os
+import numpy as np
 
 
 def decompose_filepath(filepath):
@@ -35,9 +36,12 @@ def output_to_window(name, image):
     output image to an interactive window
     """
     print(f"Image: {name}")
+    orginal_img = np.array(image, copy=True)
 
     while True:
-        window_name = name + "(press q to quit)"
+        window_name = (
+            f"{name} (press q to quit; r to revert; c to contrast; t to threshold)"
+        )
         cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.imshow(
             window_name,
@@ -46,8 +50,17 @@ def output_to_window(name, image):
 
         keyboard_input = cv2.waitKey(0)
 
+        if keyboard_input == ord("r"):
+            image = orginal_img
+
+        if keyboard_input == ord("c"):
+            image = contrast(image)
+
+        if keyboard_input == ord("t"):
+            image = threshold(image)
+
         if keyboard_input == ord("q"):
-            return
+            return image
 
 
 def mkdir_output(
