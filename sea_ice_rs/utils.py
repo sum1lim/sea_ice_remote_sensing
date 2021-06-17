@@ -33,12 +33,13 @@ def output(output_name, image, split_rgb=False):
             )
 
 
-def output_to_window(name, image):
+def output_to_window(name, image, orginal_img=None):
     """
     output image to an interactive window
     """
     print(f"Image: {name}")
-    orginal_img = np.array(image, copy=True)
+    if not orginal_img.all():
+        orginal_img = image.copy()
 
     while True:
         window_name = (
@@ -59,6 +60,7 @@ def output_to_window(name, image):
             image = contrast(image)
 
         if keyboard_input == ord("t"):
+            image = orginal_img.copy()
             image = threshold(image)
 
         if keyboard_input == ord("q"):

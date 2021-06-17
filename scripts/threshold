@@ -21,7 +21,7 @@ def main(args):
 
     (inDir, filename, _) = decompose_filepath(args.input)
     output_name = filename + "_thresh"
-    output_to_window(output_name, threshold_img)
+    output_to_window(output_name, threshold_img, img)
 
     if args.extension:
         outputFile = f"{inDir}/{output_name}.{args.extension}"
