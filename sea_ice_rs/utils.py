@@ -1,6 +1,8 @@
 import cv2
 import os
 import numpy as np
+from .contrast import contrast
+from .threshold import threshold
 
 
 def decompose_filepath(filepath):
