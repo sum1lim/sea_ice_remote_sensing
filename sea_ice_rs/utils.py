@@ -38,7 +38,7 @@ def output_to_window(name, image, orginal_img=None):
     output image to an interactive window
     """
     print(f"Image: {name}")
-    if not orginal_img.all():
+    if orginal_img is None:
         orginal_img = image.copy()
 
     while True:

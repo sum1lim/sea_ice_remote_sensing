@@ -3,6 +3,7 @@ import cv2
 
 
 def threshold(img, max_val=None, min_val=None):
+    ret_img = img.copy()
     while not ((max_val or min_val) and min_val < max_val):
         if not (max_val or min_val):
             print(
@@ -19,11 +20,11 @@ def threshold(img, max_val=None, min_val=None):
             min_val = None
 
     if max_val:
-        img[img > max_val] = 0
+        ret_img[ret_img > max_val] = 0
 
     if min_val:
-        img[img < min_val] = 0
+        ret_img[ret_img < min_val] = 0
 
-    img[img > 0] = 255
+    ret_img[ret_img > 0] = 255
 
-    return img
+    return ret_img
