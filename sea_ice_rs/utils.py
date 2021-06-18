@@ -1,6 +1,7 @@
 import cv2
 import os
 import numpy as np
+from tqdm import tqdm
 from .contrast import contrast
 from .threshold import threshold
 
@@ -90,3 +91,24 @@ def mkdir_output(
 
     except ValueError:
         print("Not a valid file type")
+
+
+def process_multiple_inputs(input_dir, func, tail_str, extension, contrast_bool=False):
+    """
+    utility function to handle a directory input
+    """
+    for img_f in tqdm(os.listdir(input_dir)):
+        file_path = f"{input_dir}/{img_f}"
+        try:  # Valid image file
+            inImage = cv2.imread(file_path)
+            processed = func(inImage)
+            if contrast_bool:  # enhances contrast of the output image
+                processed = contrast(processed).astype(np.uint8)
+
+            if extension:  # save to an output file if extension is given
+                mkdir_output(
+                    file_path, tail_str, extension, processed, split_rgb=True
+                )  # split_rgb option saves an image per band
+
+        except:  # non-image file
+            print(f"Error occurred when processing {img_f}")

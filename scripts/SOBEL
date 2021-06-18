@@ -10,7 +10,12 @@ import cv2
 import numpy as np
 from skimage import filters
 from tqdm import tqdm
-from sea_ice_rs.utils import output_to_window, mkdir_output, output
+from sea_ice_rs.utils import (
+    output_to_window,
+    mkdir_output,
+    output,
+    process_multiple_inputs,
+)
 from sea_ice_rs.contrast import contrast
 
 
@@ -34,21 +39,9 @@ def main(args):
             output(outputFile, filtered, split_rgb=True)
 
     elif os.path.isdir(args.input):  # A collection of input images
-        for img_f in tqdm(os.listdir(args.input)):
-            file_path = f"{args.input}/{img_f}"
-            try:  # Valid image file
-                inImage = cv2.imread(file_path)
-                filtered = filters.sobel(inImage)
-                if args.contrast:  # enhances contrast of the output image
-                    filtered = contrast(filtered).astype(np.uint8)
-
-                if args.extension:  # save to an output file if extension is given
-                    mkdir_output(
-                        file_path, "SOBEL", args.extension, filtered, split_rgb=True
-                    )  # split_rgb option saves an image per band
-
-            except:  # non-image file
-                print(f"Error occurred when processing {img_f}")
+        process_multiple_inputs(
+            args.input, filters.sobel, "SOBEL", args.extension, args.contrast
+        )
 
     else:
         sys.exit(f"Provided input does not exist")
