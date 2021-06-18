@@ -13,5 +13,6 @@ setup(
     scripts="""
         ./scripts/SOBEL
         ./scripts/threshold
+        ./scripts/dist-stat
     """.split(),
 )
