@@ -24,6 +24,7 @@ def main(args):
             args.extension,
             filters.sobel,
             contrast_bool=args.contrast,
+            split_rgb=True,
         )
 
     elif os.path.isdir(args.input):  # A collection of input images

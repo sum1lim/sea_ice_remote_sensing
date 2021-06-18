@@ -128,13 +128,27 @@ def process_multiple_inputs(
 
 
 def process_single_input(
-    input_file, tail_str, extension, func, params=None, contrast_bool=False
+    input_file,
+    tail_str,
+    extension,
+    func,
+    params=None,
+    contrast_bool=False,
+    split_rgb=False,
 ):
-    inImage = cv2.imread(input_file)
+    """
+    utility function to handle a single file input
+    """
+    try:
+        img = cv2.imread(input_file)
+    except:
+        print("The file does not exist", file=sys.stderr)
+        exit(1)
+
     if params:
-        processed = func(inImage, *params)
+        processed = func(img, *params)
     else:
-        processed = func(inImage)
+        processed = func(img)
 
     if contrast_bool:  # enhances contrast of the output image
         processed = contrast(processed).astype(np.uint8)
@@ -148,5 +162,7 @@ def process_single_input(
 
     if extension:  # save to an output file if extension is given
         outputFile = f"{inDir}/{output_name}.{extension}"
-
-        output(outputFile, processed, split_rgb=True)
+        try:
+            output(outputFile, processed, split_rgb)
+        except ValueError:
+            print("Not a valid file type")
