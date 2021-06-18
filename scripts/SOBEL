@@ -10,8 +10,7 @@ import cv2
 import numpy as np
 from skimage import filters
 from sea_ice_rs.utils import (
-    output_to_window,
-    output,
+    process_single_input,
     process_multiple_inputs,
 )
 from sea_ice_rs.contrast import contrast
@@ -19,22 +18,13 @@ from sea_ice_rs.contrast import contrast
 
 def main(args):
     if os.path.isfile(args.input):  # Only one input image is provided
-        inImage = cv2.imread(args.input)
-        filtered = filters.sobel(inImage)
-        if args.contrast:  # enhances contrast of the output image
-            filtered = contrast(filtered).astype(np.uint8)
-
-        output_name = args.input.split("/")[-1].split(".")[0] + "_SOBEL"
-        for i in range(
-            filtered.shape[2]
-        ):  # for loop deals with multiple bands in the image
-            output_to_window(f"{output_name}(band {i})", filtered[:, :, i])
-
-        if args.extension:  # save to an output file if extension is given
-            outExtension = "." + args.extension
-            outputFile = ".".join(args.input.split(".")[:-1]) + "_SOBEL" + outExtension
-
-            output(outputFile, filtered, split_rgb=True)
+        process_single_input(
+            args.input,
+            "SOBEL",
+            args.extension,
+            filters.sobel,
+            contrast_bool=args.contrast,
+        )
 
     elif os.path.isdir(args.input):  # A collection of input images
         process_multiple_inputs(

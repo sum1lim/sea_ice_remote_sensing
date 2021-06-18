@@ -125,3 +125,28 @@ def process_multiple_inputs(
 
         except:  # non-image file
             print(f"Error occurred when processing {img_f}")
+
+
+def process_single_input(
+    input_file, tail_str, extension, func, params=None, contrast_bool=False
+):
+    inImage = cv2.imread(input_file)
+    if params:
+        processed = func(inImage, *params)
+    else:
+        processed = func(inImage)
+
+    if contrast_bool:  # enhances contrast of the output image
+        processed = contrast(processed).astype(np.uint8)
+
+    (inDir, filename, _) = decompose_filepath(input_file)
+    output_name = f"{filename}_{tail_str}"
+    for i in range(
+        processed.shape[2]
+    ):  # for loop deals with multiple bands in the image
+        output_to_window(f"{output_name}(band {i})", processed[:, :, i])
+
+    if extension:  # save to an output file if extension is given
+        outputFile = f"{inDir}/{output_name}.{extension}"
+
+        output(outputFile, processed, split_rgb=True)
