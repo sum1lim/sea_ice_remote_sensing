@@ -6,31 +6,50 @@ install()
 import argparse
 import cv2
 import sys
+import os
 from sea_ice_rs.threshold import threshold
-from sea_ice_rs.utils import output_to_window, decompose_filepath, output
+from sea_ice_rs.utils import (
+    output_to_window,
+    decompose_filepath,
+    output,
+    process_multiple_inputs,
+)
 
 
 def main(args):
-    try:
-        img = cv2.imread(args.input)
-    except:
-        print("The file does not exist", file=sys.stderr)
-        exit(1)
-
-    threshold_img = threshold(img, args.max_val, args.min_val)
-
-    (inDir, filename, _) = decompose_filepath(args.input)
-    output_name = filename + "_thresh"
-    output_to_window(output_name, threshold_img, img)
-
-    if args.extension:
-        outputFile = f"{inDir}/{output_name}.{args.extension}"
-        print()
-
+    if os.path.isfile(args.input):  # Only one input image is provided
         try:
-            output(outputFile, threshold_img)
-        except ValueError:
-            print("Not a valid file type")
+            img = cv2.imread(args.input)
+        except:
+            print("The file does not exist", file=sys.stderr)
+            exit(1)
+
+        threshold_img = threshold(img, args.max_val, args.min_val)
+
+        (inDir, filename, _) = decompose_filepath(args.input)
+        output_name = filename + "_thresh"
+        output_to_window(output_name, threshold_img, img)
+
+        if args.extension:
+            outputFile = f"{inDir}/{output_name}.{args.extension}"
+            print()
+
+            try:
+                output(outputFile, threshold_img)
+            except ValueError:
+                print("Not a valid file type")
+
+    elif os.path.isdir(args.input):  # A collection of input images
+        process_multiple_inputs(
+            args.input,
+            "thresh",
+            args.extension,
+            threshold,
+            params=(args.max_val, args.min_val),
+        )
+
+    else:
+        sys.exit(f"Provided input does not exist")
 
 
 if __name__ == "__main__":

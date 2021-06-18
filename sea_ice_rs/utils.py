@@ -1,5 +1,6 @@
 import cv2
 import os
+import sys
 import numpy as np
 from tqdm import tqdm
 from .contrast import contrast
@@ -12,6 +13,8 @@ def decompose_filepath(filepath):
     directory path, file name and extension
     """
     parent_directories = filepath.split("/")[:-1]
+    if parent_directories[-1] == "":
+        del parent_directories[-1]
     dir_path = "/".join(parent_directories)
     File = filepath.split("/")[-1]
     [filename, extension] = File.split(".")
@@ -90,10 +93,12 @@ def mkdir_output(
         )
 
     except ValueError:
-        print("Not a valid file type")
+        print("Not a valid file type", file=sys.stderr)
 
 
-def process_multiple_inputs(input_dir, func, tail_str, extension, contrast_bool=False):
+def process_multiple_inputs(
+    input_dir, tail_str, extension, func, params=None, contrast_bool=False
+):
     """
     utility function to handle a directory input
     """
@@ -101,7 +106,12 @@ def process_multiple_inputs(input_dir, func, tail_str, extension, contrast_bool=
         file_path = f"{input_dir}/{img_f}"
         try:  # Valid image file
             inImage = cv2.imread(file_path)
-            processed = func(inImage)
+
+            if params:
+                processed = func(inImage, *params)
+            else:
+                processed = func(inImage)
+
             if contrast_bool:  # enhances contrast of the output image
                 processed = contrast(processed).astype(np.uint8)
 
@@ -109,6 +119,9 @@ def process_multiple_inputs(input_dir, func, tail_str, extension, contrast_bool=
                 mkdir_output(
                     file_path, tail_str, extension, processed, split_rgb=True
                 )  # split_rgb option saves an image per band
+
+        except KeyboardInterrupt:
+            sys.exit(1)
 
         except:  # non-image file
             print(f"Error occurred when processing {img_f}")
