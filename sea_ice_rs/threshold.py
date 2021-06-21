@@ -1,7 +1,3 @@
-import sys
-import cv2
-
-
 def threshold(img, max_val=None, min_val=None):
     ret_img = img.copy()
     while not ((max_val or min_val) and min_val < max_val):

@@ -6,8 +6,6 @@ install()
 import argparse
 import os
 import sys
-import cv2
-import numpy as np
 from skimage import filters
 from sea_ice_rs.utils import (
     process_single_input,

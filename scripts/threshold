@@ -4,7 +4,6 @@ from sea_ice_rs.install import install
 install()
 
 import argparse
-import cv2
 import sys
 import os
 from sea_ice_rs.threshold import threshold

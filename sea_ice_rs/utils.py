@@ -33,7 +33,7 @@ def output(output_name, image, split_rgb=False):
         for i in range(image.shape[2]):
             (dir_path, filename, extension) = decompose_filepath(output_name)
             cv2.imwrite(
-                os.path.join(dir_path, f"{filename}({i}).{extension}"), image[:, :, i]
+                os.path.join(dir_path, f"{filename}_B{i}.{extension}"), image[:, :, i]
             )
 
 
