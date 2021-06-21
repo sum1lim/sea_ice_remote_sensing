@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+from tqdm import tqdm
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import cv2
+import sys
+import os
+import argparse
+
+from sea_ice_rs.install import install
+
+# Install all packages before importing
+install()
+
+# Update the count of pixel value classes based on image reading
+def get_count_of_pixel_classes(d, img):
+    unique, counts = np.unique(img, return_counts=True)
+
+    for key, value in dict(zip(unique, counts)).items():
+        if(key in d):
+            d[key] += value
+        else:
+            d[key] = value
+
+# Output a figure showing a plot of all occurrences of the pixel values
+def plot_pixels(df):
+    counts = df.iloc[::].sum().sort_values(ascending=True)
+    counts.plot(kind='bar')
+
+    plt.ylabel('Occurrence of the Pixel Value')
+    plt.xlabel('Pixel Value')
+    plt.grid()
+    plt.show()
+
+# Save a CSV file with a summary of pixel values
+def export_to_csv(df, input, file_name):
+    if os.path.isdir(input):
+        path = os.path.normpath(input)
+        dir = path.split(os.sep)[0]
+        output = os.path.normpath(os.path.join(dir, file_name))
+        df.to_csv(output, index=False)
+    elif os.path.isfile(input):
+        path = os.path.normpath(input)
+        dir = path.split(os.sep)[0]
+        output = os.path.normpath(os.path.join(dir, file_name))
+        df.to_csv(output, index=False)
+
+
+def main(args):
+    try:
+        if(os.path.isfile(args.input) == None):
+            raise TypeError
+        if os.path.isfile(args.input):  # Only one input image is provided
+
+            dict_of_ppv = {}
+
+            inImage = cv2.imread(args.input, 0)
+
+            get_count_of_pixel_classes(dict_of_ppv, inImage)
+
+            df = pd.DataFrame([dict_of_ppv])
+
+            plot_pixels(df)
+
+            file_name = 'pixel_values.csv'
+
+            export_to_csv(df, args.input, file_name)
+
+        elif os.path.isdir(args.input):  # A collection of input images
+            dict_of_ppv = {}
+
+            for img_f in tqdm(os.listdir(args.input)):
+
+                file_path = f"{args.input}/{img_f}"
+
+                try:  # Valid image file
+                    inImage = cv2.imread(file_path, 0)
+                    get_count_of_pixel_classes(dict_of_ppv, inImage)
+
+                except:  # non-image file
+                    print(f"Error occurred when processing {img_f}")
+
+            df = pd.DataFrame([dict_of_ppv])
+
+            plot_pixels(df)
+
+            file_name = 'pixel_values.csv'
+
+            export_to_csv(df, args.input, file_name)
+
+        else:
+            sys.exit(f"Provided input does not exist")
+    except TypeError:
+        print("No input provided", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input file/directoy path")
+
+    args = parser.parse_args()
+
+    main(args)

@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import sys
+import os
+from sea_ice_rs.threshold import threshold
+from sea_ice_rs.utils import (
+    process_single_input,
+    process_multiple_inputs,
+)
+
+
+def main(args):
+    if os.path.isfile(args.input):  # Only one input image is provided
+        process_single_input(
+            args.input,
+            "thresh",
+            args.extension,
+            threshold,
+            params=(args.max_val, args.min_val),
+        )
+
+    elif os.path.isdir(args.input):  # A collection of input images
+        process_multiple_inputs(
+            args.input,
+            "thresh",
+            args.extension,
+            threshold,
+            params=(args.max_val, args.min_val),
+        )
+
+    else:
+        sys.exit(f"Provided input does not exist")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input b/w file")
+    parser.add_argument("--max-val", type=float, help="Maximum threshold value")
+    parser.add_argument("--min-val", type=float, help="Minimum threshold value")
+    parser.add_argument(
+        "--extension",
+        type=str,
+        help="Please provide the output file extension(Ex. png, jpg, tiff)",
+        choices=["png", "jpg", "tiff"],
+    )
+
+    args = parser.parse_args()
+    main(args)

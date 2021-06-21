@@ -1,5 +1,6 @@
 .DS_Store
-rs_tools.egg-info
+sea_ice_rs.egg-info
 __pycache__
 venv
 data
+.vscode

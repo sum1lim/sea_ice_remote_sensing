@@ -11,5 +11,8 @@ setup(
     packages=["sea_ice_rs"],
     include_package_data=True,
     scripts="""
+        ./scripts/SOBEL
+        ./scripts/threshold
+        ./scripts/dist-stat
     """.split(),
 )
