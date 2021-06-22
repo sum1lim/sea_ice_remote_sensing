@@ -22,7 +22,7 @@ def main(args):
             args.extension,
             filters.sobel,
             contrast_bool=args.contrast,
-            split_rgb=True,
+            split_rgb=args.rgb_split,
         )
 
     elif os.path.isdir(args.input):  # A collection of input images
@@ -32,6 +32,7 @@ def main(args):
             args.extension,
             filters.sobel,
             contrast_bool=args.contrast,
+            split_rgb=args.rgb_split,
         )
 
     else:
@@ -43,6 +44,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--input", type=str, help="Input file/directoy path")
     parser.add_argument("--contrast", action="store_true", help="Enhannces contrast")
+    parser.add_argument(
+        "--rgb_split", action="store_true", help="Ouputs separate RGB bands"
+    )
     parser.add_argument(
         "--extension",
         type=str,

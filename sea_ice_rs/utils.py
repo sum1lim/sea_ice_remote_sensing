@@ -97,7 +97,13 @@ def mkdir_output(
 
 
 def process_multiple_inputs(
-    input_dir, tail_str, extension, func, params=None, contrast_bool=False
+    input_dir,
+    tail_str,
+    extension,
+    func,
+    params=None,
+    contrast_bool=False,
+    split_rgb=False,
 ):
     """
     utility function to handle a directory input
@@ -117,7 +123,7 @@ def process_multiple_inputs(
 
             if extension:  # save to an output file if extension is given
                 mkdir_output(
-                    file_path, tail_str, extension, processed, split_rgb=True
+                    file_path, tail_str, extension, processed, split_rgb=split_rgb
                 )  # split_rgb option saves an image per band
 
         except KeyboardInterrupt:
@@ -168,6 +174,6 @@ def process_single_input(
     if extension:  # save to an output file if extension is given
         outputFile = f"{inDir}/{output_name}.{extension}"
         try:
-            output(outputFile, output_img, split_rgb=True)
+            output(outputFile, output_img, split_rgb=split_rgb)
         except ValueError:
             print("Not a valid file type")
