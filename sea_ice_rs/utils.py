@@ -27,14 +27,14 @@ def output(output_name, image, split_rgb=False):
     stores the image to the given path.
     split_rgb option allows to store each band separately
     """
-    if image.shape[2] == 1 or not split_rgb:
-        cv2.imwrite(output_name, image)
-    else:
+    if len(image.shape) > 2 and split_rgb:
         for i in range(image.shape[2]):
             (dir_path, filename, extension) = decompose_filepath(output_name)
             cv2.imwrite(
                 os.path.join(dir_path, f"{filename}_B{i}.{extension}"), image[:, :, i]
             )
+    else:
+        cv2.imwrite(output_name, image)
 
 
 def output_to_window(name, image, orginal_img=None):
@@ -155,14 +155,19 @@ def process_single_input(
 
     (inDir, filename, _) = decompose_filepath(input_file)
     output_name = f"{filename}_{tail_str}"
-    for i in range(
-        processed.shape[2]
-    ):  # for loop deals with multiple bands in the image
-        output_to_window(f"{output_name}(band {i})", processed[:, :, i])
+
+    output_img = np.dstack(
+        [
+            output_to_window(
+                f"{output_name}(band {i})", processed[:, :, i], orginal_img=img[:, :, i]
+            )
+            for i in range(processed.shape[2])
+        ]
+    )
 
     if extension:  # save to an output file if extension is given
         outputFile = f"{inDir}/{output_name}.{extension}"
         try:
-            output(outputFile, processed, split_rgb)
+            output(outputFile, output_img, split_rgb=True)
         except ValueError:
             print("Not a valid file type")

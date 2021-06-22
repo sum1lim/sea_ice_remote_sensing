@@ -1,6 +1,6 @@
 def threshold(img, max_val=None, min_val=None):
     ret_img = img.copy()
-    while not ((max_val or min_val) and min_val < max_val):
+    while not ((max_val or min_val) and min_val <= max_val):
         if not (max_val or min_val):
             print(
                 "At least one of maximum or minimum threshold values has to be provided"
