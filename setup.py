@@ -15,5 +15,6 @@ setup(
         ./scripts/threshold
         ./scripts/dist-stat
         ./scripts/extract-colour
+        ./scripts/connect-lines
     """.split(),
 )

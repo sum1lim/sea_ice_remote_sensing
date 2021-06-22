@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import os
+import sys
+from skimage import filters
+from sea_ice_rs.utils import (
+    process_single_input,
+    process_multiple_inputs,
+)
+from sea_ice_rs.connect_lines import connect_lines
+
+
+def main(args):
+    if os.path.isfile(args.input):  # Only one input image is provided
+        process_single_input(
+            args.input,
+            "CL",
+            args.extension,
+            connect_lines,
+            params=(args.iterations,),
+        )
+
+    elif os.path.isdir(args.input):  # A collection of input images
+        process_multiple_inputs(
+            args.input,
+            "CL",
+            args.extension,
+            connect_lines,
+            params=(args.iterations,),
+        )
+
+    else:
+        sys.exit(f"Provided input does not exist")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input file/directoy path")
+    parser.add_argument("--iterations", type=int, help="Number of dilations/erosions")
+    parser.add_argument(
+        "--extension",
+        type=str,
+        help="Output file extension(e.g. png, jpg, tiff)",
+        choices=["png", "jpg", "tiff"],
+    )
+
+    args = parser.parse_args()
+    main(args)
