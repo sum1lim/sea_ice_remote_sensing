@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import sys
+import os
+from sea_ice_rs.extract_colour import extract_colour
+from sea_ice_rs.utils import (
+    process_single_input,
+    process_multiple_inputs,
+)
+
+
+def main(args):
+    if os.path.isfile(args.input):  # Only one input image is provided
+        process_single_input(
+            args.input,
+            args.colour,
+            args.extension,
+            extract_colour,
+            contrast_bool=True,
+            params=(args.colour),
+            split_rgb=False,
+        )
+
+    elif os.path.isdir(args.input):  # A collection of input images
+        process_multiple_inputs(
+            args.input,
+            args.colour,
+            args.extension,
+            extract_colour,
+            contrast_bool=True,
+            params=(args.colour),
+            split_rgb=False,
+        )
+
+    else:
+        sys.exit(f"Provided input does not exist")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input RGB file")
+    parser.add_argument(
+        "--colour", type=str, help="Colour to extract. Select from ['R', 'G', 'B']"
+    )
+    parser.add_argument(
+        "--extension",
+        type=str,
+        help="Please provide the output file extension(Ex. png, jpg, tiff)",
+        choices=["png", "jpg", "tiff"],
+    )
+
+    args = parser.parse_args()
+    main(args)
