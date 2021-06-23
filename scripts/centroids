@@ -5,7 +5,9 @@ install()
 
 import argparse
 import sys
+import operator
 import cv2
+import csv
 import numpy as np
 from skimage import measure
 from sea_ice_rs.utils import (
@@ -28,21 +30,24 @@ def main(args):
     # locations of the centroids
     centroid_locs = np.array([prop.centroid for i, prop in enumerate(patches)])
 
+    sorted_centroids = sorted(centroid_locs, key=operator.itemgetter(0), reverse=True)
+    sorted_centroids = sorted(sorted_centroids, key=operator.itemgetter(1))
+
     # create an image of the centroids
     height, width, _ = img.shape
-    centroids_img = 255 * np.ones([height, width], dtype=np.uint8)
+    centroids_img = 255 - img[:, :, 0]
 
-    for loc in centroid_locs:
-        row = round(loc[0])
-        col = round(loc[1])
-        centroids_img[row][col] = 0
+    with open(f"{args.input}_centroids.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        for p_idx, loc in enumerate(sorted_centroids):
+            row = round(loc[0])
+            col = round(loc[1])
+            centroids_img[row][col] = 0
 
-    for i in centroid_locs:
-        print(i)
+            row = [f"P{p_idx}"] + loc.tolist()
+            writer.writerow(row)
 
     output_to_window("centroids", centroids_img)
-
-    return centroids_img, centroid_locs
 
 
 if __name__ == "__main__":
@@ -51,12 +56,6 @@ if __name__ == "__main__":
     parser.add_argument("--input", type=str, help="Input binary image file")
     parser.add_argument(
         "--max-area", type=int, help="Maximum number of pixels in a patch"
-    )
-    parser.add_argument(
-        "--extension",
-        type=str,
-        help="Output file extension(e.g. png, jpg, tiff)",
-        choices=["png", "jpg", "tiff"],
     )
 
     args = parser.parse_args()
