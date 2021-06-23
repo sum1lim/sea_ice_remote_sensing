@@ -162,14 +162,21 @@ def process_single_input(
     (inDir, filename, _) = decompose_filepath(input_file)
     output_name = f"{filename}_{tail_str}"
 
-    output_img = np.dstack(
-        [
-            output_to_window(
-                f"{output_name}(band {i})", processed[:, :, i], orginal_img=img[:, :, i]
-            )
-            for i in range(processed.shape[2])
-        ]
-    )
+    if split_rgb:
+        output_img = np.dstack(
+            [
+                output_to_window(
+                    f"{output_name}(band {i})",
+                    processed[:, :, i],
+                    orginal_img=img[:, :, i],
+                )
+                for i in range(processed.shape[2])
+            ]
+        )
+    else:
+        output_img = output_to_window(
+            f"{output_name}", processed[:, :, 0], orginal_img=img[:, :, 0]
+        )
 
     if extension:  # save to an output file if extension is given
         outputFile = f"{inDir}/{output_name}.{extension}"
