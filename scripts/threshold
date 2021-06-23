@@ -4,34 +4,32 @@ from sea_ice_rs.install import install
 install()
 
 import argparse
-import os
 import sys
-from skimage import filters
+import os
+from sea_ice_rs.threshold import threshold
 from sea_ice_rs.utils import (
     process_single_input,
     process_multiple_inputs,
 )
-from sea_ice_rs.contrast import contrast
 
 
 def main(args):
     if os.path.isfile(args.input):  # Only one input image is provided
         process_single_input(
             args.input,
-            "SOBEL",
+            "thresh",
             args.extension,
-            filters.sobel,
-            contrast_bool=args.contrast,
-            split_rgb=True,
+            threshold,
+            params=(args.max_val, args.min_val),
         )
 
     elif os.path.isdir(args.input):  # A collection of input images
         process_multiple_inputs(
             args.input,
-            "SOBEL",
+            "thresh",
             args.extension,
-            filters.sobel,
-            contrast_bool=args.contrast,
+            threshold,
+            params=(args.max_val, args.min_val),
         )
 
     else:
@@ -41,12 +39,13 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input", type=str, help="Input file/directoy path")
-    parser.add_argument("--contrast", action="store_true", help="Enhannces contrast")
+    parser.add_argument("--input", type=str, help="Input b/w file")
+    parser.add_argument("--max-val", type=float, help="Maximum threshold value")
+    parser.add_argument("--min-val", type=float, help="Minimum threshold value")
     parser.add_argument(
         "--extension",
         type=str,
-        help="Output file extension(e.g. png, jpg, tiff)",
+        help="Please provide the output file extension(Ex. png, jpg, tiff)",
         choices=["png", "jpg", "tiff"],
     )
 

@@ -44,16 +44,20 @@ pip install .
 
 ## Running Programs
 
-Make sure you are in the main Python working directory when running the scripts. 
+Make sure you are in the main Python working directory when running the commands in windows.
 
 ### SOBEL
+```SOBEL --input path/to/input/directory/or/file --contrast --extension png```
+
+### Thresholding
+```thresh --input path/to/input/directory/or/file --contrast --max 255 --min 0 --extension png```
 
 ### Distribution Statistics 
 
 Sample command for folder: 
 
-```python scripts/dist-stat --input data/arctic-sea-ice-image-masking/Masks```
+```dist-stat --input data/arctic-sea-ice-image-masking/Masks```
 
 Sample command for single file: 
 
-```python scripts/dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png```
+```dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png```
