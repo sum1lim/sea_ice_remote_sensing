@@ -11,7 +11,7 @@ from sea_ice_rs.utils import (
     process_single_input,
     process_multiple_inputs,
 )
-from sea_ice_rs.contrast import contrast
+from sea_ice_rs.image_processing import contrast
 
 
 def main(args):

@@ -3,8 +3,7 @@ import os
 import sys
 import numpy as np
 from tqdm import tqdm
-from .contrast import contrast
-from .threshold import threshold
+from .image_processing import contrast, threshold
 
 
 def decompose_filepath(filepath):
