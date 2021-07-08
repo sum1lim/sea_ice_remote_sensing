@@ -14,5 +14,8 @@ setup(
         ./scripts/SOBEL
         ./scripts/threshold
         ./scripts/dist-stat
+        ./scripts/extract-colour
+        ./scripts/connect-lines
+        ./scripts/centroids
     """.split(),
 )

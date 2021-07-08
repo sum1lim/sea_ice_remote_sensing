@@ -3,8 +3,7 @@ import os
 import sys
 import numpy as np
 from tqdm import tqdm
-from .contrast import contrast
-from .threshold import threshold
+from .data_processing import contrast, threshold
 
 
 def decompose_filepath(filepath):
@@ -27,14 +26,14 @@ def output(output_name, image, split_rgb=False):
     stores the image to the given path.
     split_rgb option allows to store each band separately
     """
-    if image.shape[2] == 1 or not split_rgb:
-        cv2.imwrite(output_name, image)
-    else:
+    if len(image.shape) > 2 and split_rgb:
         for i in range(image.shape[2]):
             (dir_path, filename, extension) = decompose_filepath(output_name)
             cv2.imwrite(
                 os.path.join(dir_path, f"{filename}_B{i}.{extension}"), image[:, :, i]
             )
+    else:
+        cv2.imwrite(output_name, image)
 
 
 def output_to_window(name, image, orginal_img=None):
@@ -97,7 +96,13 @@ def mkdir_output(
 
 
 def process_multiple_inputs(
-    input_dir, tail_str, extension, func, params=None, contrast_bool=False
+    input_dir,
+    tail_str,
+    extension,
+    func,
+    params=None,
+    contrast_bool=False,
+    split_rgb=False,
 ):
     """
     utility function to handle a directory input
@@ -117,7 +122,7 @@ def process_multiple_inputs(
 
             if extension:  # save to an output file if extension is given
                 mkdir_output(
-                    file_path, tail_str, extension, processed, split_rgb=True
+                    file_path, tail_str, extension, processed, split_rgb=split_rgb
                 )  # split_rgb option saves an image per band
 
         except KeyboardInterrupt:
@@ -155,14 +160,26 @@ def process_single_input(
 
     (inDir, filename, _) = decompose_filepath(input_file)
     output_name = f"{filename}_{tail_str}"
-    for i in range(
-        processed.shape[2]
-    ):  # for loop deals with multiple bands in the image
-        output_to_window(f"{output_name}(band {i})", processed[:, :, i])
+
+    if split_rgb:
+        output_img = np.dstack(
+            [
+                output_to_window(
+                    f"{output_name}(band {i})",
+                    processed[:, :, i],
+                    orginal_img=img[:, :, i],
+                )
+                for i in range(processed.shape[2])
+            ]
+        )
+    else:
+        output_img = output_to_window(
+            f"{output_name}", processed[:, :, 0], orginal_img=img[:, :, 0]
+        )
 
     if extension:  # save to an output file if extension is given
         outputFile = f"{inDir}/{output_name}.{extension}"
         try:
-            output(outputFile, processed, split_rgb)
+            output(outputFile, output_img, split_rgb=split_rgb)
         except ValueError:
             print("Not a valid file type")

@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import sys
+import operator
+import cv2
+import csv
+import numpy as np
+from skimage import measure
+from sea_ice_rs.utils import (
+    output_to_window,
+    decompose_filepath,
+)
+
+
+def main(args):
+    try:
+        img = cv2.imread(args.input)
+    except:
+        print("The file does not exist", file=sys.stderr)
+        exit(1)
+
+    labels = measure.label(255 - img[:, :, 0])
+
+    props = measure.regionprops(labels)
+    patches = [p for p in props if p.area <= args.max_area]
+
+    # locations of the centroids
+    centroid_locs = np.array([prop.centroid for i, prop in enumerate(patches)])
+
+    sorted_centroids = sorted(centroid_locs, key=operator.itemgetter(0), reverse=True)
+    sorted_centroids = sorted(sorted_centroids, key=operator.itemgetter(1))
+
+    # create an image of the centroids
+    height, width, _ = img.shape
+    centroids_img = 255 - img[:, :, 0]
+
+    _, filename, _ = decompose_filepath(args.input)
+    with open(f"{args.input}_centroids.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        for p_idx, loc in enumerate(sorted_centroids):
+            row = round(loc[0])
+            col = round(loc[1])
+            centroids_img[row][col] = 0
+
+            row = [f"P{p_idx}"] + loc.tolist()
+            writer.writerow(row)
+
+    output_to_window(f"{filename}_centroids", centroids_img)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input binary image file")
+    parser.add_argument(
+        "--max-area", type=int, help="Maximum number of pixels in a patch"
+    )
+
+    args = parser.parse_args()
+    main(args)

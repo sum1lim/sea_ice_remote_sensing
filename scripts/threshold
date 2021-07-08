@@ -6,7 +6,7 @@ install()
 import argparse
 import sys
 import os
-from sea_ice_rs.threshold import threshold
+from sea_ice_rs.data_processing import threshold
 from sea_ice_rs.utils import (
     process_single_input,
     process_multiple_inputs,
@@ -21,6 +21,7 @@ def main(args):
             args.extension,
             threshold,
             params=(args.max_val, args.min_val),
+            split_rgb=args.rgb_split,
         )
 
     elif os.path.isdir(args.input):  # A collection of input images
@@ -30,6 +31,7 @@ def main(args):
             args.extension,
             threshold,
             params=(args.max_val, args.min_val),
+            split_rgb=args.rgb_split,
         )
 
     else:
@@ -42,6 +44,9 @@ if __name__ == "__main__":
     parser.add_argument("--input", type=str, help="Input b/w file")
     parser.add_argument("--max-val", type=float, help="Maximum threshold value")
     parser.add_argument("--min-val", type=float, help="Minimum threshold value")
+    parser.add_argument(
+        "--rgb_split", action="store_true", help="Ouputs separate RGB bands"
+    )
     parser.add_argument(
         "--extension",
         type=str,
