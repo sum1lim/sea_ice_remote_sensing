@@ -20,7 +20,11 @@ def decompose_filepath(filepath):
         dir_path = None
 
     File = filepath.split("/")[-1]
-    [filename, extension] = File.split(".")
+    try:
+        [filename, extension] = File.split(".")
+    except ValueError:
+        filename = File
+        extension = None
 
     return (dir_path, filename, extension)
 
