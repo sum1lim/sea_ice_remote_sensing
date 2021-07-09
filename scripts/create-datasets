@@ -14,10 +14,6 @@ from tqdm import tqdm
 from sea_ice_rs.utils import decompose_filepath
 
 
-tr_dataset = Manager().list()
-te_dataset = Manager().list()
-
-
 def sampling_probability(dist_stats_file):
     """
     The function sets the probabilitiy of a sample to be included in the dataset.
@@ -47,7 +43,16 @@ def patch_location_map(patch_loc_file):
         return {row[0][1:]: (row[1], row[2]) for row in patch_loc_reader}
 
 
-def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
+def sampling(
+    images,
+    tr_writer,
+    te_writer,
+    img_dir,
+    mask_dir,
+    prob_dict,
+    patch_loc_dict,
+    thread_num,
+):
     """
     Sample the data using the probabilities defined.
     """
@@ -97,47 +102,13 @@ def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
                     pix_vals[2],
                     label,
                 ]
+
                 if selection == "tr":
-                    tr_dataset.append(sample)
+                    tr_writer.writerow(sample)
                 elif selection == "te":
-                    te_dataset.append(sample)
+                    te_writer.writerow(sample)
 
     print(f"Thread #{thread_num} done", file=sys.stdout)
-
-
-def write_to_datasets(parent_dir, sample_counts, dataset_type):
-    """
-    Outputs the train/test datasets to CSV files
-    """
-    with open(
-        f"{parent_dir}/pixel_dataset_{dataset_type}.csv", "w", newline=""
-    ) as output_file:
-
-        dataset_writer = csv.writer(output_file)
-
-        if dataset_type == "tr":
-            dataset = tr_dataset
-        elif dataset_type == "te":
-            dataset = te_dataset
-
-        for sample in dataset:
-            dataset_writer.writerow(sample)
-            sample_counts[sample[-1]] += 1
-
-
-def dataset_stats(sample_counts, stats_filename):
-    """
-    Outputs the number of samples per class statistics to a CSV file.
-    """
-    for k in sample_counts.keys():
-        print(f"{k}: {sample_counts[k]}", file=sys.stdout)
-        print(f"SUM: {sum(sample_counts.values())}", file=sys.stdout)
-
-    with open(stats_filename, "w", newline="") as file:
-        writer = csv.writer(file)
-        for item in sample_counts.items():
-            writer.writerow(item)
-        writer.writerow(["SUM", sum(sample_counts.values())])
 
 
 def main(args):
@@ -147,6 +118,11 @@ def main(args):
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
     processes = list()
+
+    tr_dataset = open(f"{parent_dir}/pixel_dataset_tr.csv", "w", newline="")
+    te_dataset = open(f"{parent_dir}/pixel_dataset_te.csv", "w", newline="")
+    tr_writer = csv.writer(tr_dataset)
+    te_writer = csv.writer(te_dataset)
 
     # Use multiprocessing to speed up
     num_images = len(os.listdir(args.images))
@@ -158,6 +134,8 @@ def main(args):
             target=sampling,
             args=(
                 images,
+                tr_writer,
+                te_writer,
                 args.images,
                 args.masks,
                 prob_dict,
@@ -170,16 +148,6 @@ def main(args):
 
     for p in processes:
         p.join()
-
-    train_sample_counts = {k: 0 for k in prob_dict.keys()}
-    test_sample_counts = {k: 0 for k in prob_dict.keys()}
-    write_to_datasets(parent_dir, train_sample_counts, "tr")
-    write_to_datasets(parent_dir, test_sample_counts, "te")
-
-    print("Train Dataset Statistics", file=sys.stdout)
-    dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats_tr.csv")
-    print("\nTest Dataset Statistics", file=sys.stdout)
-    dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats_te.csv")
 
 
 if __name__ == "__main__":
