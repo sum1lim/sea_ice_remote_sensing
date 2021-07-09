@@ -5,6 +5,7 @@ install()
 
 import argparse
 import os
+import sys
 import cv2
 import csv
 import random
@@ -17,6 +18,12 @@ dataset = Manager().list()
 
 
 def sampling_probability(dist_stats_file):
+    """
+    The function sets the probabilitiy of a sample to be included in the dataset.
+    A sample in the class with a higher occurrence is less likely to be selected.
+    The class with the smallest occurrence will have all of its samples included.
+    The expected number of samples per class is equal throughout the entire data.
+    """
     with open(dist_stats_file, "r") as dist_file:
         dist_file_reader = csv.reader(dist_file)
         dist_stats = [row for row in dist_file_reader]
@@ -31,12 +38,18 @@ def sampling_probability(dist_stats_file):
 
 
 def patch_location_map(patch_loc_file):
+    """
+    Read (X, Y) coordinates of the patches.
+    """
     with open(patch_loc_file, "r") as patch_locs:
         patch_loc_reader = csv.reader(patch_locs)
         return {row[0][1:]: (row[1], row[2]) for row in patch_loc_reader}
 
 
 def dataset_stats(sample_counts, stats_filename):
+    """
+    Outputs the number of samples per class statistics to a CSV file.
+    """
     for k in sample_counts.keys():
         print(f"{k}: {sample_counts[k]}", file=stdout)
 
@@ -47,6 +60,9 @@ def dataset_stats(sample_counts, stats_filename):
 
 
 def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict):
+    """
+    Sample the data using the probabilities defined.
+    """
     for img in tqdm(images):
         _, filename, extension = decompose_filepath(img)
         if extension != "jpg":
@@ -89,6 +105,9 @@ def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict):
 
 
 def write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts):
+    """
+    Outputs the train/test datasets to CSV files
+    """
     train_dataset = open(f"{parent_dir}/pixel_dataset_train.csv", "w", newline="")
     test_dataset = open(f"{parent_dir}/pixel_dataset_test.csv", "w", newline="")
     train_writer = csv.writer(train_dataset)
@@ -116,6 +135,7 @@ def main(args):
 
     processes = list()
 
+    # Use multiprocessing to speed up
     num_images = len(os.listdir(args.images))
     thread_size = 300
     for i in range(0, num_images, thread_size):
@@ -147,7 +167,7 @@ if __name__ == "__main__":
     parser.add_argument("--masks", type=str, help="Masks directory path")
     parser.add_argument("--dist", type=str, help="Distribution statistics CSV file")
     parser.add_argument(
-        "--patch-loc", type=str, help="Patch locations (XY coordinates) CSV file"
+        "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
     )
 
     args = parser.parse_args()
