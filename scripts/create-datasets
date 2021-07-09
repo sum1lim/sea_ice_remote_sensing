@@ -8,8 +8,12 @@ import os
 import cv2
 import csv
 import random
+from multiprocessing import Process, Manager
 from tqdm import tqdm
 from sea_ice_rs.utils import decompose_filepath
+
+
+dataset = Manager().list()
 
 
 def sampling_probability(dist_stats_file):
@@ -34,12 +38,54 @@ def patch_location_map(patch_loc_file):
 
 def dataset_stats(sample_counts, stats_filename):
     for k in sample_counts.keys():
-        print(f"{k}: {sample_counts[k]}")
+        print(f"{k}: {sample_counts[k]}", file=stdout)
 
     with open(stats_filename, "w", newline="") as file:
         writer = csv.writer(file)
         for item in sample_counts.items():
             writer.writerow(item)
+
+
+def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict):
+    for img in tqdm(images):
+        _, filename, extension = decompose_filepath(img)
+        if extension != "jpg":
+            return
+        patch_num = filename.split("-")[0][1:]
+        year = filename.split("-")[1][0:4]
+        month = filename.split("-")[1][4:6]
+        day = filename.split("-")[1][6:8]
+        hour = filename.split("-")[1][8:10]
+
+        inImage = cv2.imread(f"{img_dir}/{img}")
+        inMask = cv2.imread(f"{mask_dir}/{filename}-mask.png")
+
+        for row in range(inImage.shape[0]):
+            for col in range(inImage.shape[1]):
+                label = inMask[row][col][0]
+                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
+                skip_sampling = random.choices([True, False], sampling_weights, k=1)[0]
+
+                if skip_sampling:
+                    continue
+
+                pix_vals = inImage[row][col]
+                sample = [
+                    patch_num,
+                    patch_loc_dict[patch_num][0],
+                    patch_loc_dict[patch_num][1],
+                    year,
+                    month,
+                    day,
+                    hour,
+                    row,
+                    col,
+                    pix_vals[0],
+                    pix_vals[1],
+                    pix_vals[2],
+                    label,
+                ]
+                dataset.append(sample)
 
 
 def write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts):
@@ -66,58 +112,32 @@ def main(args):
     prob_dict = sampling_probability(args.dist)
     patch_loc_dict = patch_location_map(args.patch_loc)
 
-    dataset = []
-
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
-    for img_f in tqdm(os.listdir(args.images)):
-        _, filename, extension = decompose_filepath(img_f)
-        if extension != "jpg":
-            continue
-        patch_num = filename.split("-")[0][1:]
-        year = filename.split("-")[1][0:4]
-        month = filename.split("-")[1][4:6]
-        day = filename.split("-")[1][6:8]
-        hour = filename.split("-")[1][8:10]
 
-        inImage = cv2.imread(f"{args.images}/{img_f}")
-        inMask = cv2.imread(f"{args.masks}/{filename}-mask.png")
+    processes = list()
 
-        for row in range(inImage.shape[0]):
-            for col in range(inImage.shape[1]):
-                label = inMask[row][col][0]
-                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
-                skip_sampling = random.choices([True, False], sampling_weights, k=1)[0]
+    num_images = len(os.listdir(args.images))
+    thread_size = 300
+    for i in range(0, num_images, thread_size):
+        images = os.listdir(args.images)[i : i + thread_size]
+        p = Process(
+            target=sampling,
+            args=(images, args.images, args.masks, prob_dict, patch_loc_dict),
+        )
+        processes.append(p)
+        p.start()
 
-                if skip_sampling:
-                    col += 1
-                    continue
-
-                pix_vals = inImage[row][col]
-                sample = [
-                    patch_num,
-                    patch_loc_dict[patch_num][0],
-                    patch_loc_dict[patch_num][1],
-                    year,
-                    month,
-                    day,
-                    hour,
-                    row,
-                    col,
-                    pix_vals[0],
-                    pix_vals[1],
-                    pix_vals[2],
-                    label,
-                ]
-                dataset.append(sample)
+    for p in processes:
+        p.join()
 
     train_sample_counts = {k: 0 for k in prob_dict.keys()}
     test_sample_counts = {k: 0 for k in prob_dict.keys()}
     write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts)
 
-    print("Train Dataset Statistics")
-    dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats.csv")
-    print("\nTest Dataset Statistics")
-    dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats.csv")
+    print("Train Dataset Statistics", file=stdout)
+    dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats_train.csv")
+    print("\nTest Dataset Statistics", file=stdout)
+    dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats_test.csv")
 
 
 if __name__ == "__main__":
