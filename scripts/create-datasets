@@ -14,7 +14,8 @@ from tqdm import tqdm
 from sea_ice_rs.utils import decompose_filepath
 
 
-dataset = Manager().list()
+tr_dataset = Manager().list()
+te_dataset = Manager().list()
 
 
 def sampling_probability(dist_stats_file):
@@ -46,19 +47,6 @@ def patch_location_map(patch_loc_file):
         return {row[0][1:]: (row[1], row[2]) for row in patch_loc_reader}
 
 
-def dataset_stats(sample_counts, stats_filename):
-    """
-    Outputs the number of samples per class statistics to a CSV file.
-    """
-    for k in sample_counts.keys():
-        print(f"{k}: {sample_counts[k]}", file=sys.stdout)
-
-    with open(stats_filename, "w", newline="") as file:
-        writer = csv.writer(file)
-        for item in sample_counts.items():
-            writer.writerow(item)
-
-
 def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
     """
     Sample the data using the probabilities defined.
@@ -81,10 +69,16 @@ def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
         for row in range(inImage.shape[0]):
             for col in range(inImage.shape[1]):
                 label = inMask[row][col][0]
-                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
-                skip_sampling = random.choices([True, False], sampling_weights, k=1)[0]
+                sampling_weights = [
+                    1 - prob_dict[label],
+                    prob_dict[label] * 0.8,
+                    prob_dict[label] * 0.2,
+                ]
+                selection = random.choices(["skip", "tr", "te"], sampling_weights, k=1)[
+                    0
+                ]
 
-                if skip_sampling:
+                if selection == "skip":
                     continue
 
                 pix_vals = inImage[row][col]
@@ -103,31 +97,47 @@ def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
                     pix_vals[2],
                     label,
                 ]
-                dataset.append(sample)
+                if selection == "tr":
+                    tr_dataset.append(sample)
+                elif selection == "te":
+                    te_dataset.append(sample)
+
     print(f"Thread #{thread_num} done", file=sys.stdout)
 
 
-def write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts):
+def write_to_datasets(parent_dir, sample_counts, dataset_type):
     """
     Outputs the train/test datasets to CSV files
     """
-    train_dataset = open(f"{parent_dir}/pixel_dataset_train.csv", "w", newline="")
-    test_dataset = open(f"{parent_dir}/pixel_dataset_test.csv", "w", newline="")
-    train_writer = csv.writer(train_dataset)
-    test_writer = csv.writer(test_dataset)
+    with open(
+        f"{parent_dir}/pixel_dataset_{dataset_type}.csv", "w", newline=""
+    ) as output_file:
 
-    for sample in dataset:
-        split_probabilities = [0.8, 0.2]
-        train_sample = random.choices([True, False], split_probabilities, k=1)[0]
-        if train_sample:
-            train_writer.writerow(sample)
-            train_sample_counts[sample[-1]] += 1
-        else:
-            test_writer.writerow(sample)
-            test_sample_counts[sample[-1]] += 1
+        dataset_writer = csv.writer(output_file)
 
-    train_dataset.close()
-    test_dataset.close()
+        if dataset_type == "tr":
+            dataset = tr_dataset
+        elif dataset_type == "te":
+            dataset = te_dataset
+
+        for sample in dataset:
+            dataset_writer.writerow(sample)
+            sample_counts[sample[-1]] += 1
+
+
+def dataset_stats(sample_counts, stats_filename):
+    """
+    Outputs the number of samples per class statistics to a CSV file.
+    """
+    for k in sample_counts.keys():
+        print(f"{k}: {sample_counts[k]}", file=sys.stdout)
+        print(f"SUM: {sum(sample_counts.values())}", file=sys.stdout)
+
+    with open(stats_filename, "w", newline="") as file:
+        writer = csv.writer(file)
+        for item in sample_counts.items():
+            writer.writerow(item)
+        writer.writerow(["SUM", sum(sample_counts.values())])
 
 
 def main(args):
@@ -163,12 +173,13 @@ def main(args):
 
     train_sample_counts = {k: 0 for k in prob_dict.keys()}
     test_sample_counts = {k: 0 for k in prob_dict.keys()}
-    write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts)
+    write_to_datasets(parent_dir, train_sample_counts, "tr")
+    write_to_datasets(parent_dir, test_sample_counts, "te")
 
     print("Train Dataset Statistics", file=sys.stdout)
-    dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats_train.csv")
+    dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats_tr.csv")
     print("\nTest Dataset Statistics", file=sys.stdout)
-    dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats_test.csv")
+    dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats_te.csv")
 
 
 if __name__ == "__main__":
