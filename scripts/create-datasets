@@ -51,7 +51,7 @@ def dataset_stats(sample_counts, stats_filename):
     Outputs the number of samples per class statistics to a CSV file.
     """
     for k in sample_counts.keys():
-        print(f"{k}: {sample_counts[k]}", file=stdout)
+        print(f"{k}: {sample_counts[k]}", file=sys.stdout)
 
     with open(stats_filename, "w", newline="") as file:
         writer = csv.writer(file)
@@ -59,11 +59,13 @@ def dataset_stats(sample_counts, stats_filename):
             writer.writerow(item)
 
 
-def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict):
+def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict, thread_num):
     """
     Sample the data using the probabilities defined.
     """
-    for img in tqdm(images):
+    pbar = tqdm(images)
+    for img in pbar:
+        pbar.set_description(f"Thread #{thread_num}")
         _, filename, extension = decompose_filepath(img)
         if extension != "jpg":
             return
@@ -102,6 +104,7 @@ def sampling(images, img_dir, mask_dir, prob_dict, patch_loc_dict):
                     label,
                 ]
                 dataset.append(sample)
+    print(f"Thread #{thread_num} done", file=sys.stdout)
 
 
 def write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts):
@@ -137,12 +140,20 @@ def main(args):
 
     # Use multiprocessing to speed up
     num_images = len(os.listdir(args.images))
-    thread_size = 300
+    thread_size = args.num_threads
     for i in range(0, num_images, thread_size):
         images = os.listdir(args.images)[i : i + thread_size]
+        process_num = int(i / thread_size)
         p = Process(
             target=sampling,
-            args=(images, args.images, args.masks, prob_dict, patch_loc_dict),
+            args=(
+                images,
+                args.images,
+                args.masks,
+                prob_dict,
+                patch_loc_dict,
+                process_num,
+            ),
         )
         processes.append(p)
         p.start()
@@ -154,15 +165,18 @@ def main(args):
     test_sample_counts = {k: 0 for k in prob_dict.keys()}
     write_to_datasets(parent_dir, dataset, train_sample_counts, test_sample_counts)
 
-    print("Train Dataset Statistics", file=stdout)
+    print("Train Dataset Statistics", file=sys.stdout)
     dataset_stats(train_sample_counts, f"{parent_dir}/pixel_dataset_stats_train.csv")
-    print("\nTest Dataset Statistics", file=stdout)
+    print("\nTest Dataset Statistics", file=sys.stdout)
     dataset_stats(test_sample_counts, f"{parent_dir}/pixel_dataset_stats_test.csv")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    parser.add_argument(
+        "--num-threads", type=str, help="Number of threads for the process", default=400
+    )
     parser.add_argument("--images", type=str, help="Images directory path")
     parser.add_argument("--masks", type=str, help="Masks directory path")
     parser.add_argument("--dist", type=str, help="Distribution statistics CSV file")
