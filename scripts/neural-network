@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import sys
+import argparse
+import pandas
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import np_utils
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+
+
+def process_data(data_file):
+    dataframe = pandas.read_csv(data_file, header=None)
+    dataset = dataframe.values
+    X = dataset[:, 0:12].astype(float)
+    Y = dataset[:, 12]
+
+    encoder = LabelEncoder()
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    return X, encoded_Y, dummy_Y
+
+
+def main(args):
+    X, _, Y_tr = process_data(args.train_data)
+
+    model = Sequential()
+
+    input_layer_size = X.shape[1]
+    output_layer_size = Y_tr.shape[1]
+
+    if args.hidden_size == None:
+        hidden_layer_size = ((input_layer_size + output_layer_size) * 2) // 3
+    else:
+        hidden_layer_size = args.hidden_size
+
+    if hidden_layer_size < 2:
+        hidden_layer_size = 2
+
+    model.add(Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu"))
+    model.add(Dense(output_layer_size, activation="softmax"))
+
+    model.compile(
+        loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+
+    X_tr, X_val, Y_tr, Y_val = train_test_split(X, Y_tr, test_size=0.2)
+    model.fit(
+        x=X_tr,
+        y=Y_tr,
+        epochs=args.epochs,
+        batch_size=5,
+        verbose=1,
+        validation_data=(X_val, Y_val),
+    )
+
+    te_dataframe = pandas.read_csv(args.test_data, header=None)
+    te_dataset = te_dataframe.values
+
+    X_te, Y_te, _ = process_data(args.test_data)
+
+    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=1), axis=1)
+
+    cm = confusion_matrix(Y_te, y_pred)
+
+    np.set_printoptions(threshold=np.inf)
+    print(cm, file)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--train-data", type=str, help="CSV file containing train data")
+    parser.add_argument("--test-data", type=str, help="CSV file containing test data")
+    parser.add_argument(
+        "--epochs", type=int, help="Number of iterations for training", default=100
+    )
+    parser.add_argument("--hidden-size", type=int, help="Size of the hidden layer")
+
+    args = parser.parse_args()
+    main(args)

@@ -26,6 +26,7 @@ def install():
     pip_install("kaggle", "kaggle")
     pip_install("cv2", "opencv-python")
     pip_install("skimage", "scikit-image")
+    pip_install("sklearn", "scikit-learn")
     pip_install("tqdm", "tqdm")
     pip_install("pandas", "pandas")
     pip_install("tensorflow", "tensorflow")
