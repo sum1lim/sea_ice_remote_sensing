@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from tqdm import tqdm
+from skimage.feature import greycomatrix
 
 
 def contrast(inImage):
@@ -13,7 +15,7 @@ def contrast(inImage):
 
     outImage = np.int_((255 * (inImage - minValue)) / data_range)
 
-    return outImage
+    return outImage.astype(np.uint8)
 
 
 def threshold(img, max_val=None, min_val=None):
@@ -71,3 +73,45 @@ def extract_colour(img, colour):
     output_img = np.nan_to_num(output_img)
 
     return np.dstack([output_img])
+
+
+def generate_GLCM(inFile):
+    inImage = cv2.imread(inFile)
+
+    rescaled_img = ((inImage / 255) * (32 - 1)).astype(int)
+
+    img_border = cv2.copyMakeBorder(
+        rescaled_img[:, :, 0], 5, 5, 5, 5, borderType=cv2.BORDER_REFLECT_101
+    )
+
+    num_rows = inImage.shape[0]
+    num_cols = inImage.shape[1]
+
+    GLCM_matrices = []
+
+    for row in tqdm(range(5, num_rows)):
+        GLCM_row = []
+        for col in range(5, num_cols):
+            patch = img_border[row - 5 : row + 6, col - 5 : col + 6]
+            half_right_angle = np.pi / 8
+            histogram = greycomatrix(
+                patch,
+                distances=[1],
+                angles=[
+                    0,
+                    half_right_angle,
+                    2 * half_right_angle,
+                    3 * half_right_angle,
+                    4 * half_right_angle,
+                    5 * half_right_angle,
+                    6 * half_right_angle,
+                    7 * half_right_angle,
+                ],
+                levels=32,
+            )
+
+            GLCM_row.append(histogram)
+
+        GLCM_matrices.append(GLCM_row)
+
+    return GLCM_matrices

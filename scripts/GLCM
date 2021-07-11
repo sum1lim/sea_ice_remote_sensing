@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import numpy as np
+import cv2
+import os
+from tqdm import tqdm
+from skimage.feature import greycoprops
+from sea_ice_rs.utils import mkdir_output
+from sea_ice_rs.data_processing import generate_GLCM
+from sea_ice_rs.data_processing import contrast
+
+
+def generate_entropy(GLCM):
+    e = np.finfo(float).eps
+
+    return [
+        np.sum(-np.multiply(GLCM[:, :, :, i], np.log(GLCM[:, :, :, i] + e)))
+        for i in range(GLCM.shape[-1])
+    ]
+
+
+def glcm_product(GLCM_matrices, product_type, dirname, filename):
+    glcm_prod_img = []
+    pbar = tqdm(range(len(GLCM_matrices)))
+    for row in pbar:
+        pbar.set_description(product_type)
+        row_li = []
+        for col in range(len(GLCM_matrices[0])):
+            GLCM = GLCM_matrices[row][col]
+
+            if product_type == "entropy":
+                product = np.sum(generate_entropy(GLCM))
+            else:
+                product = np.sum(greycoprops(GLCM, product_type)[0])
+
+            row_li.append(product)
+
+        glcm_prod_img.append(row_li)
+
+    outImage = contrast(np.asarray(glcm_prod_img)).astype(np.uint8)
+
+    mkdir_output(f"{dirname}/{filename}", product_type, "jpg", outImage)
+
+
+def main(args):
+    if os.path.isdir(args.input):  # A collection of input images
+        dirname = args.input
+        pbar = tqdm(os.listdir(dirname))
+        for img_f in pbar:
+            pbar.set_description(img_f)
+            GLCM_matrices = generate_GLCM(f"{dirname}/{img_f}")
+
+            entropy_img = glcm_product(GLCM_matrices, "entropy", dirname, img_f)
+            ASM_img = glcm_product(GLCM_matrices, "ASM", dirname, img_f)
+            contrast_img = glcm_product(GLCM_matrices, "contrast", dirname, img_f)
+            homogeneity_img = glcm_product(GLCM_matrices, "homogeneity", dirname, img_f)
+            dissimilarity_img = glcm_product(
+                GLCM_matrices, "dissimilarity", dirname, img_f
+            )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input file/directoy path")
+
+    args = parser.parse_args()
+    main(args)
