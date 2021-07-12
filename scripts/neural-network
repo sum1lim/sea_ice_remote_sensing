@@ -16,10 +16,10 @@ from sklearn.metrics import confusion_matrix
 
 
 def process_data(data_file):
-    dataframe = pandas.read_csv(data_file, header=None)
+    dataframe = pandas.read_csv(data_file, header=0)
     dataset = dataframe.values
-    X = dataset[:, 0:12].astype(float)
-    Y = dataset[:, 12]
+    X = dataset[:, 1:].astype(float)
+    Y = dataset[:, 0]
 
     encoder = LabelEncoder()
     encoder.fit(Y)
@@ -73,7 +73,7 @@ def main(args):
     cm = confusion_matrix(Y_te, y_pred)
 
     np.set_printoptions(threshold=np.inf)
-    print(cm, file)
+    print(cm)
 
 
 if __name__ == "__main__":
