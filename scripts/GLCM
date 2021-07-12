@@ -4,13 +4,10 @@ from sea_ice_rs.install import install
 install()
 
 import argparse
-import numpy as np
-import cv2
-import os
 import pandas
 import csv
 from tqdm import tqdm
-from sea_ice_rs.utils import mkdir_output, decompose_filepath
+from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import generate_GLCM, glcm_product
 
 
@@ -45,9 +42,14 @@ def main(args):
 
         grouped = dataframe.groupby(["patch_num", "year", "month", "day", "hour"])
 
-        for name, group in grouped:
+        for name, group in tqdm(grouped):
+            patch_num = int(name[0])
+            year = int(name[1])
+            month = str("{:0>2}".format(int(name[2])))
+            day = str("{:0>2}".format(int(name[3])))
+            hour = str("{:0>2}".format(int(name[4])))
 
-            img_file = f"P{name[0]}-{name[1]}{str('{:0>2}'.format(name[2]))}{str('{:0>2}'.format(name[3]))}{str('{:0>2}'.format(name[4]))}.{args.img_extension}"
+            img_file = f"P{patch_num}-{year}{month}{day}{hour}.{args.img_extension}"
 
             data_points = [
                 (int(item["coord_y"]), int(item["coord_x"]))
