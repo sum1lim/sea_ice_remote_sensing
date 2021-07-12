@@ -124,10 +124,10 @@ def generate_GLCM(inFile, datapoints):
     num_cols = inImage.shape[1]
 
     GLCM_0 = GLCM_band(bordered_img, border_width, 0, datapoints)
-    # GLCM_1 = GLCM_band(bordered_img, border_width, 1, num_rows, num_cols)
-    # GLCM_2 = GLCM_band(bordered_img, border_width, 2, num_rows, num_cols)
+    GLCM_1 = GLCM_band(bordered_img, border_width, 1, datapoints)
+    GLCM_2 = GLCM_band(bordered_img, border_width, 2, datapoints)
 
-    return GLCM_0
+    return [GLCM_0, GLCM_1, GLCM_2]
 
 
 def generate_entropy(GLCM):
@@ -140,16 +140,19 @@ def generate_entropy(GLCM):
 
 
 def glcm_product(GLCM_matrices, product_type, dirname, filename):
-    glcm_prod_li = []
-    for GLCM in GLCM_matrices:
-        if product_type == "entropy":
-            product = np.sum(generate_entropy(GLCM))
-        else:
-            product = np.sum(greycoprops(GLCM, product_type)[0])
-
-        glcm_prod_li.append(product)
-
-    return glcm_prod_li
+    return np.transpose(
+        np.asarray(
+            [
+                [
+                    np.sum(generate_entropy(GLCM))
+                    if product_type == "entropy"
+                    else np.sum(greycoprops(GLCM, product_type)[0])
+                    for GLCM in GLCM_matrices[i]
+                ]
+                for i in range(len(GLCM_matrices))
+            ]
+        )
+    )
 
 
 def sampling_probability(dist_stats_file):

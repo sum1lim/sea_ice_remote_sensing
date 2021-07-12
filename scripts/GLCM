@@ -20,42 +20,62 @@ def main(args):
         GLCM_dataset = open(f"{parent_dir}/{filename}_GLCM.csv", "w", newline="")
         GLCM_writer = csv.writer(GLCM_dataset)
 
-        dataframe = pandas.read_csv(args.input, header=None)
+        dataframe = pandas.read_csv(args.input, header=0)
 
-        grouped = dataframe.groupby([0, 3, 4, 5, 6])
+        GLCM_writer.writerow(
+            list(dataframe.columns)
+            + [
+                "entropy_8",
+                "entropy_4",
+                "entropy_3",
+                "ASM_8",
+                "ASM_4",
+                "ASM_3",
+                "contrast_8",
+                "contrast_4",
+                "contrast_3",
+                "homogeneity_8",
+                "homogeneity_4",
+                "homogeneity_3",
+                "dissimilarity_8",
+                "dissimilarity_4",
+                "dissimilarity_3",
+            ]
+        )
+
+        grouped = dataframe.groupby(["patch_num", "year", "month", "day", "hour"])
 
         for name, group in grouped:
-            img_file = f"P{str(int(name[0]))}-{str(int(name[1]))}{str('{:0>2}'.format(int(name[2])))}{str('{:0>2}'.format(int(name[3])))}{str('{:0>2}'.format(int(name[4])))}.{args.img_extension}"
+
+            img_file = f"P{name[0]}-{name[1]}{str('{:0>2}'.format(name[2]))}{str('{:0>2}'.format(name[3]))}{str('{:0>2}'.format(name[4]))}.{args.img_extension}"
 
             data_points = [
-                (int(item[7]), int(item[8])) for idx, item in group.iterrows()
+                (int(item["coord_y"]), int(item["coord_x"]))
+                for idx, item in group.iterrows()
             ]
 
             GLCM_matrices = generate_GLCM(f"{args.img_dir}/{img_file}", data_points)
 
-            entropy_li = glcm_product(GLCM_matrices, "entropy", args.img_dir, img_file)
-            ASM_li = glcm_product(GLCM_matrices, "ASM", args.img_dir, img_file)
-            contrast_li = glcm_product(
-                GLCM_matrices, "contrast", args.img_dir, img_file
-            )
-            homogeneity_li = glcm_product(
+            entropy = glcm_product(GLCM_matrices, "entropy", args.img_dir, img_file)
+            ASM = glcm_product(GLCM_matrices, "ASM", args.img_dir, img_file)
+            contrast = glcm_product(GLCM_matrices, "contrast", args.img_dir, img_file)
+            homogeneity = glcm_product(
                 GLCM_matrices, "homogeneity", args.img_dir, img_file
             )
-            dissimilarity_li = glcm_product(
+            dissimilarity = glcm_product(
                 GLCM_matrices, "dissimilarity", args.img_dir, img_file
-            )
-
-            GLCM_prods = np.transpose(
-                np.asarray(
-                    [entropy_li, ASM_li, contrast_li, homogeneity_li, dissimilarity_li]
-                )
             )
 
             i = 0
             for idx, item in group.iterrows():
-                GLCM_features = [item[i] for i in range(len(item))] + GLCM_prods[
-                    i, :
-                ].tolist()
+                GLCM_features = (
+                    [item[i] for i in range(len(item))]
+                    + entropy[i, :].tolist()
+                    + ASM[i, :].tolist()
+                    + contrast[i, :].tolist()
+                    + homogeneity[i, :].tolist()
+                    + dissimilarity[i, :].tolist()
+                )
                 GLCM_writer.writerow(GLCM_features)
                 i += 1
 
