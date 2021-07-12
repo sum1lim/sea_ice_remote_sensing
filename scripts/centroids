@@ -38,8 +38,8 @@ def main(args):
     height, width, _ = img.shape
     centroids_img = 255 - img[:, :, 0]
 
-    _, filename, _ = decompose_filepath(args.input)
-    with open(f"{args.input}_centroids.csv", "w", newline="") as file:
+    parent_dir, filename, _ = decompose_filepath(args.input)
+    with open(f"{parent_dir}/{filename}_centroids.csv", "w", newline="") as file:
         writer = csv.writer(file)
         for p_idx, loc in enumerate(sorted_centroids):
             row = round(loc[0])

@@ -17,5 +17,6 @@ setup(
         ./scripts/extract-colour
         ./scripts/connect-lines
         ./scripts/centroids
+        ./scripts/create-datasets
     """.split(),
 )

@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import os
+import csv
+from multiprocessing import Process
+from sea_ice_rs.utils import decompose_filepath
+from sea_ice_rs.data_processing import (
+    sampling,
+    sampling_probability,
+    patch_location_map,
+)
+
+
+def main(args):
+    prob_dict = sampling_probability(args.dist)
+    patch_loc_dict = patch_location_map(args.patch_loc)
+
+    parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
+
+    processes = list()
+
+    tr_dataset = open(f"{parent_dir}/pixel_dataset_tr.csv", "w", newline="")
+    te_dataset = open(f"{parent_dir}/pixel_dataset_te.csv", "w", newline="")
+    tr_writer = csv.writer(tr_dataset)
+    te_writer = csv.writer(te_dataset)
+
+    headers = [
+        "label",
+        "patch_num",
+        "patch_location_y",
+        "patch_location_x",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "coord_y",
+        "coord_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+
+    tr_writer.writerow(headers)
+    te_writer.writerow(headers)
+
+    if args.multiprocess:
+        # Use multiprocessing to speed up
+        num_images = len(os.listdir(args.images))
+        thread_size = args.num_threads
+        for i in range(0, num_images, thread_size):
+            images = os.listdir(args.images)[i : i + thread_size]
+            process_num = int(i / thread_size)
+            p = Process(
+                target=sampling,
+                args=(
+                    images,
+                    tr_writer,
+                    te_writer,
+                    args.images,
+                    args.masks,
+                    prob_dict,
+                    patch_loc_dict,
+                    process_num,
+                ),
+            )
+            processes.append(p)
+            p.start()
+
+        for p in processes:
+            p.join()
+    else:
+        num_images = len(os.listdir(args.images))
+        images = os.listdir(args.images)
+        sampling(
+            images,
+            tr_writer,
+            te_writer,
+            args.images,
+            args.masks,
+            prob_dict,
+            patch_loc_dict,
+            0,
+        )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--num-threads", type=int, help="Number of threads for the process", default=400
+    )
+    parser.add_argument("--images", type=str, help="Images directory path")
+    parser.add_argument("--masks", type=str, help="Masks directory path")
+    parser.add_argument("--dist", type=str, help="Distribution statistics CSV file")
+    parser.add_argument(
+        "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
+    )
+    parser.add_argument("--multiprocess", action="store_true", help="Multiprocessing")
+
+    args = parser.parse_args()
+    main(args)
