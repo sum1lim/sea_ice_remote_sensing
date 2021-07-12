@@ -100,7 +100,7 @@ def sampling(
                     col,
                     pix_vals[0],
                     pix_vals[1],
-                    pix_vals[2]
+                    pix_vals[2],
                 ]
 
                 if selection == "tr":
@@ -137,13 +137,13 @@ def main(args):
         "coord_x",
         "band_8",
         "band_4",
-        "band_3"
+        "band_3",
     ]
 
     tr_writer.writerow(headers)
     te_writer.writerow(headers)
 
-    if(args.multiprocess):
+    if args.multiprocess:
         # Use multiprocessing to speed up
         num_images = len(os.listdir(args.images))
         thread_size = args.num_threads
@@ -160,7 +160,7 @@ def main(args):
                     args.masks,
                     prob_dict,
                     patch_loc_dict,
-                    process_num
+                    process_num,
                 ),
             )
             processes.append(p)
@@ -179,8 +179,9 @@ def main(args):
             args.masks,
             prob_dict,
             patch_loc_dict,
-            0
-            )
+            0,
+        )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
