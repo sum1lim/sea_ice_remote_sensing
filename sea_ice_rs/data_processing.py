@@ -75,27 +75,17 @@ def extract_colour(img, colour):
     return np.dstack([output_img])
 
 
-def generate_GLCM(inFile):
-    inImage = cv2.imread(inFile)
+def GLCM_band(bordered_img, border_width, band, num_rows, num_cols):
+    half_right_angle = np.pi / 8
 
-    rescaled_img = ((inImage / 255) * (32 - 1)).astype(int)
-
-    img_border = cv2.copyMakeBorder(
-        rescaled_img[:, :, 0], 5, 5, 5, 5, borderType=cv2.BORDER_REFLECT_101
-    )
-
-    num_rows = inImage.shape[0]
-    num_cols = inImage.shape[1]
-
-    GLCM_matrices = []
-
-    for row in tqdm(range(5, num_rows)):
-        GLCM_row = []
-        for col in range(5, num_cols):
-            patch = img_border[row - 5 : row + 6, col - 5 : col + 6]
-            half_right_angle = np.pi / 8
-            histogram = greycomatrix(
-                patch,
+    return [
+        [
+            greycomatrix(
+                bordered_img[
+                    row - border_width : row + border_width + 1,
+                    col - border_width : col + border_width + 1,
+                    band,
+                ],
                 distances=[1],
                 angles=[
                     0,
@@ -109,9 +99,63 @@ def generate_GLCM(inFile):
                 ],
                 levels=32,
             )
+            for col in range(border_width, num_cols)
+        ]
+        for row in range(border_width, num_rows)
+    ]
 
-            GLCM_row.append(histogram)
 
-        GLCM_matrices.append(GLCM_row)
+def generate_GLCM(inFile):
+    inImage = cv2.imread(inFile)
 
-    return GLCM_matrices
+    rescaled_img = ((inImage / 255) * (16 - 1)).astype(int)
+
+    border_width = 5
+    bordered_img = cv2.copyMakeBorder(
+        rescaled_img,
+        border_width,
+        border_width,
+        border_width,
+        border_width,
+        borderType=cv2.BORDER_REFLECT_101,
+    )
+
+    num_rows = inImage.shape[0]
+    num_cols = inImage.shape[1]
+
+    GLCM_0 = GLCM_band(bordered_img, border_width, 0, num_rows, num_cols)
+    # GLCM_1 = GLCM_band(bordered_img, border_width, 1, num_rows, num_cols)
+    # GLCM_2 = GLCM_band(bordered_img, border_width, 2, num_rows, num_cols)
+
+    return GLCM_0
+
+
+def generate_entropy(GLCM):
+    e = np.finfo(float).eps
+
+    return [
+        np.sum(-np.multiply(GLCM[:, :, :, i], np.log(GLCM[:, :, :, i] + e)))
+        for i in range(GLCM.shape[-1])
+    ]
+
+
+def glcm_product(GLCM_matrices, product_type, dirname, filename):
+    glcm_prod_img = []
+    pbar = tqdm(range(len(GLCM_matrices)))
+    for row in pbar:
+        row_li = []
+        for col in range(len(GLCM_matrices[0])):
+            GLCM = GLCM_matrices[row][col]
+
+            if product_type == "entropy":
+                product = np.sum(generate_entropy(GLCM))
+            else:
+                product = np.sum(greycoprops(GLCM, product_type)[0])
+
+            row_li.append(product)
+
+        glcm_prod_img.append(row_li)
+
+    outImage = contrast(np.asarray(glcm_prod_img)).astype(np.uint8)
+
+    mkdir_output(f"{dirname}/{filename}", product_type, "jpg", outImage)

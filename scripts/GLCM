@@ -14,38 +14,6 @@ from sea_ice_rs.data_processing import generate_GLCM
 from sea_ice_rs.data_processing import contrast
 
 
-def generate_entropy(GLCM):
-    e = np.finfo(float).eps
-
-    return [
-        np.sum(-np.multiply(GLCM[:, :, :, i], np.log(GLCM[:, :, :, i] + e)))
-        for i in range(GLCM.shape[-1])
-    ]
-
-
-def glcm_product(GLCM_matrices, product_type, dirname, filename):
-    glcm_prod_img = []
-    pbar = tqdm(range(len(GLCM_matrices)))
-    for row in pbar:
-        pbar.set_description(product_type)
-        row_li = []
-        for col in range(len(GLCM_matrices[0])):
-            GLCM = GLCM_matrices[row][col]
-
-            if product_type == "entropy":
-                product = np.sum(generate_entropy(GLCM))
-            else:
-                product = np.sum(greycoprops(GLCM, product_type)[0])
-
-            row_li.append(product)
-
-        glcm_prod_img.append(row_li)
-
-    outImage = contrast(np.asarray(glcm_prod_img)).astype(np.uint8)
-
-    mkdir_output(f"{dirname}/{filename}", product_type, "jpg", outImage)
-
-
 def main(args):
     if os.path.isdir(args.input):  # A collection of input images
         dirname = args.input
