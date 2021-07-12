@@ -186,7 +186,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--num-threads", type=str, help="Number of threads for the process", default=400
+        "--num-threads", type=int, help="Number of threads for the process", default=400
     )
     parser.add_argument("--images", type=str, help="Images directory path")
     parser.add_argument("--masks", type=str, help="Masks directory path")
