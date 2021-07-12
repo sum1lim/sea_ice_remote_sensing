@@ -7,34 +7,67 @@ import argparse
 import numpy as np
 import cv2
 import os
+import pandas
+import csv
 from tqdm import tqdm
-from skimage.feature import greycoprops
-from sea_ice_rs.utils import mkdir_output
-from sea_ice_rs.data_processing import generate_GLCM
-from sea_ice_rs.data_processing import contrast
+from sea_ice_rs.utils import mkdir_output, decompose_filepath
+from sea_ice_rs.data_processing import generate_GLCM, glcm_product
 
 
 def main(args):
-    if os.path.isdir(args.input):  # A collection of input images
-        dirname = args.input
-        pbar = tqdm(os.listdir(dirname))
-        for img_f in pbar:
-            pbar.set_description(img_f)
-            GLCM_matrices = generate_GLCM(f"{dirname}/{img_f}")
+    parent_dir, filename, extension = decompose_filepath(args.input)
+    if extension == "csv":  # Dataset file
+        GLCM_dataset = open(f"{parent_dir}/{filename}_GLCM.csv", "w", newline="")
+        GLCM_writer = csv.writer(GLCM_dataset)
 
-            entropy_img = glcm_product(GLCM_matrices, "entropy", dirname, img_f)
-            ASM_img = glcm_product(GLCM_matrices, "ASM", dirname, img_f)
-            contrast_img = glcm_product(GLCM_matrices, "contrast", dirname, img_f)
-            homogeneity_img = glcm_product(GLCM_matrices, "homogeneity", dirname, img_f)
-            dissimilarity_img = glcm_product(
-                GLCM_matrices, "dissimilarity", dirname, img_f
+        dataframe = pandas.read_csv(args.input, header=None)
+
+        grouped = dataframe.groupby([0, 3, 4, 5, 6])
+
+        for name, group in grouped:
+            img_file = f"P{str(int(name[0]))}-{str(int(name[1]))}{str('{:0>2}'.format(int(name[2])))}{str('{:0>2}'.format(int(name[3])))}{str('{:0>2}'.format(int(name[4])))}.{args.img_extension}"
+
+            data_points = [
+                (int(item[7]), int(item[8])) for idx, item in group.iterrows()
+            ]
+
+            GLCM_matrices = generate_GLCM(f"{args.img_dir}/{img_file}", data_points)
+
+            entropy_li = glcm_product(GLCM_matrices, "entropy", args.img_dir, img_file)
+            ASM_li = glcm_product(GLCM_matrices, "ASM", args.img_dir, img_file)
+            contrast_li = glcm_product(
+                GLCM_matrices, "contrast", args.img_dir, img_file
             )
+            homogeneity_li = glcm_product(
+                GLCM_matrices, "homogeneity", args.img_dir, img_file
+            )
+            dissimilarity_li = glcm_product(
+                GLCM_matrices, "dissimilarity", args.img_dir, img_file
+            )
+
+            GLCM_prods = np.transpose(
+                np.asarray(
+                    [entropy_li, ASM_li, contrast_li, homogeneity_li, dissimilarity_li]
+                )
+            )
+
+            i = 0
+            for idx, item in group.iterrows():
+                GLCM_features = [item[i] for i in range(len(item))] + GLCM_prods[
+                    i, :
+                ].tolist()
+                GLCM_writer.writerow(GLCM_features)
+                i += 1
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input", type=str, help="Input file/directoy path")
+    parser.add_argument("--input", type=str, help="Input csv/image file")
+    parser.add_argument("--img-dir", type=str, help="Directory with raw data")
+    parser.add_argument(
+        "--img-extension", type=str, help="extension of the raw images", default="jpg"
+    )
 
     args = parser.parse_args()
     main(args)
