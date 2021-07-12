@@ -19,5 +19,6 @@ setup(
         ./scripts/centroids
         ./scripts/create-datasets
         ./scripts/neural-network
+        ./scripts/GLCM
     """.split(),
 )
