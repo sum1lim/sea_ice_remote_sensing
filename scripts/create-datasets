@@ -88,6 +88,7 @@ def sampling(
 
                 pix_vals = inImage[row][col]
                 sample = [
+                    label,
                     patch_num,
                     patch_loc_dict[patch_num][0],
                     patch_loc_dict[patch_num][1],
@@ -99,8 +100,7 @@ def sampling(
                     col,
                     pix_vals[0],
                     pix_vals[1],
-                    pix_vals[2],
-                    label,
+                    pix_vals[2]
                 ]
 
                 if selection == "tr":
@@ -124,31 +124,63 @@ def main(args):
     tr_writer = csv.writer(tr_dataset)
     te_writer = csv.writer(te_dataset)
 
-    # Use multiprocessing to speed up
-    num_images = len(os.listdir(args.images))
-    thread_size = args.num_threads
-    for i in range(0, num_images, thread_size):
-        images = os.listdir(args.images)[i : i + thread_size]
-        process_num = int(i / thread_size)
-        p = Process(
-            target=sampling,
-            args=(
-                images,
-                tr_writer,
-                te_writer,
-                args.images,
-                args.masks,
-                prob_dict,
-                patch_loc_dict,
-                process_num,
-            ),
-        )
-        processes.append(p)
-        p.start()
+    headers = [
+        "label",
+        "patch_num",
+        "patch_location_y",
+        "patch_location_x",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "coord_y",
+        "coord_x",
+        "band_8",
+        "band_4",
+        "band_3"
+    ]
 
-    for p in processes:
-        p.join()
+    tr_writer.writerow(headers)
+    te_writer.writerow(headers)
 
+    if(args.multiprocess):
+        # Use multiprocessing to speed up
+        num_images = len(os.listdir(args.images))
+        thread_size = args.num_threads
+        for i in range(0, num_images, thread_size):
+            images = os.listdir(args.images)[i : i + thread_size]
+            process_num = int(i / thread_size)
+            p = Process(
+                target=sampling,
+                args=(
+                    images,
+                    tr_writer,
+                    te_writer,
+                    args.images,
+                    args.masks,
+                    prob_dict,
+                    patch_loc_dict,
+                    process_num
+                ),
+            )
+            processes.append(p)
+            p.start()
+
+        for p in processes:
+            p.join()
+    else:
+        num_images = len(os.listdir(args.images))
+        images = os.listdir(args.images)
+        sampling(
+            images,
+            tr_writer,
+            te_writer,
+            args.images,
+            args.masks,
+            prob_dict,
+            patch_loc_dict,
+            0
+            )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -162,6 +194,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
     )
+    parser.add_argument("--multiprocess", action="store_true", help="Multiprocessing")
 
     args = parser.parse_args()
     main(args)
