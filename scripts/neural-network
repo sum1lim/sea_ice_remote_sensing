@@ -46,7 +46,7 @@ def main(args):
     if hidden_layer_size < 2:
         hidden_layer_size = 2
 
-    model.add(Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu"))
+    model.add()
     model.add(Dense(output_layer_size, activation="softmax"))
 
     model.compile(
@@ -72,7 +72,7 @@ def main(args):
 
     cm = confusion_matrix(Y_te, y_pred)
 
-    np.set_printoptions(threshold=np.inf)
+    np.set_printoptions(threshold=np.inf, linewidth=np.inf)
     print(cm)
 
 
