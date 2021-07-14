@@ -188,5 +188,5 @@ def sampling(
 
                 csv_writer.writerow(sample)
 
-    print(f"{pbar_text} dataset creation finished", sys.stdout)
+    print(f"{pbar_text} thread finished", sys.stdout)
     dataset.close()
