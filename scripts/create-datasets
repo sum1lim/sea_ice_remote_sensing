@@ -5,7 +5,6 @@ install()
 
 import argparse
 import os
-import csv
 import random
 from multiprocessing import Process
 from sea_ice_rs.utils import decompose_filepath
@@ -18,7 +17,9 @@ from sea_ice_rs.data_processing import (
 
 def main(args):
     prob_dict = sampling_probability(args.dist)
-    patch_loc_dict = patch_location_map(args.patch_loc)
+    patch_locs = patch_location_map(args.patch_loc)
+    img_dir = args.images
+    mask_dir = args.masks
 
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
@@ -32,37 +33,70 @@ def main(args):
     except FileExistsError:
         None
 
-    tr_dataset = open(f"{parent_dir}/train_dataset/raw.csv", "w", newline="")
-    te_dataset = open(f"{parent_dir}/test_dataset/raw.csv", "w", newline="")
-    tr_writer = csv.writer(tr_dataset)
-    te_writer = csv.writer(te_dataset)
-
     images = os.listdir(args.images)
     random.shuffle(images)
     split_threshold = int(len(images) * 0.8)
     tr_images = images[:split_threshold]
     te_images = images[split_threshold:]
 
-    sampling(
-        tr_images,
-        tr_writer,
-        args.images,
-        args.masks,
-        prob_dict,
-        patch_loc_dict,
-        0,
-    )
+    tr_file = f"{parent_dir}/train_dataset/raw.csv"
+    te_file = f"{parent_dir}/test_dataset/raw.csv"
 
-    images = os.listdir(args.images)
-    sampling(
-        te_images,
-        te_writer,
-        args.images,
-        args.masks,
-        prob_dict,
-        patch_loc_dict,
-        0,
-    )
+    if args.multiprocess:
+        processes = list()
+        p_tr = Process(
+            target=sampling,
+            args=(
+                tr_images,
+                tr_file,
+                img_dir,
+                mask_dir,
+                prob_dict,
+                patch_locs,
+                "Train",
+            ),
+        )
+
+        p_te = Process(
+            target=sampling,
+            args=(
+                te_images,
+                te_file,
+                img_dir,
+                mask_dir,
+                prob_dict,
+                patch_locs,
+                "Test",
+            ),
+        )
+        p_tr.start()
+        p_te.start()
+        processes.append(p_tr)
+        processes.append(p_te)
+
+        for p in processes:
+            p.join()
+
+    else:
+        sampling(
+            tr_images,
+            tr_file,
+            img_dir,
+            mask_dir,
+            prob_dict,
+            patch_locs,
+            "Train",
+        )
+
+        sampling(
+            te_images,
+            te_file,
+            img_dir,
+            mask_dir,
+            prob_dict,
+            patch_locs,
+            "Test",
+        )
 
 
 if __name__ == "__main__":
@@ -74,6 +108,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
     )
+    parser.add_argument("--multiprocess", action="store_true", help="Multiprocessing")
 
     args = parser.parse_args()
     main(args)

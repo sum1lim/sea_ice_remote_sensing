@@ -108,12 +108,12 @@ def patch_location_map(patch_loc_file):
 
 def sampling(
     images,
-    csv_writer,
+    dataset_file,
     img_dir,
     mask_dir,
     prob_dict,
     patch_loc_dict,
-    thread_num,
+    pbar_text,
 ):
     """
     Sample the data using the probabilities defined.
@@ -134,12 +134,13 @@ def sampling(
         "band_4",
         "band_3",
     ]
-
+    dataset = open(dataset_file, "w", newline="")
+    csv_writer = csv.writer(dataset)
     csv_writer.writerow(headers)
 
     pbar = tqdm(images)
-    for idx, img in enumerate(pbar):
-        pbar.set_description(f"{img}")
+    for img in pbar:
+        pbar.set_description(f"{pbar_text}: {img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
             continue
@@ -180,4 +181,4 @@ def sampling(
 
                 csv_writer.writerow(sample)
 
-    print(f"Thread #{thread_num} done", file=sys.stdout)
+    dataset.close()
