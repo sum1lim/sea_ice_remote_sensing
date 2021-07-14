@@ -122,9 +122,6 @@ def generate_GLCM(inFile, datapoints):
         borderType=cv2.BORDER_REFLECT_101,
     )
 
-    num_rows = inImage.shape[0]
-    num_cols = inImage.shape[1]
-
     GLCM_0 = GLCM_band(bordered_img, border_width, 0, datapoints)
     GLCM_1 = GLCM_band(bordered_img, border_width, 1, datapoints)
     GLCM_2 = GLCM_band(bordered_img, border_width, 2, datapoints)
@@ -141,7 +138,7 @@ def generate_entropy(GLCM):
     ]
 
 
-def glcm_product(GLCM_matrices, product_type, dirname, filename):
+def glcm_product(GLCM_matrices, product_type):
     return np.transpose(
         np.asarray(
             [
@@ -203,7 +200,8 @@ def sampling(
     headers = [
         "label",
         "patch_num",
-        "year" "patch_location_y",
+        "year",
+        "patch_location_y",
         "patch_location_x",
         "DOY",
         "hour",
