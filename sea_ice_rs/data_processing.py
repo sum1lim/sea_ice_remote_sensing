@@ -121,8 +121,13 @@ def sampling(
     """
     random.shuffle(images)
     pbar = tqdm(images)
-    for img in pbar:
-        pbar.set_description(img)
+    for idx, img in enumerate(pbar):
+        if idx < 0.8 * len(pbar):
+            dataset = "Train"
+        else:
+            dataset = "Test"
+
+        pbar.set_description(f"{dataset}: {img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
             return
@@ -138,38 +143,32 @@ def sampling(
         for row in range(inImage.shape[0]):
             for col in range(inImage.shape[1]):
                 label = inMask[row][col][0]
-                sampling_weights = [
-                    1 - prob_dict[label],
-                    prob_dict[label] * 0.8,
-                    prob_dict[label] * 0.2,
-                ]
-                selection = random.choices(["skip", "tr", "te"], sampling_weights, k=1)[
-                    0
-                ]
+                sampling_weights = [1 - prob_dict[label], prob_dict[label] * 0.8]
+                selection = random.choices(["skip", "sample"], sampling_weights, k=1)[0]
 
                 if selection == "skip":
                     continue
+                elif selection == "sample":
+                    pix_vals = inImage[row][col]
+                    sample = [
+                        label,
+                        patch_num,
+                        patch_loc_dict[patch_num][0],
+                        patch_loc_dict[patch_num][1],
+                        year,
+                        month,
+                        day,
+                        hour,
+                        row,
+                        col,
+                        pix_vals[0],
+                        pix_vals[1],
+                        pix_vals[2],
+                    ]
 
-                pix_vals = inImage[row][col]
-                sample = [
-                    label,
-                    patch_num,
-                    patch_loc_dict[patch_num][0],
-                    patch_loc_dict[patch_num][1],
-                    year,
-                    month,
-                    day,
-                    hour,
-                    row,
-                    col,
-                    pix_vals[0],
-                    pix_vals[1],
-                    pix_vals[2],
-                ]
-
-                if selection == "tr":
+                if dataset == "Train":
                     tr_writer.writerow(sample)
-                elif selection == "te":
+                else:
                     te_writer.writerow(sample)
 
     print(f"Thread #{thread_num} done", file=sys.stdout)
