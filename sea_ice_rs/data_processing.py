@@ -119,9 +119,10 @@ def sampling(
     """
     Sample the data using the probabilities defined.
     """
+    random.shuffle(images)
     pbar = tqdm(images)
     for img in pbar:
-        pbar.set_description(f"Thread #{thread_num}")
+        pbar.set_description(img)
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
             return

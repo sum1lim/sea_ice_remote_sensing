@@ -21,8 +21,6 @@ def main(args):
 
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
-    processes = list()
-
     tr_dataset = open(f"{parent_dir}/pixel_dataset_tr.csv", "w", newline="")
     te_dataset = open(f"{parent_dir}/pixel_dataset_te.csv", "w", newline="")
     tr_writer = csv.writer(tr_dataset)
@@ -47,7 +45,6 @@ def main(args):
     tr_writer.writerow(headers)
     te_writer.writerow(headers)
 
-    num_images = len(os.listdir(args.images))
     images = os.listdir(args.images)
     sampling(
         images,
