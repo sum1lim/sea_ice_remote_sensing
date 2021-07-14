@@ -47,59 +47,29 @@ def main(args):
     tr_writer.writerow(headers)
     te_writer.writerow(headers)
 
-    if args.multiprocess:
-        # Use multiprocessing to speed up
-        num_images = len(os.listdir(args.images))
-        thread_size = args.num_threads
-        for i in range(0, num_images, thread_size):
-            images = os.listdir(args.images)[i : i + thread_size]
-            process_num = int(i / thread_size)
-            p = Process(
-                target=sampling,
-                args=(
-                    images,
-                    tr_writer,
-                    te_writer,
-                    args.images,
-                    args.masks,
-                    prob_dict,
-                    patch_loc_dict,
-                    process_num,
-                ),
-            )
-            processes.append(p)
-            p.start()
-
-        for p in processes:
-            p.join()
-    else:
-        num_images = len(os.listdir(args.images))
-        images = os.listdir(args.images)
-        sampling(
-            images,
-            tr_writer,
-            te_writer,
-            args.images,
-            args.masks,
-            prob_dict,
-            patch_loc_dict,
-            0,
-        )
+    num_images = len(os.listdir(args.images))
+    images = os.listdir(args.images)
+    sampling(
+        images,
+        tr_writer,
+        te_writer,
+        args.images,
+        args.masks,
+        prob_dict,
+        patch_loc_dict,
+        0,
+    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--thread-size", type=int, help="Number of images a thread processes", default=400
-    )
     parser.add_argument("--images", type=str, help="Images directory path")
     parser.add_argument("--masks", type=str, help="Masks directory path")
     parser.add_argument("--dist", type=str, help="Distribution statistics CSV file")
     parser.add_argument(
         "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
     )
-    parser.add_argument("--multiprocess", action="store_true", help="Multiprocessing")
 
     args = parser.parse_args()
     main(args)
