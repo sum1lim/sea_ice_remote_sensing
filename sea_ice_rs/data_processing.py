@@ -108,8 +108,7 @@ def patch_location_map(patch_loc_file):
 
 def sampling(
     images,
-    tr_writer,
-    te_writer,
+    csv_writer,
     img_dir,
     mask_dir,
     prob_dict,
@@ -119,18 +118,31 @@ def sampling(
     """
     Sample the data using the probabilities defined.
     """
-    random.shuffle(images)
+
+    headers = [
+        "label",
+        "patch_num",
+        "patch_location_y",
+        "patch_location_x",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "coord_y",
+        "coord_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+
+    csv_writer.writerow(headers)
+
     pbar = tqdm(images)
     for idx, img in enumerate(pbar):
-        if idx < 0.8 * len(pbar):
-            dataset = "Train"
-        else:
-            dataset = "Test"
-
-        pbar.set_description(f"{dataset}: {img}")
+        pbar.set_description(f"{img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
-            return
+            continue
         patch_num = filename.split("-")[0][1:]
         year = filename.split("-")[1][0:4]
         month = filename.split("-")[1][4:6]
@@ -143,32 +155,29 @@ def sampling(
         for row in range(inImage.shape[0]):
             for col in range(inImage.shape[1]):
                 label = inMask[row][col][0]
-                sampling_weights = [1 - prob_dict[label], prob_dict[label] * 0.8]
+                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
                 selection = random.choices(["skip", "sample"], sampling_weights, k=1)[0]
 
                 if selection == "skip":
                     continue
-                elif selection == "sample":
-                    pix_vals = inImage[row][col]
-                    sample = [
-                        label,
-                        patch_num,
-                        patch_loc_dict[patch_num][0],
-                        patch_loc_dict[patch_num][1],
-                        year,
-                        month,
-                        day,
-                        hour,
-                        row,
-                        col,
-                        pix_vals[0],
-                        pix_vals[1],
-                        pix_vals[2],
-                    ]
 
-                if dataset == "Train":
-                    tr_writer.writerow(sample)
-                else:
-                    te_writer.writerow(sample)
+                pix_vals = inImage[row][col]
+                sample = [
+                    label,
+                    patch_num,
+                    patch_loc_dict[patch_num][0],
+                    patch_loc_dict[patch_num][1],
+                    year,
+                    month,
+                    day,
+                    hour,
+                    row,
+                    col,
+                    pix_vals[0],
+                    pix_vals[1],
+                    pix_vals[2],
+                ]
+
+                csv_writer.writerow(sample)
 
     print(f"Thread #{thread_num} done", file=sys.stdout)

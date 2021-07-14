@@ -6,6 +6,7 @@ install()
 import argparse
 import os
 import csv
+import random
 from multiprocessing import Process
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import (
@@ -21,34 +22,40 @@ def main(args):
 
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
-    tr_dataset = open(f"{parent_dir}/pixel_dataset_tr.csv", "w", newline="")
-    te_dataset = open(f"{parent_dir}/pixel_dataset_te.csv", "w", newline="")
+    try:
+        os.mkdir(f"{parent_dir}/train_dataset")
+    except FileExistsError:
+        None
+
+    try:
+        os.mkdir(f"{parent_dir}/test_dataset")
+    except FileExistsError:
+        None
+
+    tr_dataset = open(f"{parent_dir}/train_dataset/raw.csv", "w", newline="")
+    te_dataset = open(f"{parent_dir}/test_dataset/raw.csv", "w", newline="")
     tr_writer = csv.writer(tr_dataset)
     te_writer = csv.writer(te_dataset)
 
-    headers = [
-        "label",
-        "patch_num",
-        "patch_location_y",
-        "patch_location_x",
-        "year",
-        "month",
-        "day",
-        "hour",
-        "coord_y",
-        "coord_x",
-        "band_8",
-        "band_4",
-        "band_3",
-    ]
+    images = os.listdir(args.images)
+    random.shuffle(images)
+    split_threshold = int(len(images) * 0.8)
+    tr_images = images[:split_threshold]
+    te_images = images[split_threshold:]
 
-    tr_writer.writerow(headers)
-    te_writer.writerow(headers)
+    sampling(
+        tr_images,
+        tr_writer,
+        args.images,
+        args.masks,
+        prob_dict,
+        patch_loc_dict,
+        0,
+    )
 
     images = os.listdir(args.images)
     sampling(
-        images,
-        tr_writer,
+        te_images,
         te_writer,
         args.images,
         args.masks,
