@@ -16,11 +16,7 @@ from sea_ice_rs.data_processing import (
 
 
 def main(args):
-    prob_dict = sampling_probability(args.dist)
-    patch_locs = patch_location_map(args.patch_loc)
-    img_dir = args.images
-    mask_dir = args.masks
-
+    # Create dataset CSV files
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
     try:
@@ -33,12 +29,23 @@ def main(args):
     except FileExistsError:
         None
 
+    # Generate probabilities to select samples depending on their class
+    prob_dict = sampling_probability(args.dist)
+    # Obtain XY corrdinates of patches
+    patch_locs = patch_location_map(args.patch_loc)
+
+    # Directory paths for images and masks
+    img_dir = args.images
+    mask_dir = args.masks
+
+    # Split the set of images for train and test data sampling
     images = os.listdir(args.images)
     random.shuffle(images)
     split_threshold = int(len(images) * 0.8)
     tr_images = images[:split_threshold]
     te_images = images[split_threshold:]
 
+    # Output CSV dataset filepaths
     tr_file = f"{parent_dir}/train_dataset/raw.csv"
     te_file = f"{parent_dir}/test_dataset/raw.csv"
 
