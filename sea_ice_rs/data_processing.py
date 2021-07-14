@@ -1,9 +1,11 @@
 import cv2
 import csv
+import sys
 import numpy as np
 import random
 import sea_ice_rs.utils as utils
 from tqdm import tqdm
+from datetime import datetime
 
 
 def contrast(inImage):
@@ -119,14 +121,13 @@ def sampling(
     Sample the data using the probabilities defined.
     """
 
+    # Write headers
     headers = [
         "label",
         "patch_num",
-        "patch_location_y",
+        "year" "patch_location_y",
         "patch_location_x",
-        "year",
-        "month",
-        "day",
+        "DOY",
         "hour",
         "coord_y",
         "coord_x",
@@ -138,17 +139,24 @@ def sampling(
     csv_writer = csv.writer(dataset)
     csv_writer.writerow(headers)
 
+    # Sample from images
     pbar = tqdm(images)
     for img in pbar:
         pbar.set_description(f"{pbar_text}: {img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
             continue
+
         patch_num = filename.split("-")[0][1:]
-        year = filename.split("-")[1][0:4]
-        month = filename.split("-")[1][4:6]
-        day = filename.split("-")[1][6:8]
-        hour = filename.split("-")[1][8:10]
+
+        # Extract date information
+        date_info = filename.split("-")[1]
+        year = int(date_info[0:4])
+        month = int(date_info[4:6])
+        day = int(date_info[6:8])
+        hour = int(date_info[8:10])
+
+        doy = int(datetime(year, month, day).strftime("%j"))
 
         inImage = cv2.imread(f"{img_dir}/{img}")
         inMask = cv2.imread(f"{mask_dir}/{filename}-mask.png")
@@ -166,11 +174,10 @@ def sampling(
                 sample = [
                     label,
                     patch_num,
+                    year,
                     patch_loc_dict[patch_num][0],
                     patch_loc_dict[patch_num][1],
-                    year,
-                    month,
-                    day,
+                    doy,
                     hour,
                     row,
                     col,
@@ -181,4 +188,5 @@ def sampling(
 
                 csv_writer.writerow(sample)
 
+    print(f"{pbar_text} dataset creation finished", sys.stdout)
     dataset.close()
