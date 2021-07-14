@@ -125,7 +125,8 @@ def sampling(
     headers = [
         "label",
         "patch_num",
-        "year" "patch_location_y",
+        "year",
+        "patch_location_y",
         "patch_location_x",
         "DOY",
         "hour",
