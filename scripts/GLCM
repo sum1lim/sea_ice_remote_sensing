@@ -7,79 +7,76 @@ import argparse
 import pandas
 import csv
 from tqdm import tqdm
+from datetime import datetime
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import generate_GLCM, glcm_product
 
 
 def main(args):
     parent_dir, filename, extension = decompose_filepath(args.input)
-    if extension == "csv":  # Dataset file
-        GLCM_dataset = open(f"{parent_dir}/{filename}_GLCM.csv", "w", newline="")
-        GLCM_writer = csv.writer(GLCM_dataset)
+    GLCM_dataset = open(f"{parent_dir}/GLCM.csv", "w", newline="")
+    GLCM_writer = csv.writer(GLCM_dataset)
 
-        dataframe = pandas.read_csv(args.input, header=0)
+    dataframe = pandas.read_csv(args.input, header=0)
 
-        GLCM_writer.writerow(
-            list(dataframe.columns)
-            + [
-                "entropy_8",
-                "entropy_4",
-                "entropy_3",
-                "ASM_8",
-                "ASM_4",
-                "ASM_3",
-                "contrast_8",
-                "contrast_4",
-                "contrast_3",
-                "homogeneity_8",
-                "homogeneity_4",
-                "homogeneity_3",
-                "dissimilarity_8",
-                "dissimilarity_4",
-                "dissimilarity_3",
-            ]
-        )
+    GLCM_writer.writerow(
+        list(dataframe.columns)
+        + [
+            "entropy_8",
+            "entropy_4",
+            "entropy_3",
+            "ASM_8",
+            "ASM_4",
+            "ASM_3",
+            "contrast_8",
+            "contrast_4",
+            "contrast_3",
+            "homogeneity_8",
+            "homogeneity_4",
+            "homogeneity_3",
+            "dissimilarity_8",
+            "dissimilarity_4",
+            "dissimilarity_3",
+        ]
+    )
 
-        grouped = dataframe.groupby(["patch_num", "year", "month", "day", "hour"])
+    grouped = dataframe.groupby(["patch_num", "year", "DOY", "hour"])
 
-        for name, group in tqdm(grouped):
-            patch_num = int(name[0])
-            year = int(name[1])
-            month = str("{:0>2}".format(int(name[2])))
-            day = str("{:0>2}".format(int(name[3])))
-            hour = str("{:0>2}".format(int(name[4])))
+    for name, group in tqdm(grouped):
+        patch_num = int(name[0])
+        year = int(name[1])
 
-            img_file = f"P{patch_num}-{year}{month}{day}{hour}.{args.img_extension}"
+        month = datetime.strptime(f"{year} {name[2]}", "%Y %j").strftime("%m")
+        day = datetime.strptime(f"{year} {name[2]}", "%Y %j").strftime("%d")
+        hour = "{:0>2}".format(int(name[3]))
 
-            data_points = [
-                (int(item["coord_y"]), int(item["coord_x"]))
-                for idx, item in group.iterrows()
-            ]
+        img_file = f"P{patch_num}-{year}{month}{day}{hour}.{args.img_extension}"
 
-            GLCM_matrices = generate_GLCM(f"{args.img_dir}/{img_file}", data_points)
+        data_points = [
+            (int(item["coord_y"]), int(item["coord_x"]))
+            for idx, item in group.iterrows()
+        ]
 
-            entropy = glcm_product(GLCM_matrices, "entropy", args.img_dir, img_file)
-            ASM = glcm_product(GLCM_matrices, "ASM", args.img_dir, img_file)
-            contrast = glcm_product(GLCM_matrices, "contrast", args.img_dir, img_file)
-            homogeneity = glcm_product(
-                GLCM_matrices, "homogeneity", args.img_dir, img_file
+        GLCM_matrices = generate_GLCM(f"{args.img_dir}/{img_file}", data_points)
+
+        entropy = glcm_product(GLCM_matrices, "entropy")
+        ASM = glcm_product(GLCM_matrices, "ASM")
+        contrast = glcm_product(GLCM_matrices, "contrast")
+        homogeneity = glcm_product(GLCM_matrices, "homogeneity")
+        dissimilarity = glcm_product(GLCM_matrices, "dissimilarity")
+
+        i = 0
+        for idx, item in group.iterrows():
+            GLCM_features = (
+                [item[i] for i in range(len(item))]
+                + entropy[i, :].tolist()
+                + ASM[i, :].tolist()
+                + contrast[i, :].tolist()
+                + homogeneity[i, :].tolist()
+                + dissimilarity[i, :].tolist()
             )
-            dissimilarity = glcm_product(
-                GLCM_matrices, "dissimilarity", args.img_dir, img_file
-            )
-
-            i = 0
-            for idx, item in group.iterrows():
-                GLCM_features = (
-                    [item[i] for i in range(len(item))]
-                    + entropy[i, :].tolist()
-                    + ASM[i, :].tolist()
-                    + contrast[i, :].tolist()
-                    + homogeneity[i, :].tolist()
-                    + dissimilarity[i, :].tolist()
-                )
-                GLCM_writer.writerow(GLCM_features)
-                i += 1
+            GLCM_writer.writerow(GLCM_features)
+            i += 1
 
 
 if __name__ == "__main__":

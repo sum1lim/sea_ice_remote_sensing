@@ -1,9 +1,11 @@
 import cv2
 import csv
+import sys
 import numpy as np
 import random
 import sea_ice_rs.utils as utils
 from tqdm import tqdm
+from datetime import datetime
 from skimage.feature import greycomatrix, greycoprops
 
 
@@ -120,9 +122,6 @@ def generate_GLCM(inFile, datapoints):
         borderType=cv2.BORDER_REFLECT_101,
     )
 
-    num_rows = inImage.shape[0]
-    num_cols = inImage.shape[1]
-
     GLCM_0 = GLCM_band(bordered_img, border_width, 0, datapoints)
     GLCM_1 = GLCM_band(bordered_img, border_width, 1, datapoints)
     GLCM_2 = GLCM_band(bordered_img, border_width, 2, datapoints)
@@ -139,7 +138,7 @@ def generate_entropy(GLCM):
     ]
 
 
-def glcm_product(GLCM_matrices, product_type, dirname, filename):
+def glcm_product(GLCM_matrices, product_type):
     return np.transpose(
         np.asarray(
             [
@@ -186,28 +185,54 @@ def patch_location_map(patch_loc_file):
 
 def sampling(
     images,
-    tr_writer,
-    te_writer,
+    dataset_file,
     img_dir,
     mask_dir,
     prob_dict,
     patch_loc_dict,
-    thread_num,
+    pbar_text,
 ):
     """
     Sample the data using the probabilities defined.
     """
+
+    # Write headers
+    headers = [
+        "label",
+        "patch_num",
+        "year",
+        "patch_location_y",
+        "patch_location_x",
+        "DOY",
+        "hour",
+        "coord_y",
+        "coord_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+    dataset = open(dataset_file, "w", newline="")
+    csv_writer = csv.writer(dataset)
+    csv_writer.writerow(headers)
+
+    # Sample from images
     pbar = tqdm(images)
     for img in pbar:
-        pbar.set_description(f"Thread #{thread_num}")
+        pbar.set_description(f"{pbar_text}: {img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
-            return
+            continue
+
         patch_num = filename.split("-")[0][1:]
-        year = filename.split("-")[1][0:4]
-        month = filename.split("-")[1][4:6]
-        day = filename.split("-")[1][6:8]
-        hour = filename.split("-")[1][8:10]
+
+        # Extract date information
+        date_info = filename.split("-")[1]
+        year = int(date_info[0:4])
+        month = int(date_info[4:6])
+        day = int(date_info[6:8])
+        hour = int(date_info[8:10])
+
+        doy = int(datetime(year, month, day).strftime("%j"))
 
         inImage = cv2.imread(f"{img_dir}/{img}")
         inMask = cv2.imread(f"{mask_dir}/{filename}-mask.png")
@@ -215,14 +240,8 @@ def sampling(
         for row in range(inImage.shape[0]):
             for col in range(inImage.shape[1]):
                 label = inMask[row][col][0]
-                sampling_weights = [
-                    1 - prob_dict[label],
-                    prob_dict[label] * 0.8,
-                    prob_dict[label] * 0.2,
-                ]
-                selection = random.choices(["skip", "tr", "te"], sampling_weights, k=1)[
-                    0
-                ]
+                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
+                selection = random.choices(["skip", "sample"], sampling_weights, k=1)[0]
 
                 if selection == "skip":
                     continue
@@ -231,11 +250,10 @@ def sampling(
                 sample = [
                     label,
                     patch_num,
+                    year,
                     patch_loc_dict[patch_num][0],
                     patch_loc_dict[patch_num][1],
-                    year,
-                    month,
-                    day,
+                    doy,
                     hour,
                     row,
                     col,
@@ -244,9 +262,7 @@ def sampling(
                     pix_vals[2],
                 ]
 
-                if selection == "tr":
-                    tr_writer.writerow(sample)
-                elif selection == "te":
-                    te_writer.writerow(sample)
+                csv_writer.writerow(sample)
 
-    print(f"Thread #{thread_num} done", file=sys.stdout)
+    print(f"{pbar_text} thread finished", sys.stdout)
+    dataset.close()
