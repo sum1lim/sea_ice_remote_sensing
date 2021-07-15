@@ -1,5 +1,6 @@
 import cv2
 import csv
+import sys
 import numpy as np
 import random
 import sea_ice_rs.utils as utils
