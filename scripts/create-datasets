@@ -5,7 +5,7 @@ install()
 
 import argparse
 import os
-import csv
+import random
 from multiprocessing import Process
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import (
@@ -16,83 +16,66 @@ from sea_ice_rs.data_processing import (
 
 
 def main(args):
-    prob_dict = sampling_probability(args.dist)
-    patch_loc_dict = patch_location_map(args.patch_loc)
-
+    # Create dataset CSV files
     parent_dir = decompose_filepath(decompose_filepath(args.images)[0])[0]
 
-    processes = list()
+    try:
+        os.mkdir(f"{parent_dir}/train_dataset")
+    except FileExistsError:
+        None
 
-    tr_dataset = open(f"{parent_dir}/pixel_dataset_tr.csv", "w", newline="")
-    te_dataset = open(f"{parent_dir}/pixel_dataset_te.csv", "w", newline="")
-    tr_writer = csv.writer(tr_dataset)
-    te_writer = csv.writer(te_dataset)
+    try:
+        os.mkdir(f"{parent_dir}/test_dataset")
+    except FileExistsError:
+        None
 
-    headers = [
-        "label",
-        "patch_num",
-        "patch_location_y",
-        "patch_location_x",
-        "year",
-        "month",
-        "day",
-        "hour",
-        "coord_y",
-        "coord_x",
-        "band_8",
-        "band_4",
-        "band_3",
-    ]
+    # Generate probabilities to select samples depending on their class
+    prob_dict = sampling_probability(args.dist)
+    # Obtain XY corrdinates of patches
+    patch_locs = patch_location_map(args.patch_loc)
 
-    tr_writer.writerow(headers)
-    te_writer.writerow(headers)
+    # Directory paths for images and masks
+    img_dir = args.images
+    mask_dir = args.masks
+
+    # Split the set of images for train and test data sampling
+    images = os.listdir(args.images)
+    random.shuffle(images)
+    split_threshold = int(len(images) * 0.8)
+    tr_images = images[:split_threshold]
+    te_images = images[split_threshold:]
+
+    # Output CSV dataset filepaths
+    tr_file = f"{parent_dir}/train_dataset/raw.csv"
+    te_file = f"{parent_dir}/test_dataset/raw.csv"
+
+    # Arguments for processes
+    tr_args = [tr_images, tr_file, img_dir, mask_dir, prob_dict, patch_locs, "Train"]
+    te_args = [te_images, te_file, img_dir, mask_dir, prob_dict, patch_locs, "Test"]
 
     if args.multiprocess:
-        # Use multiprocessing to speed up
-        num_images = len(os.listdir(args.images))
-        thread_size = args.num_threads
-        for i in range(0, num_images, thread_size):
-            images = os.listdir(args.images)[i : i + thread_size]
-            process_num = int(i / thread_size)
-            p = Process(
-                target=sampling,
-                args=(
-                    images,
-                    tr_writer,
-                    te_writer,
-                    args.images,
-                    args.masks,
-                    prob_dict,
-                    patch_loc_dict,
-                    process_num,
-                ),
-            )
-            processes.append(p)
-            p.start()
+        processes = list()
+
+        p_tr = Process(target=sampling, args=tr_args)
+        p_tr.start()
+        processes.append(p_tr)
+
+        p_te = Process(target=sampling, args=te_args)
+        p_te.start()
+        processes.append(p_te)
 
         for p in processes:
             p.join()
+
     else:
-        num_images = len(os.listdir(args.images))
-        images = os.listdir(args.images)
-        sampling(
-            images,
-            tr_writer,
-            te_writer,
-            args.images,
-            args.masks,
-            prob_dict,
-            patch_loc_dict,
-            0,
-        )
+        sampling(*tr_args)
+
+        sampling(*te_args)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--num-threads", type=int, help="Number of threads for the process", default=400
-    )
     parser.add_argument("--images", type=str, help="Images directory path")
     parser.add_argument("--masks", type=str, help="Masks directory path")
     parser.add_argument("--dist", type=str, help="Distribution statistics CSV file")
