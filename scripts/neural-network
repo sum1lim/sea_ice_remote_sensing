@@ -20,22 +20,33 @@ def process_data(data_file, data_config=None):
     dataframe = pandas.read_csv(data_file, header=0)
     # print(dataframe['label'].value_counts())
 
-    dataset = dataframe.values
     if data_config:
         stream = open(data_config, "r")
         config_dict = yaml.safe_load(stream)
-        try:
-            for key, value in config_dict["labels"].items():
-                for i in value:
-                    dataframe["label"].replace({i: key}, inplace=True)
-        except KeyError:
-            None
-        try:
-            X = dataframe[config_dict["features"]].astype(float).values
-        except KeyError:
-            None
-    else:
-        X = dataset[:, 1:12].astype(float)
+
+        if "labels" in config_dict.keys():
+            try:
+                for key, value in config_dict["labels"].items():
+                    for i in value:
+                        dataframe["label"].replace({i: key}, inplace=True)
+            except KeyError:
+                print("Error in configuration format", file=sys.stderr)
+                sys.exit(1)
+
+        if "features" in config_dict.keys():
+            try:
+                dataframe.drop(
+                    dataframe.columns.difference(config_dict["features"] + ["label"]),
+                    1,
+                    inplace=True,
+                )
+            except KeyError:
+                print("Error in configuration format", file=sys.stderr)
+                sys.exit(1)
+
+    print(f"Features: {[col for col in dataframe.columns]}", file=sys.stdout)
+    dataset = dataframe.values
+    X = dataset[:, 1:].astype(float)
     Y = dataset[:, 0]
 
     encoder = LabelEncoder()
@@ -84,13 +95,13 @@ def main(args):
 
     y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=1), axis=1)
 
-    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}")
+    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
     print(np.asarray([classes]))
     cm = confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te), normalize="true")
 
-    print(cm * 100)
+    print(cm * 100, file=sys.stdout)
 
 
 if __name__ == "__main__":

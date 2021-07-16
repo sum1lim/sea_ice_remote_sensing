@@ -15,7 +15,7 @@ labels:
     - 92
 
 features:
-  - patch_location_y
+  - patch_loc_y
   - DOY
   - hour
   - band_8
