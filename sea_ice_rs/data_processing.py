@@ -154,24 +154,43 @@ def glcm_product(GLCM_matrices, product_type):
     )
 
 
-def sampling_probability(dist_stats_file):
+def get_count_of_pixel_classes(d, img):
+    """
+    Update the count of pixel value classes based on image reading
+    """
+    unique, counts = np.unique(img, return_counts=True)
+
+    for key, value in dict(zip(unique, counts)).items():
+        if key in d:
+            d[key] += value
+        else:
+            d[key] = value
+
+
+def sampling_probability(mask_dir, images):
     """
     The function sets the probabilitiy of a sample to be included in the dataset.
     A sample in the class with a higher occurrence is less likely to be selected.
     The class with the smallest occurrence will have all of its samples included.
     The expected number of samples per class is equal throughout the entire data.
     """
-    with open(dist_stats_file, "r") as dist_file:
-        dist_file_reader = csv.reader(dist_file)
-        dist_stats = [row for row in dist_file_reader]
-        labels = dist_stats[0]
-        counts = list(map(float, dist_stats[1]))
+    dict_of_ppv = {}
+    for img_f in images:
+        _, img_name, _ = utils.decompose_filepath(img_f)
+        file_path = f"{mask_dir}/{img_name}-mask.png"
+        try:  # Valid image file
+            inImage = cv2.imread(file_path, 0)
+            get_count_of_pixel_classes(dict_of_ppv, inImage)
+        except:  # non-image file
+            print(f"Error occurred when processing {img_f}")
 
-        null_idx = labels.index("")
-        del labels[null_idx]
-        del counts[null_idx]
+    try:
+        del dict_of_ppv[None]
+    except KeyError:
+        None
 
-        return {int(labels[i]): min(counts) / counts[i] for i in range(len(labels))}
+    min_count = min(dict_of_ppv.values())
+    return {label: min_count / count for label, count in dict_of_ppv.items()}
 
 
 def patch_location_map(patch_loc_file):
@@ -201,12 +220,12 @@ def sampling(
         "label",
         "patch_num",
         "year",
-        "patch_location_y",
-        "patch_location_x",
+        "patch_loc_y",
+        "patch_loc_x",
         "DOY",
         "hour",
-        "coord_y",
-        "coord_x",
+        "pix_loc_y",
+        "pix_loc_x",
         "band_8",
         "band_4",
         "band_3",
@@ -214,6 +233,8 @@ def sampling(
     dataset = open(dataset_file, "w", newline="")
     csv_writer = csv.writer(dataset)
     csv_writer.writerow(headers)
+
+    data_summary = {}
 
     # Sample from images
     pbar = tqdm(images)
@@ -245,6 +266,10 @@ def sampling(
 
                 if selection == "skip":
                     continue
+                try:
+                    data_summary[label] += 1
+                except KeyError:
+                    data_summary[label] = 1
 
                 pix_vals = inImage[row][col]
                 sample = [
@@ -266,3 +291,8 @@ def sampling(
 
     print(f"{pbar_text} thread finished", sys.stdout)
     dataset.close()
+
+    for label, count in data_summary.items():
+        print(f"{label}: {count}")
+
+    print(f"SUM: {sum(data_summary.values())}")
