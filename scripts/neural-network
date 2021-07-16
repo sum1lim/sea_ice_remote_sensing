@@ -81,7 +81,9 @@ def main(args):
         loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
     )
 
-    X_tr, X_val, Y_tr, Y_val = train_test_split(X, Y_tr, test_size=0.2)
+    X_tr, X_val, Y_tr, Y_val = train_test_split(
+        X, Y_tr, test_size=0.2, shuffle=False, stratify=None
+    )
     model.fit(
         x=X_tr,
         y=Y_tr,
