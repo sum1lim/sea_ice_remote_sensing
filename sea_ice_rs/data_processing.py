@@ -5,6 +5,8 @@ import numpy as np
 import random
 import sea_ice_rs.utils as utils
 from tqdm import tqdm
+from datetime import datetime
+from skimage.feature import greycomatrix, greycoprops
 
 
 def contrast(inImage):
@@ -18,7 +20,7 @@ def contrast(inImage):
 
     outImage = np.int_((255 * (inImage - minValue)) / data_range)
 
-    return outImage
+    return outImage.astype(np.uint8)
 
 
 def threshold(img, max_val=None, min_val=None):
@@ -78,24 +80,117 @@ def extract_colour(img, colour):
     return np.dstack([output_img])
 
 
-def sampling_probability(dist_stats_file):
+def GLCM_band(bordered_img, border_width, band, datapoints):
+    half_right_angle = np.pi / 8
+
+    return [
+        greycomatrix(
+            bordered_img[
+                row : row + 2 * border_width + 1,
+                col : col + 2 * border_width + 1,
+                band,
+            ],
+            distances=[1],
+            angles=[
+                0,
+                half_right_angle,
+                2 * half_right_angle,
+                3 * half_right_angle,
+                4 * half_right_angle,
+                5 * half_right_angle,
+                6 * half_right_angle,
+                7 * half_right_angle,
+            ],
+            levels=64,
+        )
+        for (row, col) in datapoints
+    ]
+
+
+def generate_GLCM(inFile, datapoints):
+    inImage = cv2.imread(inFile)
+
+    rescaled_img = ((inImage / 255) * (64 - 1)).astype(int)
+
+    border_width = 5
+    bordered_img = cv2.copyMakeBorder(
+        rescaled_img,
+        border_width,
+        border_width,
+        border_width,
+        border_width,
+        borderType=cv2.BORDER_REFLECT_101,
+    )
+
+    GLCM_0 = GLCM_band(bordered_img, border_width, 0, datapoints)
+    GLCM_1 = GLCM_band(bordered_img, border_width, 1, datapoints)
+    GLCM_2 = GLCM_band(bordered_img, border_width, 2, datapoints)
+
+    return [GLCM_0, GLCM_1, GLCM_2]
+
+
+def generate_entropy(GLCM):
+    e = np.finfo(float).eps
+
+    return [
+        np.sum(-np.multiply(GLCM[:, :, :, i], np.log(GLCM[:, :, :, i] + e)))
+        for i in range(GLCM.shape[-1])
+    ]
+
+
+def glcm_product(GLCM_matrices, product_type):
+    return np.transpose(
+        np.asarray(
+            [
+                [
+                    np.sum(generate_entropy(GLCM))
+                    if product_type == "entropy"
+                    else np.sum(greycoprops(GLCM, product_type)[0])
+                    for GLCM in GLCM_matrices[i]
+                ]
+                for i in range(len(GLCM_matrices))
+            ]
+        )
+    )
+
+
+def get_count_of_pixel_classes(d, img):
+    """
+    Update the count of pixel value classes based on image reading
+    """
+    unique, counts = np.unique(img, return_counts=True)
+
+    for key, value in dict(zip(unique, counts)).items():
+        if key in d:
+            d[key] += value
+        else:
+            d[key] = value
+
+
+def sampling_probability(mask_dir, images):
     """
     The function sets the probabilitiy of a sample to be included in the dataset.
     A sample in the class with a higher occurrence is less likely to be selected.
     The class with the smallest occurrence will have all of its samples included.
     The expected number of samples per class is equal throughout the entire data.
     """
-    with open(dist_stats_file, "r") as dist_file:
-        dist_file_reader = csv.reader(dist_file)
-        dist_stats = [row for row in dist_file_reader]
-        labels = dist_stats[0]
-        counts = list(map(float, dist_stats[1]))
+    dict_of_ppv = {}
+    for img_f in images:
+        _, img_name, _ = utils.decompose_filepath(img_f)
+        file_path = f"{mask_dir}/{img_name}-mask.png"
+        try:  # Valid image file
+            inImage = cv2.imread(file_path, 0)
+            get_count_of_pixel_classes(dict_of_ppv, inImage)
+        except:  # non-image file
+            print(f"Error occurred when processing {img_f}")
 
-        null_idx = labels.index("")
-        del labels[null_idx]
-        del counts[null_idx]
+    try:
+        del dict_of_ppv[None]
+    except KeyError:
+        None
 
-        return {int(labels[i]): min(counts) / counts[i] for i in range(len(labels))}
+    min_count = min(dict_of_ppv.values())
+    return {label: min_count / count for label, count in dict_of_ppv.items()}
 
 
 def patch_location_map(patch_loc_file):
@@ -109,28 +204,56 @@ def patch_location_map(patch_loc_file):
 
 def sampling(
     images,
-    tr_writer,
-    te_writer,
+    dataset_file,
     img_dir,
     mask_dir,
     prob_dict,
     patch_loc_dict,
-    thread_num,
+    pbar_text,
 ):
     """
     Sample the data using the probabilities defined.
     """
+
+    # Write headers
+    headers = [
+        "label",
+        "patch_num",
+        "year",
+        "patch_loc_y",
+        "patch_loc_x",
+        "DOY",
+        "hour",
+        "pix_loc_y",
+        "pix_loc_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+    dataset = open(dataset_file, "w", newline="")
+    csv_writer = csv.writer(dataset)
+    csv_writer.writerow(headers)
+
+    data_summary = {}
+
+    # Sample from images
     pbar = tqdm(images)
     for img in pbar:
-        pbar.set_description(f"Thread #{thread_num}")
+        pbar.set_description(f"{pbar_text}: {img}")
         _, filename, extension = utils.decompose_filepath(img)
         if extension != "jpg":
-            return
+            continue
+
         patch_num = filename.split("-")[0][1:]
-        year = filename.split("-")[1][0:4]
-        month = filename.split("-")[1][4:6]
-        day = filename.split("-")[1][6:8]
-        hour = filename.split("-")[1][8:10]
+
+        # Extract date information
+        date_info = filename.split("-")[1]
+        year = int(date_info[0:4])
+        month = int(date_info[4:6])
+        day = int(date_info[6:8])
+        hour = int(date_info[8:10])
+
+        doy = int(datetime(year, month, day).strftime("%j"))
 
         inImage = cv2.imread(f"{img_dir}/{img}")
         inMask = cv2.imread(f"{mask_dir}/{filename}-mask.png")
@@ -138,27 +261,24 @@ def sampling(
         for row in range(inImage.shape[0]):
             for col in range(inImage.shape[1]):
                 label = inMask[row][col][0]
-                sampling_weights = [
-                    1 - prob_dict[label],
-                    prob_dict[label] * 0.8,
-                    prob_dict[label] * 0.2,
-                ]
-                selection = random.choices(["skip", "tr", "te"], sampling_weights, k=1)[
-                    0
-                ]
+                sampling_weights = [1 - prob_dict[label], prob_dict[label]]
+                selection = random.choices(["skip", "sample"], sampling_weights, k=1)[0]
 
                 if selection == "skip":
                     continue
+                try:
+                    data_summary[label] += 1
+                except KeyError:
+                    data_summary[label] = 1
 
                 pix_vals = inImage[row][col]
                 sample = [
                     label,
                     patch_num,
+                    year,
                     patch_loc_dict[patch_num][0],
                     patch_loc_dict[patch_num][1],
-                    year,
-                    month,
-                    day,
+                    doy,
                     hour,
                     row,
                     col,
@@ -167,9 +287,12 @@ def sampling(
                     pix_vals[2],
                 ]
 
-                if selection == "tr":
-                    tr_writer.writerow(sample)
-                elif selection == "te":
-                    te_writer.writerow(sample)
+                csv_writer.writerow(sample)
 
-    print(f"Thread #{thread_num} done", file=sys.stdout)
+    print(f"{pbar_text} thread finished", sys.stdout)
+    dataset.close()
+
+    for label, count in data_summary.items():
+        print(f"{label}: {count}")
+
+    print(f"SUM: {sum(data_summary.values())}")

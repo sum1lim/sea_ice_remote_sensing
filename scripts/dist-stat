@@ -11,17 +11,7 @@ import cv2
 import sys
 import os
 import argparse
-
-
-# Update the count of pixel value classes based on image reading
-def get_count_of_pixel_classes(d, img):
-    unique, counts = np.unique(img, return_counts=True)
-
-    for key, value in dict(zip(unique, counts)).items():
-        if key in d:
-            d[key] += value
-        else:
-            d[key] = value
+from sea_ice_rs.data_processing import get_count_of_pixel_classes
 
 
 # Output a figure showing a plot of all occurrences of the pixel values
