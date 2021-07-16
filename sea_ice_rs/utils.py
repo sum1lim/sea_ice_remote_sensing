@@ -3,7 +3,7 @@ import os
 import sys
 import numpy as np
 from tqdm import tqdm
-from .data_processing import contrast, threshold
+import sea_ice_rs.data_processing as dp
 
 
 def decompose_filepath(filepath):
@@ -68,11 +68,11 @@ def output_to_window(name, image, orginal_img=None):
             image = orginal_img
 
         if keyboard_input == ord("c"):
-            image = contrast(image)
+            image = dp.contrast(image)
 
         if keyboard_input == ord("t"):
             image = orginal_img.copy()
-            image = threshold(image)
+            image = dp.threshold(image)
 
         if keyboard_input == ord("q"):
             return image
@@ -126,7 +126,7 @@ def process_multiple_inputs(
                 processed = func(inImage)
 
             if contrast_bool:  # enhances contrast of the output image
-                processed = contrast(processed).astype(np.uint8)
+                processed = dp.contrast(processed).astype(np.uint8)
 
             if extension:  # save to an output file if extension is given
                 mkdir_output(
@@ -164,7 +164,7 @@ def process_single_input(
         processed = func(img)
 
     if contrast_bool:  # enhances contrast of the output image
-        processed = contrast(processed).astype(np.uint8)
+        processed = dp.contrast(processed).astype(np.uint8)
 
     (inDir, filename, _) = decompose_filepath(input_file)
     output_name = f"{filename}_{tail_str}"

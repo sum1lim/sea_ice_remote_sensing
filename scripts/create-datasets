@@ -5,7 +5,6 @@ install()
 
 import argparse
 import os
-import random
 from multiprocessing import Process
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import (
@@ -29,8 +28,6 @@ def main(args):
     except FileExistsError:
         None
 
-    # Generate probabilities to select samples depending on their class
-    prob_dict = sampling_probability(args.dist)
     # Obtain XY corrdinates of patches
     patch_locs = patch_location_map(args.patch_loc)
 
@@ -39,19 +36,22 @@ def main(args):
     mask_dir = args.masks
 
     # Split the set of images for train and test data sampling
-    images = os.listdir(args.images)
-    random.shuffle(images)
+    images = sorted(os.listdir(args.images))
     split_threshold = int(len(images) * 0.8)
     tr_images = images[:split_threshold]
     te_images = images[split_threshold:]
+
+    # Generate probabilities to select samples depending on their class
+    tr_prob_dict = sampling_probability(args.masks, tr_images)
+    te_prob_dict = sampling_probability(args.masks, te_images)
 
     # Output CSV dataset filepaths
     tr_file = f"{parent_dir}/train_dataset/raw.csv"
     te_file = f"{parent_dir}/test_dataset/raw.csv"
 
     # Arguments for processes
-    tr_args = [tr_images, tr_file, img_dir, mask_dir, prob_dict, patch_locs, "Train"]
-    te_args = [te_images, te_file, img_dir, mask_dir, prob_dict, patch_locs, "Test"]
+    tr_args = [tr_images, tr_file, img_dir, mask_dir, tr_prob_dict, patch_locs, "Train"]
+    te_args = [te_images, te_file, img_dir, mask_dir, te_prob_dict, patch_locs, "Test"]
 
     if args.multiprocess:
         processes = list()
