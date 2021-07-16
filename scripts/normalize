@@ -7,39 +7,39 @@ import argparse
 import os
 import sys
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 from sea_ice_rs.utils import decompose_filepath
 
-"""Transform features to a range (0,1)"""
 def main(args):
-    try:
-        if os.path.isfile(args.input) == False:
-            raise TypeError
-        if os.path.isfile(args.input):  # Only one input csv is provided
-            decomposed = decompose_filepath(args.input)
-            
-            df = pd.read_csv(args.input)
+    if os.path.isfile(args.input) == False or os.path.isfile(args.std_data) == False:
+        print("File(s) not existing", file=sys.stderr)
+        sys.exit(1)
 
-            scaler = MinMaxScaler()
+    tr_df = pd.read_csv(args.std_data)
 
-            columns = []
+    minimums = {col: tr_df[col].min() for col in tr_df.columns if col != "label"}
+    maximums = {col: tr_df[col].max() for col in tr_df.columns if col != "label"}
 
-            for col in df.columns:
-                if col != "label":
-                    columns.append(col)
+    decomposed = decompose_filepath(args.input)
 
-            df[columns] = scaler.fit_transform(df[columns])
+    df = pd.read_csv(args.input)
 
-            out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
+    for col in df.columns:
+        if col == "label":
+            continue
+        df[col] = (df[col] - minimums[col]) / (maximums[col] - minimums[col])
 
-            df.to_csv(out, index=False)
-    except TypeError:
-        print("No input provided", file=sys.stderr)
+    out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
+
+    df.to_csv(out, index=False)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--input", type=str, help="Path of dataset to be normalized")
+    parser.add_argument(
+        "--std-data", type=str, help="Dataset that provides normalization standard"
+    )
 
     args = parser.parse_args()
     main(args)

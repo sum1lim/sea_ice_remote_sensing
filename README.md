@@ -94,9 +94,12 @@ Windows users will need to individual run the commands individually.
 
 ### Normalize Data
 
-Sample command (Windows):
+To normalize the training dataset (UNIX):
 
-```python scripts/normalize --input ./data/train_dataset/raw.csv```
+```normalize --input ./data/train_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv```
+To normalize the test dataset (UNIX):
+
+```normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv```
 
 ### SOBEL
 
