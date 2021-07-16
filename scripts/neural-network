@@ -21,8 +21,15 @@ from seaborn import heatmap
 import matplotlib.pyplot as plt
 
 
-def config_parser(config_dict):
+def config_parser(data_config):
     num_epochs, hidden_size, verbosity, K = 100, None, None, 5
+
+    if data_config:
+        stream = open(data_config, "r")
+        config_dict = yaml.safe_load(stream)
+    else:
+        return num_epochs, hidden_size, verbosity, K
+
     if "configuration" in config_dict.keys():
         params = config_dict["configuration"]
         if "epochs" in params.keys():
@@ -37,7 +44,25 @@ def config_parser(config_dict):
     return num_epochs, hidden_size, verbosity, K
 
 
-def process_data(data_file, config_dict=None):
+def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_defined=None):
+    if user_defined == None:
+        hidden_layer_size = ((input_layer_size + output_layer_size) * 2) // 3
+    else:
+        hidden_layer_size = user_defined
+
+    if hidden_layer_size < 2:
+        hidden_layer_size = 2
+
+    return hidden_layer_size
+
+
+def process_data(data_file, data_config=None):
+    if data_config:
+        stream = open(data_config, "r")
+        config_dict = yaml.safe_load(stream)
+    else:
+        config_dict = None
+
     dataframe = pandas.read_csv(data_file, header=0)
 
     if config_dict:
@@ -96,77 +121,7 @@ def learning_curve(model_hist, result_dir, iter):
     plt.savefig(f"{result_dir}/loss_curve_{iter}.png")
 
 
-def main(args):
-    if args.data_config:
-        stream = open(args.data_config, "r")
-        config_dict = yaml.safe_load(stream)
-    else:
-        config_dict = None
-
-    num_epochs, hidden_size, verbosity, K = config_parser(config_dict)
-
-    # Set up results directory
-    config_dir, filename, _ = decompose_filepath(args.data_config)
-    result_dir = os.path.join(
-        ".".join(config_dir.split("/")[:-1]), f"results/{filename}"
-    )
-
-    if verbosity == 2:
-        log_file = open(f"{result_dir}/{filename}.log", "w")
-        sys.stdout = log_file
-
-    try:
-        os.mkdir(result_dir)
-    except FileExistsError:
-        None
-
-    X_tr, Y_tr, _ = process_data(args.train_data, config_dict)
-
-    input_layer_size = X_tr.shape[1]
-    output_layer_size = len(np.unique(Y_tr))
-
-    if hidden_size == None:
-        hidden_layer_size = ((input_layer_size + output_layer_size) * 2) // 3
-    else:
-        hidden_layer_size = hidden_size
-
-    if hidden_layer_size < 2:
-        hidden_layer_size = 2
-
-    kfold = StratifiedKFold(n_splits=K, shuffle=False)
-    iter = 0
-    for train, validation in kfold.split(X_tr, Y_tr):
-        one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
-        one_hot_Y_val = np_utils.to_categorical(Y_tr[validation])
-
-        model = Sequential()
-        model.add(
-            Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu")
-        )
-        model.add(Dense(output_layer_size, activation="softmax"))
-
-        model.compile(
-            loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
-        )
-
-        model_summary = model.fit(
-            x=X_tr[train],
-            y=one_hot_Y_tr,
-            epochs=num_epochs,
-            batch_size=5,
-            verbose=verbosity,
-            validation_data=(X_tr[validation], one_hot_Y_val),
-        )
-
-        learning_curve(model_summary.history, result_dir, iter)
-        iter += 1
-
-    X_te, Y_te, classes = process_data(args.test_data, config_dict)
-
-    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1)
-
-    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
-
+def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
     print(np.asarray([classes]), file=sys.stdout)
     cm_percentage = confusion_matrix(
@@ -185,6 +140,82 @@ def main(args):
     heatmap(cm_percentage * 100, vmin=0, vmax=100)
     plt.savefig(f"{result_dir}/heat_map.png")
 
+
+def main(args):
+    # Parse configuration
+    num_epochs, hidden_size, verbosity, K = config_parser(args.data_config)
+
+    # Set up results directory
+    config_dir, filename, _ = decompose_filepath(args.data_config)
+    result_dir = os.path.join(
+        ".".join(config_dir.split("/")[:-1]), f"results/{filename}"
+    )
+
+    # Verbosity == 1 --> sys.stdout
+    # Verbosity == 2 --> .log file
+    if verbosity == 2:
+        log_file = open(f"{result_dir}/{filename}.log", "w")
+        sys.stdout = log_file
+    try:
+        os.mkdir(result_dir)
+    except FileExistsError:
+        None
+
+    # Modify train dataset
+    # Merging labels & Selecting feautres for learning
+    X_tr, Y_tr, _ = process_data(args.train_data, args.data_config)
+
+    # Define hidden layer size
+    input_layer_size = X_tr.shape[1]
+    output_layer_size = len(np.unique(Y_tr))
+    hidden_layer_size = claculate_hidden_layer_size(
+        input_layer_size, output_layer_size, hidden_size
+    )
+
+    # Stratified K-fold classification
+    kfold = StratifiedKFold(n_splits=K, shuffle=False)
+    for iter, (train, validation) in enumerate(kfold.split(X_tr, Y_tr)):
+
+        # One-hot encoding of the label vector
+        one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
+        one_hot_Y_val = np_utils.to_categorical(Y_tr[validation])
+
+        # Construct Neural Network
+        model = Sequential()
+        model.add(
+            Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu")
+        )
+        model.add(Dense(output_layer_size, activation="softmax"))
+
+        model.compile(
+            loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+        )
+
+        # Train the model
+        model_summary = model.fit(
+            x=X_tr[train],
+            y=one_hot_Y_tr,
+            epochs=num_epochs,
+            batch_size=5,
+            verbose=verbosity,
+            validation_data=(X_tr[validation], one_hot_Y_val),
+        )
+
+        # Plot the learning curve
+        learning_curve(model_summary.history, result_dir, iter)
+
+    # Modify test dataset
+    # Merging labels & Selecting feautres for learning
+    X_te, Y_te, classes = process_data(args.test_data, args.data_config)
+
+    # Predict the test dataset
+    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1)
+    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
+
+    # Construct confusion matrix
+    construct_confusion_matrix(classes, Y_te, y_pred, result_dir)
+
+    # stdout redirection closed
     log_file.close()
 
 
