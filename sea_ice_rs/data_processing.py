@@ -294,3 +294,5 @@ def sampling(
 
     for label, count in data_summary.items():
         print(f"{label}: {count}")
+
+    print(f"SUM: {sum(data_summary.values())}")
