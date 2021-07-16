@@ -18,6 +18,7 @@ setup(
         ./scripts/connect-lines
         ./scripts/centroids
         ./scripts/create-datasets
+        ./scripts/normalize
         ./scripts/GLCM
     """.split(),
 )

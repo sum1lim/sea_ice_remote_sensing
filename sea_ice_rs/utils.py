@@ -113,7 +113,7 @@ def process_multiple_inputs(
     split_rgb=False,
 ):
     """
-    utility function to handle a directory input
+    utility function to handle a directory input containing images
     """
     for img_f in tqdm(os.listdir(input_dir)):
         file_path = f"{input_dir}/{img_f}"
@@ -150,7 +150,7 @@ def process_single_input(
     split_rgb=False,
 ):
     """
-    utility function to handle a single file input
+    utility function to handle a single file input (graphic file format only)
     """
     try:
         img = cv2.imread(input_file)

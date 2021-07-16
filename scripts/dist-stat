@@ -41,7 +41,7 @@ def export_to_csv(df, input, file_name):
 
 def main(args):
     try:
-        if os.path.isfile(args.input) == None:
+        if os.path.isfile(args.input) == False:
             raise TypeError
         if os.path.isfile(args.input):  # Only one input image is provided
 

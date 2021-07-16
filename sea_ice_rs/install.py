@@ -28,3 +28,4 @@ def install():
     pip_install("skimage", "scikit-image")
     pip_install("tqdm", "tqdm")
     pip_install("pandas", "pandas")
+    pip_install("sklearn", "sklearn")

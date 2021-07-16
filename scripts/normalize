@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+from sea_ice_rs.install import install
+
+install()
+
+import argparse
+import os
+import sys
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+from sea_ice_rs.utils import decompose_filepath
+
+"""Transform features to a range (0,1)"""
+def main(args):
+    try:
+        if os.path.isfile(args.input) == False:
+            raise TypeError
+        if os.path.isfile(args.input):  # Only one input csv is provided
+            decomposed = decompose_filepath(args.input)
+            
+            df = pd.read_csv(args.input)
+
+            scaler = MinMaxScaler()
+
+            columns = []
+
+            for col in df.columns:
+                if col != "label":
+                    columns.append(col)
+
+            df[columns] = scaler.fit_transform(df[columns])
+
+            out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
+
+            df.to_csv(out, index=False)
+    except TypeError:
+        print("No input provided", file=sys.stderr)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Path of dataset to be normalized")
+
+    args = parser.parse_args()
+    main(args)
