@@ -1,5 +1,5 @@
 configuration:
-  verbosity: 1
+  verbosity: 2
   hidden_size: 128
   epochs: 1
   K-fold: 2
