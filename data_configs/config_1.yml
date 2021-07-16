@@ -1,0 +1,19 @@
+labels:
+  0:
+    - 1
+  20:
+    - 30
+  70:
+    - 80
+  90:
+    - 91
+    - 92
+
+features:
+  - patch_location_y
+  - DOY
+  - hour
+  - coord_y
+  - band_8
+  - band_4
+  - band_3
