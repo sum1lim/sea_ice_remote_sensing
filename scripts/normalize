@@ -22,8 +22,11 @@ def main(args):
 
             scaler = MinMaxScaler()
 
-            columns = ['patch_location_y', 'patch_location_x', 'DOY',
-                    'hour', 'coord_y', 'coord_x', 'band_8', 'band_4', 'band_3']
+            columns = []
+
+            for col in df.columns:
+                if col != "label":
+                    columns.append(col)
 
             df[columns] = scaler.fit_transform(df[columns])
 
