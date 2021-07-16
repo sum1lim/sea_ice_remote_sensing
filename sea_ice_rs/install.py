@@ -31,3 +31,4 @@ def install():
     pip_install("pandas", "pandas")
     pip_install("tensorflow", "tensorflow")
     pip_install("keras", "keras")
+    pip_install("seaborn", "seaborn")

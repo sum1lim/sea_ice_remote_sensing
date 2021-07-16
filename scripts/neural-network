@@ -4,16 +4,21 @@ from sea_ice_rs.install import install
 install()
 
 import sys
+import os
+import csv
 import yaml
 import argparse
 import pandas
 import numpy as np
+from sea_ice_rs.utils import decompose_filepath
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import confusion_matrix, accuracy_score
+from seaborn import heatmap
+import matplotlib.pyplot as plt
 
 
 def process_data(data_file, data_config=None):
@@ -44,7 +49,6 @@ def process_data(data_file, data_config=None):
                 print("Error in configuration format", file=sys.stderr)
                 sys.exit(1)
 
-    print(f"Features: {[col for col in dataframe.columns]}", file=sys.stdout)
     dataset = dataframe.values
     X = dataset[:, 1:].astype(float)
     Y = dataset[:, 0]
@@ -55,10 +59,47 @@ def process_data(data_file, data_config=None):
     return X, encoded_Y, encoder.classes_
 
 
-def main(args):
-    X_tr, Y_tr, _ = process_data(args.train_data, args.data_config)
+def learning_curve(model_hist, result_dir, iter):
+    """
+    This chunk of code is sourced and modified from Machin Learning Mastery [1].
 
-    model = Sequential()
+    [1] J. Brownlee, “Display Deep Learning Model Training History in Keras,” Machine Learning Mastery, 03-Oct-2019. [Online].
+    Available: https://machinelearningmastery.com/display-deep-learning-model-training-history-in-keras/. [Accessed: 16-Jul-2021].
+    """
+    # summarize history for accuracy
+    plt.plot(model_hist["accuracy"])
+    plt.plot(model_hist["val_accuracy"])
+    plt.title(f"Learning Curve (iteration: {iter+1})")
+    plt.ylabel("Accuracy")
+    plt.xlabel("Epoch")
+    plt.legend(["Train", "Validation"], loc="upper left")
+    plt.savefig(f"{result_dir}/learning_curve_{iter}.png")
+    # summarize history for loss
+    plt.plot(model_hist["loss"])
+    plt.plot(model_hist["val_loss"])
+    plt.title(f"Loss Curve (iteration: {iter+1})")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.legend(["Train", "Validation"], loc="upper left")
+    plt.savefig(f"{result_dir}/loss_curve_{iter}.png")
+
+
+def main(args):
+    # Set up results directory
+    config_dir, filename, _ = decompose_filepath(args.data_config)
+    result_dir = os.path.join(
+        ".".join(config_dir.split("/")[:-1]), f"results/{filename}"
+    )
+
+    log_file = open(f"{result_dir}/filename.log", "w")
+    sys.stdout = log_file
+
+    try:
+        os.mkdir(result_dir)
+    except FileExistsError:
+        None
+
+    X_tr, Y_tr, _ = process_data(args.train_data, args.data_config)
 
     input_layer_size = X_tr.shape[1]
     output_layer_size = len(np.unique(Y_tr))
@@ -71,11 +112,13 @@ def main(args):
     if hidden_layer_size < 2:
         hidden_layer_size = 2
 
-    kfold = StratifiedKFold(n_splits=5, shuffle=False)
+    kfold = StratifiedKFold(n_splits=2, shuffle=False)
+    iter = 0
     for train, validation in kfold.split(X_tr, Y_tr):
         one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
         one_hot_Y_val = np_utils.to_categorical(Y_tr[validation])
 
+        model = Sequential()
         model.add(
             Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu")
         )
@@ -85,7 +128,7 @@ def main(args):
             loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
         )
 
-        model.fit(
+        model_summary = model.fit(
             x=X_tr[train],
             y=one_hot_Y_tr,
             epochs=args.epochs,
@@ -94,17 +137,34 @@ def main(args):
             validation_data=(X_tr[validation], one_hot_Y_val),
         )
 
+        learning_curve(model_summary.history, result_dir, iter)
+        iter += 1
+
     X_te, Y_te, classes = process_data(args.test_data, args.data_config)
 
-    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=1), axis=1)
+    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=2), axis=1)
 
     print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
     print(np.asarray([classes]))
-    cm = confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te), normalize="true")
+    cm_percentage = confusion_matrix(
+        Y_te, y_pred, labels=np.unique(Y_te), normalize="true"
+    )
+    cm_counts = confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te))
 
-    print(cm * 100, file=sys.stdout)
+    print(cm_counts, file=sys.stdout)
+
+    cm_csv = open(f"{result_dir}/confusion_matrix.csv", "w", newline="")
+    cm_writer = csv.writer(cm_csv)
+    cm_writer.writerow(classes)
+    for row in cm_counts:
+        cm_writer.writerow(row)
+
+    heatmap(cm_percentage * 100, vmin=0, vmax=100)
+    plt.savefig(f"{result_dir}/heat_map.png")
+
+    log_file.close()
 
 
 if __name__ == "__main__":
