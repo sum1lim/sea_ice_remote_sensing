@@ -1,28 +1,34 @@
-labels:
-  0:
-    - 1
-    - 2
-  10:
-    - 20
-  30:
-    - 40
-  50:
-    - 60
-  70:
-    - 80
-  90:
-    - 91
-    - 92
+configuration:
+  verbosity: 1
+  hidden_size: 128
+  epochs: 1
+  K-fold: 2
+
+# labels:
+#   0:
+#     - 1
+#     - 2
+#   10:
+#     - 20
+#   30:
+#     - 40
+#   50:
+#     - 60
+#   70:
+#     - 80
+#   90:
+#     - 91
+#     - 92
 
 features:
   # - label
   # - patch_num
   # - year
-  - patch_loc_y
+  # - patch_loc_y
   # - patch_loc_x
   - DOY
   - hour
-  - pix_loc_y
+  # - pix_loc_y
   # - pix_loc_x
   - band_8
   - band_4

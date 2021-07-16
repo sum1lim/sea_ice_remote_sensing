@@ -21,14 +21,26 @@ from seaborn import heatmap
 import matplotlib.pyplot as plt
 
 
-def process_data(data_file, data_config=None):
+def config_parser(config_dict):
+    num_epochs, hidden_size, verbosity, K = 100, None, None, 5
+    if "configuration" in config_dict.keys():
+        params = config_dict["configuration"]
+        if "epochs" in params.keys():
+            num_epochs = params["epochs"]
+        if "hidden_size" in params.keys():
+            hidden_size = params["hidden_size"]
+        if "verbosity" in params.keys():
+            verbosity = params["verbosity"]
+        if "K-fold" in params.keys():
+            K = params["K-fold"]
+
+    return num_epochs, hidden_size, verbosity, K
+
+
+def process_data(data_file, config_dict=None):
     dataframe = pandas.read_csv(data_file, header=0)
-    # print(dataframe['label'].value_counts())
 
-    if data_config:
-        stream = open(data_config, "r")
-        config_dict = yaml.safe_load(stream)
-
+    if config_dict:
         if "labels" in config_dict.keys():
             try:
                 for key, value in config_dict["labels"].items():
@@ -85,34 +97,43 @@ def learning_curve(model_hist, result_dir, iter):
 
 
 def main(args):
+    if args.data_config:
+        stream = open(args.data_config, "r")
+        config_dict = yaml.safe_load(stream)
+    else:
+        config_dict = None
+
+    num_epochs, hidden_size, verbosity, K = config_parser(config_dict)
+
     # Set up results directory
     config_dir, filename, _ = decompose_filepath(args.data_config)
     result_dir = os.path.join(
         ".".join(config_dir.split("/")[:-1]), f"results/{filename}"
     )
 
-    log_file = open(f"{result_dir}/filename.log", "w")
-    sys.stdout = log_file
+    if verbosity == 2:
+        log_file = open(f"{result_dir}/{filename}.log", "w")
+        sys.stdout = log_file
 
     try:
         os.mkdir(result_dir)
     except FileExistsError:
         None
 
-    X_tr, Y_tr, _ = process_data(args.train_data, args.data_config)
+    X_tr, Y_tr, _ = process_data(args.train_data, config_dict)
 
     input_layer_size = X_tr.shape[1]
     output_layer_size = len(np.unique(Y_tr))
 
-    if args.hidden_size == None:
+    if hidden_size == None:
         hidden_layer_size = ((input_layer_size + output_layer_size) * 2) // 3
     else:
-        hidden_layer_size = args.hidden_size
+        hidden_layer_size = hidden_size
 
     if hidden_layer_size < 2:
         hidden_layer_size = 2
 
-    kfold = StratifiedKFold(n_splits=2, shuffle=False)
+    kfold = StratifiedKFold(n_splits=K, shuffle=False)
     iter = 0
     for train, validation in kfold.split(X_tr, Y_tr):
         one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
@@ -131,23 +152,23 @@ def main(args):
         model_summary = model.fit(
             x=X_tr[train],
             y=one_hot_Y_tr,
-            epochs=args.epochs,
+            epochs=num_epochs,
             batch_size=5,
-            verbose=1,
+            verbose=verbosity,
             validation_data=(X_tr[validation], one_hot_Y_val),
         )
 
         learning_curve(model_summary.history, result_dir, iter)
         iter += 1
 
-    X_te, Y_te, classes = process_data(args.test_data, args.data_config)
+    X_te, Y_te, classes = process_data(args.test_data, config_dict)
 
-    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=2), axis=1)
+    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1)
 
     print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
-    print(np.asarray([classes]))
+    print(np.asarray([classes]), file=sys.stdout)
     cm_percentage = confusion_matrix(
         Y_te, y_pred, labels=np.unique(Y_te), normalize="true"
     )
@@ -177,10 +198,6 @@ if __name__ == "__main__":
         type=str,
         help="YAML file containing the configuration for label/feature modification",
     )
-    parser.add_argument(
-        "--epochs", type=int, help="Number of iterations for training", default=100
-    )
-    parser.add_argument("--hidden-size", type=int, help="Size of the hidden layer")
 
     args = parser.parse_args()
     main(args)
