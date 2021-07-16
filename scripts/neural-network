@@ -3,6 +3,7 @@ from sea_ice_rs.install import install
 
 install()
 
+import sys
 import yaml
 import argparse
 import pandas
@@ -12,7 +13,7 @@ from keras.layers import Dense
 from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 
 def process_data(data_file, data_config=None):
@@ -23,11 +24,16 @@ def process_data(data_file, data_config=None):
     if data_config:
         stream = open(data_config, "r")
         config_dict = yaml.safe_load(stream)
-        for key, value in config_dict["labels"].items():
-            for i in value:
-                dataframe["label"].replace({i: key}, inplace=True)
-
-        X = dataframe[config_dict["features"]].astype(float).values
+        try:
+            for key, value in config_dict["labels"].items():
+                for i in value:
+                    dataframe["label"].replace({i: key}, inplace=True)
+        except KeyError:
+            None
+        try:
+            X = dataframe[config_dict["features"]].astype(float).values
+        except KeyError:
+            None
     else:
         X = dataset[:, 1:12].astype(float)
     Y = dataset[:, 0]
@@ -77,6 +83,8 @@ def main(args):
     X_te, Y_te, _, classes = process_data(args.test_data, args.data_config)
 
     y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=1), axis=1)
+
+    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}")
 
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
     print(np.asarray([classes]))
