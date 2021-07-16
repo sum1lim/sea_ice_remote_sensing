@@ -53,7 +53,7 @@ def main(args):
         img_file = f"P{patch_num}-{year}{month}{day}{hour}.{args.img_extension}"
 
         data_points = [
-            (int(item["coord_y"]), int(item["coord_x"]))
+            (int(item["pix_loc_y"]), int(item["pix_loc_x"]))
             for idx, item in group.iterrows()
         ]
 
