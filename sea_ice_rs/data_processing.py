@@ -6,6 +6,7 @@ import random
 import sea_ice_rs.utils as utils
 from tqdm import tqdm
 from datetime import datetime
+from skimage.feature import greycomatrix, greycoprops
 
 
 def contrast(inImage):
@@ -19,7 +20,7 @@ def contrast(inImage):
 
     outImage = np.int_((255 * (inImage - minValue)) / data_range)
 
-    return outImage
+    return outImage.astype(np.uint8)
 
 
 def threshold(img, max_val=None, min_val=None):
@@ -77,6 +78,80 @@ def extract_colour(img, colour):
     output_img = np.nan_to_num(output_img)
 
     return np.dstack([output_img])
+
+
+def GLCM_band(bordered_img, border_width, band, datapoints):
+    half_right_angle = np.pi / 8
+
+    return [
+        greycomatrix(
+            bordered_img[
+                row : row + 2 * border_width + 1,
+                col : col + 2 * border_width + 1,
+                band,
+            ],
+            distances=[1],
+            angles=[
+                0,
+                half_right_angle,
+                2 * half_right_angle,
+                3 * half_right_angle,
+                4 * half_right_angle,
+                5 * half_right_angle,
+                6 * half_right_angle,
+                7 * half_right_angle,
+            ],
+            levels=64,
+        )
+        for (row, col) in datapoints
+    ]
+
+
+def generate_GLCM(inFile, datapoints):
+    inImage = cv2.imread(inFile)
+
+    rescaled_img = ((inImage / 255) * (64 - 1)).astype(int)
+
+    border_width = 5
+    bordered_img = cv2.copyMakeBorder(
+        rescaled_img,
+        border_width,
+        border_width,
+        border_width,
+        border_width,
+        borderType=cv2.BORDER_REFLECT_101,
+    )
+
+    GLCM_0 = GLCM_band(bordered_img, border_width, 0, datapoints)
+    GLCM_1 = GLCM_band(bordered_img, border_width, 1, datapoints)
+    GLCM_2 = GLCM_band(bordered_img, border_width, 2, datapoints)
+
+    return [GLCM_0, GLCM_1, GLCM_2]
+
+
+def generate_entropy(GLCM):
+    e = np.finfo(float).eps
+
+    return [
+        np.sum(-np.multiply(GLCM[:, :, :, i], np.log(GLCM[:, :, :, i] + e)))
+        for i in range(GLCM.shape[-1])
+    ]
+
+
+def glcm_product(GLCM_matrices, product_type):
+    return np.transpose(
+        np.asarray(
+            [
+                [
+                    np.sum(generate_entropy(GLCM))
+                    if product_type == "entropy"
+                    else np.sum(greycoprops(GLCM, product_type)[0])
+                    for GLCM in GLCM_matrices[i]
+                ]
+                for i in range(len(GLCM_matrices))
+            ]
+        )
+    )
 
 
 def sampling_probability(dist_stats_file):
