@@ -48,19 +48,19 @@ Make sure you are in the main Python working directory when running the commands
 
 Also be sure to write ```python``` before the path to the script if you are on windows. 
 
-## Centroids
+### Centroids
 
 Sample command (UNIX):
 
 ```centroids --input ./data/AOIs_R_thresh_CL.png --max-area 700```
 
-## Connected Lines
+### Connected Lines
 
 Sample command (UNIX):
 
 ```connect-lines --input ./data/AOIs_R_thresh.png --iterations 2 --extension png```
 
-## Create Datasets
+### Create Datasets
 
 Sample command on UNIX based systems for multiprocessing: 
 
@@ -80,17 +80,24 @@ Sample command for single file (UNIX):
 
 ```dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png```
 
-## Extract Colour 
+### Extract Colour 
 
 Sample command (UNIX):
 
 ```extract-colour --input ./data/AOIs.png --colour R --extension png```         
 
-## Extracting X-Y Coordinates of Patch Locations
+### Extracting X-Y Coordinates of Patch Locations
 
 For those on UNIX based OSs, there is a batch script for extracting X-Y coordinates of patch locations (see ```extract_patch_locations.sh```). 
 
 Windows users will need to individual run the commands individually. 
+
+### Normalize Data
+
+Sample command (Windows):
+
+```python scripts/normalize --input ./data/train_dataset/raw.csv```
+
 ### SOBEL
 
 ```SOBEL --input path/to/input/directory/or/file --contrast --extension png```
