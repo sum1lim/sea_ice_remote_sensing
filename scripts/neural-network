@@ -19,23 +19,8 @@ from sea_ice_rs.ML_tools import (
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import np_utils
-from keras.layers.convolutional import Conv1D
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
-
-
-# def CNN():
-# 	model = Sequential()
-# 	model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(n_timesteps,n_features)))
-# 	model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
-# 	model.add(Dropout(0.5))
-# 	model.add(MaxPooling1D(pool_size=2))
-# 	model.add(Flatten())
-# 	model.add(Dense(100, activation='relu'))
-# 	model.add(Dense(n_outputs, activation='softmax'))
-# 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-#     return model
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):
