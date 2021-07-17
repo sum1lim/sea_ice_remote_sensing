@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
+from sklearn.utils import shuffle
 from seaborn import heatmap
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
@@ -143,7 +144,7 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
     )
     cm_counts = confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te))
 
-    print(cm_counts, file=sys.stdout)
+    print(cm_percentage, file=sys.stdout)
 
     cm_csv = open(f"{result_dir}/confusion_matrix.csv", "w", newline="")
     cm_writer = csv.writer(cm_csv)
@@ -161,6 +162,7 @@ def tr_val_split(K, X_tr, Y_tr):
         kfold = StratifiedKFold(n_splits=K, shuffle=False)
         tr_val_pairs = kfold.split(X_tr, Y_tr)
     else:
+        X_tr, Y_tr = shuffle(X_tr, Y_tr, random_state=0)
         tr_val_pairs = [
             (
                 [i for i in range(int(0.8 * len(X_tr)))],
