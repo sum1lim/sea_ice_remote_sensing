@@ -1,38 +1,98 @@
+Before oversampling: Counter({50.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475, 40.0: 37235})
+After oversampling: Counter({50.0: 38006, 40.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475})
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
-conv1d (Conv1D)              (None, 24, 64)            256       
+conv1d (Conv1D)              (None, 22, 64)            384       
 _________________________________________________________________
-dense (Dense)                (None, 24, 128)           8320      
+dense (Dense)                (None, 22, 128)           8320      
 _________________________________________________________________
-max_pooling1d (MaxPooling1D) (None, 12, 128)           0         
+max_pooling1d (MaxPooling1D) (None, 11, 128)           0         
 _________________________________________________________________
-flatten (Flatten)            (None, 1536)              0         
+flatten (Flatten)            (None, 1408)              0         
 _________________________________________________________________
-dense_1 (Dense)              (None, 15)                23055     
+dense_1 (Dense)              (None, 15)                21135     
 =================================================================
-Total params: 31,631
-Trainable params: 31,631
+Total params: 29,839
+Trainable params: 29,839
 Non-trainable params: 0
 _________________________________________________________________
-Epoch 1/5
-90388/90388 - 43s - loss: 0.9487 - accuracy: 0.6630 - val_loss: 10.1901 - val_accuracy: 0.1773
+Epoch 1/100
+90511/90511 - 55s - loss: 0.9389 - accuracy: 0.6666 - val_loss: 11.2096 - val_accuracy: 0.2100
 
 Epoch 00001: saving model to ./results/CNN_trial_1/cp.ckpt
-Epoch 2/5
-90388/90388 - 42s - loss: 0.7042 - accuracy: 0.7481 - val_loss: 11.0990 - val_accuracy: 0.2084
+Epoch 2/100
+90511/90511 - 55s - loss: 0.6970 - accuracy: 0.7486 - val_loss: 10.7769 - val_accuracy: 0.1984
 
 Epoch 00002: saving model to ./results/CNN_trial_1/cp.ckpt
-Epoch 3/5
-90388/90388 - 42s - loss: 0.6427 - accuracy: 0.7694 - val_loss: 11.5266 - val_accuracy: 0.1940
+Epoch 3/100
+90511/90511 - 55s - loss: 0.6368 - accuracy: 0.7700 - val_loss: 11.2505 - val_accuracy: 0.1744
 
 Epoch 00003: saving model to ./results/CNN_trial_1/cp.ckpt
-Epoch 4/5
-90388/90388 - 42s - loss: 0.6098 - accuracy: 0.7800 - val_loss: 12.1834 - val_accuracy: 0.1882
+Epoch 4/100
+90511/90511 - 55s - loss: 0.6025 - accuracy: 0.7824 - val_loss: 12.1686 - val_accuracy: 0.1673
 
 Epoch 00004: saving model to ./results/CNN_trial_1/cp.ckpt
-Epoch 5/5
-90388/90388 - 42s - loss: 0.5883 - accuracy: 0.7878 - val_loss: 13.2617 - val_accuracy: 0.1999
+Epoch 5/100
+90511/90511 - 54s - loss: 0.5810 - accuracy: 0.7902 - val_loss: 11.8322 - val_accuracy: 0.1536
 
 Epoch 00005: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 6/100
+90511/90511 - 54s - loss: 0.5641 - accuracy: 0.7959 - val_loss: 11.9474 - val_accuracy: 0.1493
+
+Epoch 00006: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 7/100
+90511/90511 - 56s - loss: 0.5514 - accuracy: 0.8009 - val_loss: 12.1754 - val_accuracy: 0.1633
+
+Epoch 00007: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 8/100
+90511/90511 - 56s - loss: 0.5416 - accuracy: 0.8041 - val_loss: 13.2613 - val_accuracy: 0.1543
+
+Epoch 00008: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 9/100
+90511/90511 - 56s - loss: 0.5347 - accuracy: 0.8062 - val_loss: 13.8265 - val_accuracy: 0.1476
+
+Epoch 00009: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 10/100
+90511/90511 - 47s - loss: 0.5265 - accuracy: 0.8088 - val_loss: 13.9512 - val_accuracy: 0.1674
+
+Epoch 00010: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 11/100
+90511/90511 - 44s - loss: 0.5196 - accuracy: 0.8118 - val_loss: 14.5329 - val_accuracy: 0.1719
+
+Epoch 00011: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 12/100
+90511/90511 - 45s - loss: 0.5132 - accuracy: 0.8146 - val_loss: 14.9056 - val_accuracy: 0.1534
+
+Epoch 00012: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 13/100
+90511/90511 - 45s - loss: 0.5082 - accuracy: 0.8162 - val_loss: 16.0033 - val_accuracy: 0.1563
+
+Epoch 00013: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 14/100
+90511/90511 - 45s - loss: 0.5046 - accuracy: 0.8173 - val_loss: 16.1646 - val_accuracy: 0.1670
+
+Epoch 00014: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 15/100
+90511/90511 - 44s - loss: 0.5012 - accuracy: 0.8191 - val_loss: 16.7196 - val_accuracy: 0.1725
+
+Epoch 00015: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 16/100
+90511/90511 - 42s - loss: 0.4983 - accuracy: 0.8198 - val_loss: 16.6897 - val_accuracy: 0.1325
+
+Epoch 00016: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 17/100
+90511/90511 - 48s - loss: 0.4966 - accuracy: 0.8209 - val_loss: 17.6939 - val_accuracy: 0.1598
+
+Epoch 00017: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 18/100
+90511/90511 - 54s - loss: 0.4934 - accuracy: 0.8217 - val_loss: 17.4867 - val_accuracy: 0.1684
+
+Epoch 00018: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 19/100
+90511/90511 - 54s - loss: 0.4912 - accuracy: 0.8237 - val_loss: 19.0794 - val_accuracy: 0.1527
+
+Epoch 00019: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 20/100
+90511/90511 - 57s - loss: 0.4897 - accuracy: 0.8238 - val_loss: 19.0744 - val_accuracy: 0.1554

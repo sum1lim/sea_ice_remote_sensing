@@ -1,0 +1,36 @@
+Before oversampling: Counter({50.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475, 40.0: 37235})
+After oversampling: Counter({50.0: 38006, 40.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475})
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 128)               3200      
+_________________________________________________________________
+dense_1 (Dense)              (None, 15)                1935      
+=================================================================
+Total params: 5,135
+Trainable params: 5,135
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/100
+90511/90511 - 30s - loss: 1.2727 - accuracy: 0.5575 - val_loss: 12.6172 - val_accuracy: 0.2310
+
+Epoch 00001: saving model to ./results/NN_trial_2/cp.ckpt
+Epoch 2/100
+90511/90511 - 29s - loss: 1.0159 - accuracy: 0.6460 - val_loss: 14.7568 - val_accuracy: 0.2309
+
+Epoch 00002: saving model to ./results/NN_trial_2/cp.ckpt
+Epoch 3/100
+90511/90511 - 30s - loss: 0.9323 - accuracy: 0.6730 - val_loss: 15.9239 - val_accuracy: 0.2063
+
+Epoch 00003: saving model to ./results/NN_trial_2/cp.ckpt
+Epoch 4/100
+90511/90511 - 29s - loss: 0.8850 - accuracy: 0.6878 - val_loss: 17.2082 - val_accuracy: 0.2207
+
+Epoch 00004: saving model to ./results/NN_trial_2/cp.ckpt
+Epoch 5/100
+90511/90511 - 31s - loss: 0.8532 - accuracy: 0.6993 - val_loss: 17.9865 - val_accuracy: 0.2115
+
+Epoch 00005: saving model to ./results/NN_trial_2/cp.ckpt
+Epoch 6/100
+90511/90511 - 30s - loss: 0.8301 - accuracy: 0.7064 - val_loss: 18.9102 - val_accuracy: 0.2302
