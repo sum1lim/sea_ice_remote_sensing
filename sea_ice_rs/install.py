@@ -32,3 +32,4 @@ def install():
     pip_install("tensorflow", "tensorflow")
     pip_install("keras", "keras")
     pip_install("seaborn", "seaborn")
+    pip_install("imblearn", "imblearn")

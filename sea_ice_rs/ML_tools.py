@@ -10,6 +10,8 @@ from sklearn.model_selection import StratifiedKFold
 from seaborn import heatmap
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
+from collections import Counter
+from imblearn.over_sampling import RandomOverSampler
 
 
 def config_parser(dl_config):
@@ -90,6 +92,12 @@ def process_data(data_file, dl_config=None):
     dataset = dataframe.values
     X = dataset[:, 1:].astype(float)
     Y = dataset[:, 0]
+
+    print(f"Before oversampling: {Counter(Y)}", file=sys.stdout)
+    oversample = RandomOverSampler(sampling_strategy="minority")
+    X, Y = oversample.fit_resample(X, Y)
+    print(f"After oversampling: {Counter(Y)}", file=sys.stdout)
+
     encoder = LabelEncoder()
     encoder.fit(Y)
     encoded_Y = encoder.transform(Y)
