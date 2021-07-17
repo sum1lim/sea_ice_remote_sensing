@@ -1,0 +1,86 @@
+Before oversampling: Counter({50.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475, 40.0: 37235})
+After oversampling: Counter({50.0: 38006, 40.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475})
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d (Conv1D)              (None, 14, 64)            384       
+_________________________________________________________________
+dense (Dense)                (None, 14, 128)           8320      
+_________________________________________________________________
+max_pooling1d (MaxPooling1D) (None, 7, 128)            0         
+_________________________________________________________________
+flatten (Flatten)            (None, 896)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 15)                13455     
+=================================================================
+Total params: 22,159
+Trainable params: 22,159
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/100
+90511/90511 - 52s - loss: 1.7995 - accuracy: 0.3524 - val_loss: 8.4789 - val_accuracy: 0.1631
+
+Epoch 00001: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 2/100
+90511/90511 - 51s - loss: 1.7017 - accuracy: 0.3886 - val_loss: 8.7560 - val_accuracy: 0.2004
+
+Epoch 00002: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 3/100
+90511/90511 - 51s - loss: 1.6804 - accuracy: 0.3960 - val_loss: 8.5225 - val_accuracy: 0.1338
+
+Epoch 00003: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 4/100
+90511/90511 - 51s - loss: 1.6699 - accuracy: 0.3990 - val_loss: 8.4543 - val_accuracy: 0.1750
+
+Epoch 00004: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 5/100
+90511/90511 - 52s - loss: 1.6626 - accuracy: 0.4027 - val_loss: 8.3621 - val_accuracy: 0.1773
+
+Epoch 00005: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 6/100
+90511/90511 - 52s - loss: 1.6581 - accuracy: 0.4034 - val_loss: 8.5549 - val_accuracy: 0.1735
+
+Epoch 00006: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 7/100
+90511/90511 - 53s - loss: 1.6555 - accuracy: 0.4046 - val_loss: 8.7196 - val_accuracy: 0.1392
+
+Epoch 00007: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 8/100
+90511/90511 - 53s - loss: 1.6526 - accuracy: 0.4057 - val_loss: 8.7852 - val_accuracy: 0.1451
+
+Epoch 00008: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 9/100
+90511/90511 - 52s - loss: 1.6506 - accuracy: 0.4066 - val_loss: 9.1952 - val_accuracy: 0.1836
+
+Epoch 00009: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 10/100
+90511/90511 - 53s - loss: 1.6476 - accuracy: 0.4078 - val_loss: 9.4307 - val_accuracy: 0.1260
+
+Epoch 00010: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 11/100
+90511/90511 - 52s - loss: 1.6460 - accuracy: 0.4083 - val_loss: 9.3848 - val_accuracy: 0.1778
+
+Epoch 00011: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 12/100
+90511/90511 - 54s - loss: 1.6449 - accuracy: 0.4081 - val_loss: 9.8457 - val_accuracy: 0.1784
+
+Epoch 00012: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 13/100
+90511/90511 - 54s - loss: 1.6440 - accuracy: 0.4088 - val_loss: 9.9205 - val_accuracy: 0.1753
+
+Epoch 00013: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 14/100
+90511/90511 - 54s - loss: 1.6437 - accuracy: 0.4092 - val_loss: 9.6399 - val_accuracy: 0.1786
+
+Epoch 00014: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 15/100
+90511/90511 - 58s - loss: 1.6431 - accuracy: 0.4088 - val_loss: 10.1465 - val_accuracy: 0.1643
+
+Epoch 00015: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 16/100
+90511/90511 - 53s - loss: 1.6434 - accuracy: 0.4088 - val_loss: 10.4093 - val_accuracy: 0.1751
+
+Epoch 00016: saving model to ./results/CNN_trial_6/cp.ckpt
+Epoch 17/100
+90511/90511 - 53s - loss: 1.6434 - accuracy: 0.4090 - val_loss: 10.4744 - val_accuracy: 0.1682

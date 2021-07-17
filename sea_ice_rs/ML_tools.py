@@ -141,8 +141,8 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
     """
     np.set_printoptions(threshold=np.inf, linewidth=np.inf, precision=1, suppress=True)
     print(np.asarray([classes]), file=sys.stdout)
-    cm_percentage = confusion_matrix(
-        Y_te, y_pred, labels=np.unique(Y_te), normalize="true"
+    cm_percentage = (
+        confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te), normalize="true") * 100
     )
     cm_counts = confusion_matrix(Y_te, y_pred, labels=np.unique(Y_te))
 
@@ -154,7 +154,7 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
     for row in cm_counts:
         cm_writer.writerow(row)
 
-    heatmap(cm_percentage * 100, vmin=0, vmax=100)
+    heatmap(cm_percentage, vmin=0, vmax=100)
     plt.savefig(f"{result_dir}/heat_map.png")
     plt.clf()
 
@@ -191,7 +191,9 @@ def NN(hidden_layer_size, input_layer_size, output_layer_size):
 
 def CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size):
     model = Sequential()
-    model.add(Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1)))
+    model.add(
+        Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1))
+    )
     model.add(Dense(hidden_layer_size, activation="relu"))
     model.add(MaxPooling1D())
     model.add(Flatten())
