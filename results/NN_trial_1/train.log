@@ -1,0 +1,32 @@
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 128)               3456      
+_________________________________________________________________
+dense_1 (Dense)              (None, 15)                1935      
+=================================================================
+Total params: 5,391
+Trainable params: 5,391
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/5
+90388/90388 - 24s - loss: 1.1675 - accuracy: 0.5922 - val_loss: 13.6903 - val_accuracy: 0.1581
+
+Epoch 00001: saving model to ./results/NN_trial_1/cp.ckpt
+Epoch 2/5
+90388/90388 - 24s - loss: 0.9259 - accuracy: 0.6736 - val_loss: 15.3334 - val_accuracy: 0.1940
+
+Epoch 00002: saving model to ./results/NN_trial_1/cp.ckpt
+Epoch 3/5
+90388/90388 - 24s - loss: 0.8500 - accuracy: 0.6978 - val_loss: 16.3826 - val_accuracy: 0.2195
+
+Epoch 00003: saving model to ./results/NN_trial_1/cp.ckpt
+Epoch 4/5
+90388/90388 - 24s - loss: 0.8036 - accuracy: 0.7124 - val_loss: 16.4506 - val_accuracy: 0.2294
+
+Epoch 00004: saving model to ./results/NN_trial_1/cp.ckpt
+Epoch 5/5
+90388/90388 - 24s - loss: 0.7672 - accuracy: 0.7258 - val_loss: 17.1126 - val_accuracy: 0.1715
+
+Epoch 00005: saving model to ./results/NN_trial_1/cp.ckpt

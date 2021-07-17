@@ -14,37 +14,18 @@ from sea_ice_rs.ML_tools import (
     claculate_hidden_layer_size,
     process_data,
     learning_curve,
-    construct_confusion_matrix,
     tr_val_split,
+    CNN,
 )
-from keras.models import Sequential
-from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
-from keras.utils import np_utils
-from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import accuracy_score
-
-
-def CNN(hidden_layer_size, input_layer_size, output_layer_size):
-    model = Sequential()
-    model.add(Conv1D(64, 3, activation="relu", input_shape=(input_layer_size, 1)))
-    model.add(Dense(hidden_layer_size, activation="relu"))
-    model.add(MaxPooling1D())
-    model.add(Flatten())
-    model.add(Dense(output_layer_size, activation="softmax"))
-    model.compile(
-        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
-    )
-    model.summary()
-
-    return model
+from keras.callbacks import ModelCheckpoint
 
 
 def main(args):
     # Parse configuration
-    num_epochs, hidden_size, verbosity, K = config_parser(args.data_config)
+    num_epochs, hidden_size, verbosity, K = config_parser(args.dl_config)
 
     # Set up results directory
-    config_dir, filename, _ = decompose_filepath(args.data_config)
+    config_dir, filename, _ = decompose_filepath(args.dl_config)
     result_dir = os.path.join(
         ".".join(config_dir.split("/")[:-1]), f"results/CNN_{filename}"
     )
@@ -57,11 +38,11 @@ def main(args):
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
     if verbosity == 2:
-        log_file = open(f"{result_dir}/{filename}.log", "w")
+        log_file = open(f"{result_dir}/train.log", "w")
         sys.stdout = log_file
 
     # Modify train dataset
-    X_tr, Y_tr, _ = process_data(args.train_data, args.data_config)
+    X_tr, Y_tr, _ = process_data(args.train_data, args.dl_config)
 
     # Define hidden layer size
     input_layer_size = X_tr.shape[1]
@@ -74,6 +55,11 @@ def main(args):
     tr_val_pairs = tr_val_split(K, X_tr, Y_tr)
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
+        checkpoint_path = f"{result_dir}/cp.ckpt"
+        cp_callback = ModelCheckpoint(
+            filepath=checkpoint_path, save_weights_only=True, verbose=1
+        )
+
         model = CNN(hidden_layer_size, input_layer_size, output_layer_size)
 
         # Format X for CNN
@@ -88,22 +74,11 @@ def main(args):
             batch_size=5,
             verbose=verbosity,
             validation_data=(formatted_X_val, Y_tr[validation]),
+            callbacks=[cp_callback],
         )
 
         # Plot the learning curve
         learning_curve(model_summary.history, result_dir, iter)
-
-    # Modify test dataset
-    X_te, Y_te, classes = process_data(args.test_data, args.data_config)
-    formatted_X_te = np.transpose(np.array([np.transpose(X_te)]))
-
-    # Predict the test dataset
-    pred = model.predict(x=formatted_X_te, batch_size=5, verbose=verbosity)
-    y_pred = pred.argmax(axis=-1)
-    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
-
-    # Construct confusion matrix
-    construct_confusion_matrix(classes, Y_te, y_pred, result_dir)
 
     # stdout redirection closed
     if verbosity == 2:
@@ -114,11 +89,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--train-data", type=str, help="CSV file containing train data")
-    parser.add_argument("--test-data", type=str, help="CSV file containing test data")
     parser.add_argument(
-        "--data-config",
+        "--dl-config",
         type=str,
-        help="YAML file containing the configuration for label/feature modification",
+        help="YAML file containing the configuration for deep learning",
     )
 
     args = parser.parse_args()

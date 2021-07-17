@@ -22,5 +22,6 @@ setup(
         ./scripts/normalize
         ./scripts/GLCM
         ./scripts/CNN
+        ./scripts/test-model
     """.split(),
 )

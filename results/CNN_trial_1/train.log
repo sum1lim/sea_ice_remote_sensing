@@ -1,0 +1,38 @@
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d (Conv1D)              (None, 24, 64)            256       
+_________________________________________________________________
+dense (Dense)                (None, 24, 128)           8320      
+_________________________________________________________________
+max_pooling1d (MaxPooling1D) (None, 12, 128)           0         
+_________________________________________________________________
+flatten (Flatten)            (None, 1536)              0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 15)                23055     
+=================================================================
+Total params: 31,631
+Trainable params: 31,631
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/5
+90388/90388 - 43s - loss: 0.9487 - accuracy: 0.6630 - val_loss: 10.1901 - val_accuracy: 0.1773
+
+Epoch 00001: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 2/5
+90388/90388 - 42s - loss: 0.7042 - accuracy: 0.7481 - val_loss: 11.0990 - val_accuracy: 0.2084
+
+Epoch 00002: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 3/5
+90388/90388 - 42s - loss: 0.6427 - accuracy: 0.7694 - val_loss: 11.5266 - val_accuracy: 0.1940
+
+Epoch 00003: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 4/5
+90388/90388 - 42s - loss: 0.6098 - accuracy: 0.7800 - val_loss: 12.1834 - val_accuracy: 0.1882
+
+Epoch 00004: saving model to ./results/CNN_trial_1/cp.ckpt
+Epoch 5/5
+90388/90388 - 42s - loss: 0.5883 - accuracy: 0.7878 - val_loss: 13.2617 - val_accuracy: 0.1999
+
+Epoch 00005: saving model to ./results/CNN_trial_1/cp.ckpt

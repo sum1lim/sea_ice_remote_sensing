@@ -8,16 +8,18 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from seaborn import heatmap
+from keras.models import Sequential
+from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
 
 
-def config_parser(data_config):
+def config_parser(dl_config):
     """
     Parse the parameters defined in the configuration part.
     """
     num_epochs, hidden_size, verbosity, K = 100, None, None, 5
 
-    if data_config:
-        stream = open(data_config, "r")
+    if dl_config:
+        stream = open(dl_config, "r")
         config_dict = yaml.safe_load(stream)
     else:
         return num_epochs, hidden_size, verbosity, K
@@ -51,13 +53,13 @@ def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_define
     return hidden_layer_size
 
 
-def process_data(data_file, data_config=None):
+def process_data(data_file, dl_config=None):
     """
     Merge labels and/or select feautres for learning
     based on the user definition in the configuration file
     """
-    if data_config:
-        stream = open(data_config, "r")
+    if dl_config:
+        stream = open(dl_config, "r")
         config_dict = yaml.safe_load(stream)
     else:
         config_dict = None
@@ -159,3 +161,32 @@ def tr_val_split(K, X_tr, Y_tr):
         ]
 
     return tr_val_pairs
+
+
+def NN(hidden_layer_size, input_layer_size, output_layer_size):
+    # Construct Neural Network
+    model = Sequential()
+    model.add(Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu"))
+    model.add(Dense(output_layer_size, activation="softmax"))
+
+    model.compile(
+        loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+    model.summary()
+
+    return model
+
+
+def CNN(hidden_layer_size, input_layer_size, output_layer_size):
+    model = Sequential()
+    model.add(Conv1D(64, 3, activation="relu", input_shape=(input_layer_size, 1)))
+    model.add(Dense(hidden_layer_size, activation="relu"))
+    model.add(MaxPooling1D())
+    model.add(Flatten())
+    model.add(Dense(output_layer_size, activation="softmax"))
+    model.compile(
+        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+    model.summary()
+
+    return model
