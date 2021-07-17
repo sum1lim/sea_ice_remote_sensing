@@ -1,7 +1,10 @@
+# No merging between classes
+# Use all features
+
 configuration:
   verbosity: 2
   hidden_size: 128
-  epochs: 5
+  epochs: 100
   K-fold: 1
 
 features:

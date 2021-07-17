@@ -1,5 +1,6 @@
 # No merging between classes
 # Drop unprocessed image indicator features
+# Drop X coordinates
 
 configuration:
   verbosity: 2
@@ -12,11 +13,11 @@ features:
   # - patch_num
   # - year
   - patch_loc_y
-  - patch_loc_x
+  # - patch_loc_x
   - DOY
   - hour
   - pix_loc_y
-  - pix_loc_x
+  # - pix_loc_x
   - band_8
   - band_4
   - band_3
