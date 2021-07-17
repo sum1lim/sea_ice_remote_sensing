@@ -6,6 +6,7 @@ import pandas
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import StratifiedKFold
 from seaborn import heatmap
 
 
@@ -143,3 +144,18 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
     heatmap(cm_percentage * 100, vmin=0, vmax=100)
     plt.savefig(f"{result_dir}/heat_map.png")
     plt.clf()
+
+
+def tr_val_split(K, X_tr, Y_tr):
+    if K > 1:
+        kfold = StratifiedKFold(n_splits=K, shuffle=False)
+        tr_val_pairs = kfold.split(X_tr, Y_tr)
+    else:
+        tr_val_pairs = [
+            (
+                [i for i in range(int(0.8 * len(X_tr)))],
+                [i for i in range(int(0.8 * len(X_tr)), len(X_tr))],
+            )
+        ]
+
+    return tr_val_pairs

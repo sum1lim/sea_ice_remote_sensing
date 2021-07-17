@@ -21,5 +21,6 @@ setup(
         ./scripts/neural-network
         ./scripts/normalize
         ./scripts/GLCM
+        ./scripts/CNN
     """.split(),
 )

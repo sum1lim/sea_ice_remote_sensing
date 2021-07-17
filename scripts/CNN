@@ -18,19 +18,21 @@ from sea_ice_rs.ML_tools import (
     tr_val_split,
 )
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
 from keras.utils import np_utils
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
 
 
-def NN(hidden_layer_size, input_layer_size, output_layer_size):
-    # Construct Neural Network
+def CNN(hidden_layer_size, input_layer_size, output_layer_size):
     model = Sequential()
-    model.add(Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu"))
+    model.add(Conv1D(64, 3, activation="relu", input_shape=(input_layer_size, 1)))
+    model.add(Dense(hidden_layer_size, activation="relu"))
+    model.add(MaxPooling1D())
+    model.add(Flatten())
     model.add(Dense(output_layer_size, activation="softmax"))
-
     model.compile(
-        loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
     )
     model.summary()
 
@@ -44,7 +46,7 @@ def main(args):
     # Set up results directory
     config_dir, filename, _ = decompose_filepath(args.data_config)
     result_dir = os.path.join(
-        ".".join(config_dir.split("/")[:-1]), f"results/NN_{filename}"
+        ".".join(config_dir.split("/")[:-1]), f"results/CNN_{filename}"
     )
     try:
         os.mkdir(result_dir)
@@ -72,20 +74,20 @@ def main(args):
     tr_val_pairs = tr_val_split(K, X_tr, Y_tr)
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
-        model = NN(hidden_layer_size, input_layer_size, output_layer_size)
+        model = CNN(hidden_layer_size, input_layer_size, output_layer_size)
 
-        # One-hot encoding of the label vector
-        one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
-        one_hot_Y_val = np_utils.to_categorical(Y_tr[validation])
+        # Format X for CNN
+        formatted_X_tr = np.transpose(np.array([np.transpose(X_tr[train])]))
+        formatted_X_val = np.transpose(np.array([np.transpose(X_tr[validation])]))
 
         # Train the model
         model_summary = model.fit(
-            x=X_tr[train],
-            y=one_hot_Y_tr,
+            x=formatted_X_tr,
+            y=Y_tr[train],
             epochs=num_epochs,
             batch_size=5,
             verbose=verbosity,
-            validation_data=(X_tr[validation], one_hot_Y_val),
+            validation_data=(formatted_X_val, Y_tr[validation]),
         )
 
         # Plot the learning curve
@@ -93,9 +95,11 @@ def main(args):
 
     # Modify test dataset
     X_te, Y_te, classes = process_data(args.test_data, args.data_config)
+    formatted_X_te = np.transpose(np.array([np.transpose(X_te)]))
 
     # Predict the test dataset
-    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1)
+    pred = model.predict(x=formatted_X_te, batch_size=5, verbose=verbosity)
+    y_pred = pred.argmax(axis=-1)
     print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
     # Construct confusion matrix
