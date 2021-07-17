@@ -109,6 +109,7 @@ def learning_curve(model_hist, result_dir, iter):
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
     plt.savefig(f"{result_dir}/learning_curve_{iter}.png")
+    plt.clf()
     # summarize history for loss
     plt.plot(model_hist["loss"])
     plt.plot(model_hist["val_loss"])
@@ -117,6 +118,7 @@ def learning_curve(model_hist, result_dir, iter):
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
     plt.savefig(f"{result_dir}/loss_curve_{iter}.png")
+    plt.clf()
 
 
 def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
@@ -140,3 +142,4 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
 
     heatmap(cm_percentage * 100, vmin=0, vmax=100)
     plt.savefig(f"{result_dir}/heat_map.png")
+    plt.clf()

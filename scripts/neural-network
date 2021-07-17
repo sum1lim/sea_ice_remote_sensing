@@ -17,10 +17,34 @@ from sea_ice_rs.ML_tools import (
     construct_confusion_matrix,
 )
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Conv1D, Dropout, MaxPooling1D, Flatten
 from keras.utils import np_utils
+from keras.preprocessing import timeseries_dataset_from_array
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
+
+
+def CNN(hidden_layer_size, input_layer_size, output_layer_size):
+    model = Sequential()
+    model.add(
+        Conv1D(
+            filters=64,
+            kernel_size=3,
+            activation="relu",
+            input_shape=(128, input_layer_size),
+        )
+    )
+    model.add(Conv1D(filters=64, kernel_size=3, activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Flatten())
+    model.add(Dense(hidden_layer_size, activation="relu"))
+    model.add(Dense(output_layer_size, activation="softmax"))
+    model.compile(
+        loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+
+    return model
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):
@@ -67,8 +91,13 @@ def main(args):
     )
 
     # Stratified K-fold classification
-    kfold = StratifiedKFold(n_splits=K, shuffle=False)
-    for iter, (train, validation) in enumerate(kfold.split(X_tr, Y_tr)):
+    if K > 1:
+        kfold = StratifiedKFold(n_splits=K, shuffle=False)
+        tr_val_pairs = kfold.split(X_tr, Y_tr)
+    else:
+        tr_val_pairs = (X_tr, Y_tr)
+
+    for iter, (train, validation) in enumerate(tr_val_pairs):
 
         # One-hot encoding of the label vector
         one_hot_Y_tr = np_utils.to_categorical(Y_tr[train])
