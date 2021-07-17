@@ -17,7 +17,7 @@ def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, hidden_size, verbosity, K = config_parser(args.dl_config)
+    _, hidden_size, verbosity, K, kernel_size = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -39,7 +39,7 @@ def main(args):
     if model_type == "NN":
         model = NN(hidden_layer_size, input_layer_size, output_layer_size)
     elif model_type == "CNN":
-        model = CNN(hidden_layer_size, input_layer_size, output_layer_size)
+        model = CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size)
         # X should be formatted for CNN
         X_te = np.transpose(np.array([np.transpose(X_te)]))
 

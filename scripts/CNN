@@ -22,7 +22,7 @@ from keras.callbacks import ModelCheckpoint
 
 def main(args):
     # Parse configuration
-    num_epochs, hidden_size, verbosity, K = config_parser(args.dl_config)
+    num_epochs, hidden_size, verbosity, K, kernel_size = config_parser(args.dl_config)
 
     # Set up results directory
     config_dir, filename, _ = decompose_filepath(args.dl_config)
@@ -60,7 +60,7 @@ def main(args):
             filepath=checkpoint_path, save_weights_only=True, verbose=1
         )
 
-        model = CNN(hidden_layer_size, input_layer_size, output_layer_size)
+        model = CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size)
 
         # Format X for CNN
         formatted_X_tr = np.transpose(np.array([np.transpose(X_tr[train])]))

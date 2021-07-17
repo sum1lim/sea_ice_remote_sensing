@@ -6,6 +6,7 @@ configuration:
   hidden_size: 128
   epochs: 100
   K-fold: 1
+  kernel_size: 5
 
 features:
   # - label

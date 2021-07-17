@@ -23,7 +23,7 @@ from keras.callbacks import ModelCheckpoint
 
 def main(args):
     # Parse configuration
-    num_epochs, hidden_size, verbosity, K = config_parser(args.dl_config)
+    num_epochs, hidden_size, verbosity, K, _ = config_parser(args.dl_config)
 
     # Set up results directory
     config_dir, filename, _ = decompose_filepath(args.dl_config)

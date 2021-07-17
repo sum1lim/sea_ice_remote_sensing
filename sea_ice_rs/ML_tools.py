@@ -19,7 +19,7 @@ def config_parser(dl_config):
     """
     Parse the parameters defined in the configuration part.
     """
-    num_epochs, hidden_size, verbosity, K = 100, None, None, 5
+    num_epochs, hidden_size, verbosity, K, kernel_size = 100, None, None, 5, None
 
     if dl_config:
         stream = open(dl_config, "r")
@@ -37,8 +37,10 @@ def config_parser(dl_config):
             verbosity = params["verbosity"]
         if "K-fold" in params.keys():
             K = params["K-fold"]
+        if "kernel_size" in params.keys():
+            kernel_size = params["kernel_size"]
 
-    return num_epochs, hidden_size, verbosity, K
+    return num_epochs, hidden_size, verbosity, K, kernel_size
 
 
 def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_defined=None):
@@ -187,9 +189,9 @@ def NN(hidden_layer_size, input_layer_size, output_layer_size):
     return model
 
 
-def CNN(hidden_layer_size, input_layer_size, output_layer_size):
+def CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size):
     model = Sequential()
-    model.add(Conv1D(64, 3, activation="relu", input_shape=(input_layer_size, 1)))
+    model.add(Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1)))
     model.add(Dense(hidden_layer_size, activation="relu"))
     model.add(MaxPooling1D())
     model.add(Flatten())
