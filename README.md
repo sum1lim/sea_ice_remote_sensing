@@ -1,30 +1,16 @@
 # Sea Ice Remote Sensing
 
-**Authors:** [Sangwon Lim](https://github.com/sum1lim) and [Omar Kawach](https://github.com/omarkawach)
+**Authors**: [Sangwon Lim](https://github.com/sum1lim) and [Omar Kawach](https://github.com/omarkawach)
 
-**Purpose:** Submission for the group project in University of Victoria's Artificial Intelligence course (ECE 470). 
+**Purpose**: Submission for the group project in University of Victoria's Artificial Intelligence course (ECE 470). 
 
-## Development Instructions 
+**Description**: Get a model and see if it can be applicable to other data.
 
-### Getting the Data
-
-For our research we used optical data from Kaggle. Our Python programs in the package are intended to run the following dataset:
-
-[Sylvester, S. (2021, April). Arctic sea ice image masking, Version 3. Retrieved May 17, 2021](https://www.kaggle.com/alexandersylvester/arctic-sea-ice-image-masking/version/3)
-
-To use the dataset we selected, ensure that you have a [Kaggle API token](https://www.kaggle.com/c/two-sigma-financial-news/discussion/83593) properly saved locally. 
-
-Then you may ```cd``` into the ```data``` folder and run in venv
-
-```
-kaggle datasets download alexandersylvester/arctic-sea-ice-image-masking 
-```
-
-Once you have the zipped file, unzip it. 
-
-**Note**: You will need to have Kaggle already pip installed. 
+## Getting Started
 
 ### Install the Package in a Python Virtual Environment
+
+To avoid conflicts, the first step is to isolate this project by creating a Python virtual environment called ```venv```. The virtual environment will have it's own python interpreter, dependencies, and scripts. Commands should only be entered in a terminal that has ```venv``` active. 
 
 #### MacOS / Linux
 
@@ -32,6 +18,7 @@ Once you have the zipped file, unzip it.
 python -m venv venv
 source venv/bin/activate
 pip install .
+pip install -r requirements.txt
 ```
 
 #### Windows
@@ -40,75 +27,157 @@ pip install .
 python -m venv venv
 venv/Scripts/activate
 pip install .
+pip install -r requirements.txt
+```
+
+### Getting the Data
+
+For our research we used optical data from Kaggle. The Python programs in the package were built with the following dataset:
+
+[Sylvester, S. (2021, April). Arctic sea ice image masking, Version 3. Retrieved May 17, 2021](https://www.kaggle.com/alexandersylvester/arctic-sea-ice-image-masking/version/3)
+
+To use the dataset we selected, ensure that you have a [Kaggle API token](https://www.kaggle.com/c/two-sigma-financial-news/discussion/83593) properly saved locally. 
+
+Once you have ensured that you have a Kaggle API token, ```cd``` into the ```data``` folder and run the following command:
+
+```
+kaggle datasets download alexandersylvester/arctic-sea-ice-image-masking 
 ```
 
 ## Running Programs
 
-Make sure you are in the main Python working directory when running the commands in windows.
+For the workflow, the commands below are in sequential order. Again, make sure you are in ```venv``` when running these commands.
 
-Also be sure to write ```python``` before the path to the script if you are on windows. 
+**Note**: If you are on Windows, be sure to write ```python``` before the path to the script you are trying to run. Only Windows requires a relative path to the script you are trying to run. The commands below assume you are in the project's home directory. 
 
-### Centroids
+### 1. Extracting X-Y Coordinates of Patch Locations
 
-Sample command (UNIX):
+***Purpose***: Preprocessing step for feature extraction.
 
-```centroids --input ./data/AOIs_R_thresh_CL.png --max-area 700```
+**Note**: The reference image of patch locations is retrieved using the ```extract_patch_locations``` shell script or batch script. 
 
-### Connected Lines
+##### Unix-like Operating Systems
 
-Sample command (UNIX):
+```
+./extract_patch_locations.sh
+```
 
-```connect-lines --input ./data/AOIs_R_thresh.png --iterations 2 --extension png```
+##### Windows
 
-### Create Datasets
+```
+./extract_patch_locations.bat
+```
 
-Sample command on UNIX based systems for multiprocessing: 
+### 2. Pixel Based Feature Extraction
 
-```create-datasets --images ./data/arctic-sea-ice-image-masking/Images --masks ./data/arctic-sea-ice-image-masking/Masks --dist ./data/pixel_values.csv --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --multiprocess```
+***Purpose***: Features for machine learning should be extracted for each sample pixel. Extracts pixel samples where the number of samples per class is nearly consistent throughout the resulting dataset.
 
-Sample command for Windows without multiprocessing:
+#### Distribution statistics 
 
-```python scripts/create-datasets --images ./data/arctic-sea-ice-image-masking/Images --masks ./data/arctic-sea-ice-image-masking/Masks --dist ./data/pixel_values.csv --patasks --dist ./data/pixel_values.csv --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv```
+##### Unix-like Operating Systems
 
-### Distribution Statistics 
+Command to run distribution statistics on a folder: 
 
-Sample command for folder (UNIX): 
+```
+dist-stat --input data/arctic-sea-ice-image-masking/Masks
+```
 
-```dist-stat --input data/arctic-sea-ice-image-masking/Masks```
+Command to run distribution statistics on a single file: 
 
-Sample command for single file (UNIX): 
+```
+dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png
+```
 
-```dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png```
+##### Windows
 
-### Extract Colour 
+Command to run distribution statistics on a folder: 
 
-Sample command (UNIX):
+```
+python scripts/dist-stat --input data/arctic-sea-ice-image-masking/Masks
+```
 
-```extract-colour --input ./data/AOIs.png --colour R --extension png```         
+Command to run distribution statistics on a single file: 
 
-### Extracting X-Y Coordinates of Patch Locations
+```
+python scripts/dist-stat --input data/arctic-sea-ice-image-masking/Masks/P0-2016042417-mask.png
+```
 
-For those on UNIX based OSs, there is a batch script for extracting X-Y coordinates of patch locations (see ```extract_patch_locations.sh```). 
+#### Create datasets
 
-Windows users will need to individual run the commands individually. 
+##### Unix-like Operating Systems
 
-### Normalize Data
+Command to create datasets via multiprocessing:
 
-To normalize the training dataset (UNIX):
+```
+create-datasets --images ./data/arctic-sea-ice-image-masking/Images --masks ./data/arctic-sea-ice-image-masking/Masks --dist ./data/pixel_values.csv --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --multiprocess
+```
 
-```normalize --input ./data/train_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv```
-To normalize the test dataset (UNIX):
+Command to create datasets without multiprocessing:
 
-```normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv```
+```
+create-datasets --images ./data/arctic-sea-ice-image-masking/Images --masks ./data/arctic-sea-ice-image-masking/Masks --dist ./data/pixel_values.csv --dist ./data/pixel_values.csv --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv
+```
 
-### SOBEL
+##### Windows
 
-```SOBEL --input path/to/input/directory/or/file --contrast --extension png```
+**Note:** WinError 5 will occur if you try creating datasets with multiprocessing on Windows.
 
-### Thresholding
+Command to create datasets without multiprocessing:
 
-```thresh --input path/to/input/directory/or/file --contrast --max 255 --min 0 --extension png```
+```
+python scripts/create-datasets --images ./data/arctic-sea-ice-image-masking/Images --masks ./data/arctic-sea-ice-image-masking/Masks --dist ./data/pixel_values.csv --dist ./data/pixel_values.csv --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv
+```
 
-Sample command (UNIX):
+### 3. Generate GLCM Texture Features
 
-```threshold --input ./data/AOIs_R.png --max 255 --min 104 --extension png```
+***Purpose***: Generate 5 GLCM products for each of the data points
+
+##### Unix-like Operating Systems
+
+```
+GLCM --input ./data/train_dataset/raw.csv --img-dir ./data/arctic-sea-ice-image-masking/Images
+```
+
+##### Windows
+
+```
+python scripts/GLCM --input ./data/train_dataset/raw.csv --img-dir ./data/arctic-sea-ice-image-masking/Images
+```
+
+### 4. Normalize Data
+
+***Purpose***: Normalizing data can result in better performance of the model. Except for training data, the strategy of normalization should include standard min & max values instead of calculating such values within the dataset. The standard values are from the training dataset.
+
+##### Unix-like Operating Systems
+
+To normalize the training dataset:
+
+```
+normalize --input ./data/train_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv
+```
+
+To normalize the test dataset:
+
+```
+normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv
+```
+
+##### Windows
+
+To normalize the training dataset:
+
+```
+python scripts/normalize --input ./data/train_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv
+```
+
+To normalize the test dataset:
+
+```
+python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv
+```
+
+### 5. 
+
+## Sources 
+
+[1] R. Ressel, A. Frost and S. Lehner, "A Neural Network-Based Classification for Sea Ice Types on X-Band SAR Images," in IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, vol. 8, no. 7, pp. 3672-3680, July 2015, doi: 10.1109/JSTARS.2015.2436993.

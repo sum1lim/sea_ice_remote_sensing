@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-from sea_ice_rs.install import install
-
-install()
-
 import argparse
 import os
 import sys

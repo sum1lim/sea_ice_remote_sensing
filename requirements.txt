@@ -1,0 +1,5 @@
+kaggle
+opencv-python
+scikit-image
+tqdm
+pandas
