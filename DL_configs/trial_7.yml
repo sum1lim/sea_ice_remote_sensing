@@ -1,13 +1,28 @@
-# No merging between classes
-# Drop unprocessed image indicator features
-# Drop (X, Y) coordinates
+# Merge classes that show high confusions between them
+# Use only pixel values and GLCM products
 
 configuration:
   verbosity: 2
   hidden_size: 128
   epochs: 100
-  K-fold: 1
+  K-fold: 5
   kernel_size: 5
+
+labels:
+  0:
+    - 1
+    - 2
+  10:
+    - 20
+    - 30
+  40:
+    - 50
+    - 60
+  70:
+    - 80
+    - 90
+  91:
+    - 92
 
 features:
   # - label
@@ -15,8 +30,8 @@ features:
   # - year
   # - patch_loc_y
   # - patch_loc_x
-  - DOY
-  - hour
+  # - DOY
+  # - hour
   # - pix_loc_y
   # - pix_loc_x
   - band_8

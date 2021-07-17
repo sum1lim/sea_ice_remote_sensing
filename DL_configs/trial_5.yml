@@ -1,5 +1,5 @@
 # No merging between classes
-# Use only pixel values and GLCM products
+# Use only pixel values
 
 configuration:
   verbosity: 2
@@ -21,18 +21,18 @@ features:
   - band_8
   - band_4
   - band_3
-  - entropy_8
-  - entropy_4
-  - entropy_3
-  - ASM_8
-  - ASM_4
-  - ASM_3
-  - contrast_8
-  - contrast_4
-  - contrast_3
-  - homogeneity_8
-  - homogeneity_4
-  - homogeneity_3
-  - dissimilarity_8
-  - dissimilarity_4
-  - dissimilarity_3
+  # - entropy_8
+  # - entropy_4
+  # - entropy_3
+  # - ASM_8
+  # - ASM_4
+  # - ASM_3
+  # - contrast_8
+  # - contrast_4
+  # - contrast_3
+  # - homogeneity_8
+  # - homogeneity_4
+  # - homogeneity_3
+  # - dissimilarity_8
+  # - dissimilarity_4
+  # - dissimilarity_3
