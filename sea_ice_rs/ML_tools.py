@@ -150,9 +150,9 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
 
     cm_csv = open(f"{result_dir}/confusion_matrix.csv", "w", newline="")
     cm_writer = csv.writer(cm_csv)
-    cm_writer.writerow(classes)
-    for row in cm_counts:
-        cm_writer.writerow(row)
+    cm_writer.writerow(np.insert(classes, 0, None, axis=0))
+    for i, row in enumerate(cm_counts):
+        cm_writer.writerow(np.insert(row, 0, classes[i], axis=0))
 
     heatmap(cm_percentage, vmin=0, vmax=100)
     plt.savefig(f"{result_dir}/heat_map.png")
