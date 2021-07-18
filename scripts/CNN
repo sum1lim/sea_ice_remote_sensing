@@ -16,6 +16,8 @@ from sea_ice_rs.ML_tools import (
     learning_curve,
     tr_val_split,
 )
+from keras.models import Sequential
+from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
 from keras.callbacks import ModelCheckpoint
 
 
