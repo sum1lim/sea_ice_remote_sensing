@@ -1,0 +1,420 @@
+Before oversampling: Counter({50.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475, 40.0: 37235})
+After oversampling: Counter({50.0: 38006, 40.0: 38006, 0.0: 37856, 1.0: 37836, 70.0: 37779, 20.0: 37752, 80.0: 37699, 10.0: 37678, 60.0: 37677, 92.0: 37673, 2.0: 37641, 91.0: 37630, 30.0: 37505, 90.0: 37480, 100.0: 37475})
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d (Conv1D)              (None, 16, 64)            384       
+_________________________________________________________________
+dense (Dense)                (None, 16, 128)           8320      
+_________________________________________________________________
+max_pooling1d (MaxPooling1D) (None, 8, 128)            0         
+_________________________________________________________________
+flatten (Flatten)            (None, 1024)              0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 15)                15375     
+=================================================================
+Total params: 24,079
+Trainable params: 24,079
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/100
+56570/56570 - 41s - loss: 1.3260 - accuracy: 0.5413 - val_loss: 4.5975 - val_accuracy: 0.3180
+
+Epoch 00001: val_loss improved from inf to 4.59749, saving model to ./results/CNN_trial_3/cp.ckpt
+Epoch 2/100
+56570/56570 - 41s - loss: 1.1393 - accuracy: 0.6019 - val_loss: 5.3403 - val_accuracy: 0.2967
+
+Epoch 00002: val_loss did not improve from 4.59749
+Epoch 3/100
+56570/56570 - 41s - loss: 1.0753 - accuracy: 0.6237 - val_loss: 6.0201 - val_accuracy: 0.3025
+
+Epoch 00003: val_loss did not improve from 4.59749
+Epoch 4/100
+56570/56570 - 41s - loss: 1.0356 - accuracy: 0.6393 - val_loss: 6.1955 - val_accuracy: 0.2992
+
+Epoch 00004: val_loss did not improve from 4.59749
+Epoch 5/100
+56570/56570 - 41s - loss: 1.0069 - accuracy: 0.6493 - val_loss: 6.7086 - val_accuracy: 0.3091
+
+Epoch 00005: val_loss did not improve from 4.59749
+Epoch 6/100
+56570/56570 - 41s - loss: 0.9882 - accuracy: 0.6567 - val_loss: 6.3886 - val_accuracy: 0.3069
+
+Epoch 00006: val_loss did not improve from 4.59749
+Epoch 7/100
+56570/56570 - 41s - loss: 0.9738 - accuracy: 0.6616 - val_loss: 6.1907 - val_accuracy: 0.3075
+
+Epoch 00007: val_loss did not improve from 4.59749
+Epoch 8/100
+56570/56570 - 41s - loss: 0.9624 - accuracy: 0.6654 - val_loss: 7.2185 - val_accuracy: 0.3020
+
+Epoch 00008: val_loss did not improve from 4.59749
+Epoch 9/100
+56570/56570 - 42s - loss: 0.9546 - accuracy: 0.6686 - val_loss: 7.4391 - val_accuracy: 0.3065
+
+Epoch 00009: val_loss did not improve from 4.59749
+Epoch 10/100
+56570/56570 - 42s - loss: 0.9472 - accuracy: 0.6723 - val_loss: 7.7681 - val_accuracy: 0.2970
+
+Epoch 00010: val_loss did not improve from 4.59749
+Epoch 11/100
+56570/56570 - 42s - loss: 0.9407 - accuracy: 0.6740 - val_loss: 6.8263 - val_accuracy: 0.3062
+
+Epoch 00011: val_loss did not improve from 4.59749
+Epoch 12/100
+56570/56570 - 41s - loss: 0.9351 - accuracy: 0.6764 - val_loss: 7.4711 - val_accuracy: 0.3076
+
+Epoch 00012: val_loss did not improve from 4.59749
+Epoch 13/100
+56570/56570 - 42s - loss: 0.9302 - accuracy: 0.6784 - val_loss: 7.1871 - val_accuracy: 0.3215
+
+Epoch 00013: val_loss did not improve from 4.59749
+Epoch 14/100
+56570/56570 - 42s - loss: 0.9242 - accuracy: 0.6805 - val_loss: 7.6204 - val_accuracy: 0.3039
+
+Epoch 00014: val_loss did not improve from 4.59749
+Epoch 15/100
+56570/56570 - 41s - loss: 0.9194 - accuracy: 0.6817 - val_loss: 8.3055 - val_accuracy: 0.2955
+
+Epoch 00015: val_loss did not improve from 4.59749
+Epoch 16/100
+56570/56570 - 42s - loss: 0.9150 - accuracy: 0.6840 - val_loss: 7.0759 - val_accuracy: 0.3030
+
+Epoch 00016: val_loss did not improve from 4.59749
+Epoch 17/100
+56570/56570 - 41s - loss: 0.9107 - accuracy: 0.6847 - val_loss: 7.3767 - val_accuracy: 0.3010
+
+Epoch 00017: val_loss did not improve from 4.59749
+Epoch 18/100
+56570/56570 - 41s - loss: 0.9085 - accuracy: 0.6854 - val_loss: 8.8725 - val_accuracy: 0.3037
+
+Epoch 00018: val_loss did not improve from 4.59749
+Epoch 19/100
+56570/56570 - 41s - loss: 0.9046 - accuracy: 0.6875 - val_loss: 7.1673 - val_accuracy: 0.3057
+
+Epoch 00019: val_loss did not improve from 4.59749
+Epoch 20/100
+56570/56570 - 41s - loss: 0.9037 - accuracy: 0.6871 - val_loss: 8.0413 - val_accuracy: 0.3017
+
+Epoch 00020: val_loss did not improve from 4.59749
+Epoch 21/100
+56570/56570 - 41s - loss: 0.8997 - accuracy: 0.6888 - val_loss: 8.8174 - val_accuracy: 0.3053
+
+Epoch 00021: val_loss did not improve from 4.59749
+Epoch 22/100
+56570/56570 - 41s - loss: 0.8977 - accuracy: 0.6898 - val_loss: 8.5863 - val_accuracy: 0.3013
+
+Epoch 00022: val_loss did not improve from 4.59749
+Epoch 23/100
+56570/56570 - 41s - loss: 0.8967 - accuracy: 0.6903 - val_loss: 8.6836 - val_accuracy: 0.3119
+
+Epoch 00023: val_loss did not improve from 4.59749
+Epoch 24/100
+56570/56570 - 41s - loss: 0.8949 - accuracy: 0.6906 - val_loss: 8.5624 - val_accuracy: 0.3037
+
+Epoch 00024: val_loss did not improve from 4.59749
+Epoch 25/100
+56570/56570 - 41s - loss: 0.8948 - accuracy: 0.6915 - val_loss: 8.3133 - val_accuracy: 0.2963
+
+Epoch 00025: val_loss did not improve from 4.59749
+Epoch 26/100
+56570/56570 - 41s - loss: 0.8927 - accuracy: 0.6919 - val_loss: 9.8831 - val_accuracy: 0.3029
+
+Epoch 00026: val_loss did not improve from 4.59749
+Epoch 27/100
+56570/56570 - 41s - loss: 0.8917 - accuracy: 0.6920 - val_loss: 9.0026 - val_accuracy: 0.3077
+
+Epoch 00027: val_loss did not improve from 4.59749
+Epoch 28/100
+56570/56570 - 41s - loss: 0.8897 - accuracy: 0.6931 - val_loss: 9.6179 - val_accuracy: 0.3035
+
+Epoch 00028: val_loss did not improve from 4.59749
+Epoch 29/100
+56570/56570 - 41s - loss: 0.8892 - accuracy: 0.6933 - val_loss: 10.2668 - val_accuracy: 0.2949
+
+Epoch 00029: val_loss did not improve from 4.59749
+Epoch 30/100
+56570/56570 - 41s - loss: 0.8921 - accuracy: 0.6916 - val_loss: 9.7528 - val_accuracy: 0.2987
+
+Epoch 00030: val_loss did not improve from 4.59749
+Epoch 31/100
+56570/56570 - 41s - loss: 0.8890 - accuracy: 0.6935 - val_loss: 9.5463 - val_accuracy: 0.3099
+
+Epoch 00031: val_loss did not improve from 4.59749
+Epoch 32/100
+56570/56570 - 41s - loss: 0.8877 - accuracy: 0.6934 - val_loss: 9.5992 - val_accuracy: 0.2999
+
+Epoch 00032: val_loss did not improve from 4.59749
+Epoch 33/100
+56570/56570 - 41s - loss: 0.8879 - accuracy: 0.6935 - val_loss: 9.5329 - val_accuracy: 0.3173
+
+Epoch 00033: val_loss did not improve from 4.59749
+Epoch 34/100
+56570/56570 - 41s - loss: 0.8855 - accuracy: 0.6947 - val_loss: 9.7269 - val_accuracy: 0.3057
+
+Epoch 00034: val_loss did not improve from 4.59749
+Epoch 35/100
+56570/56570 - 41s - loss: 0.8859 - accuracy: 0.6950 - val_loss: 9.7518 - val_accuracy: 0.3021
+
+Epoch 00035: val_loss did not improve from 4.59749
+Epoch 36/100
+56570/56570 - 41s - loss: 0.8850 - accuracy: 0.6949 - val_loss: 9.8852 - val_accuracy: 0.2981
+
+Epoch 00036: val_loss did not improve from 4.59749
+Epoch 37/100
+56570/56570 - 41s - loss: 0.8853 - accuracy: 0.6949 - val_loss: 9.5880 - val_accuracy: 0.2997
+
+Epoch 00037: val_loss did not improve from 4.59749
+Epoch 38/100
+56570/56570 - 41s - loss: 0.8832 - accuracy: 0.6953 - val_loss: 10.4176 - val_accuracy: 0.3146
+
+Epoch 00038: val_loss did not improve from 4.59749
+Epoch 39/100
+56570/56570 - 41s - loss: 0.8836 - accuracy: 0.6956 - val_loss: 9.4591 - val_accuracy: 0.3045
+
+Epoch 00039: val_loss did not improve from 4.59749
+Epoch 40/100
+56570/56570 - 41s - loss: 0.8841 - accuracy: 0.6958 - val_loss: 8.6939 - val_accuracy: 0.3091
+
+Epoch 00040: val_loss did not improve from 4.59749
+Epoch 41/100
+56570/56570 - 41s - loss: 0.8846 - accuracy: 0.6955 - val_loss: 10.6023 - val_accuracy: 0.3071
+
+Epoch 00041: val_loss did not improve from 4.59749
+Epoch 42/100
+56570/56570 - 41s - loss: 0.8869 - accuracy: 0.6948 - val_loss: 10.8006 - val_accuracy: 0.3068
+
+Epoch 00042: val_loss did not improve from 4.59749
+Epoch 43/100
+56570/56570 - 41s - loss: 0.8843 - accuracy: 0.6957 - val_loss: 10.1097 - val_accuracy: 0.3052
+
+Epoch 00043: val_loss did not improve from 4.59749
+Epoch 44/100
+56570/56570 - 41s - loss: 0.8886 - accuracy: 0.6941 - val_loss: 9.7260 - val_accuracy: 0.3093
+
+Epoch 00044: val_loss did not improve from 4.59749
+Epoch 45/100
+56570/56570 - 41s - loss: 0.8845 - accuracy: 0.6958 - val_loss: 10.9925 - val_accuracy: 0.3014
+
+Epoch 00045: val_loss did not improve from 4.59749
+Epoch 46/100
+56570/56570 - 41s - loss: 0.8850 - accuracy: 0.6959 - val_loss: 10.2926 - val_accuracy: 0.3048
+
+Epoch 00046: val_loss did not improve from 4.59749
+Epoch 47/100
+56570/56570 - 41s - loss: 0.8842 - accuracy: 0.6961 - val_loss: 9.6500 - val_accuracy: 0.2989
+
+Epoch 00047: val_loss did not improve from 4.59749
+Epoch 48/100
+56570/56570 - 41s - loss: 0.8847 - accuracy: 0.6960 - val_loss: 11.0168 - val_accuracy: 0.3117
+
+Epoch 00048: val_loss did not improve from 4.59749
+Epoch 49/100
+56570/56570 - 41s - loss: 0.8840 - accuracy: 0.6957 - val_loss: 11.5912 - val_accuracy: 0.3011
+
+Epoch 00049: val_loss did not improve from 4.59749
+Epoch 50/100
+56570/56570 - 41s - loss: 0.8840 - accuracy: 0.6960 - val_loss: 10.8139 - val_accuracy: 0.2966
+
+Epoch 00050: val_loss did not improve from 4.59749
+Epoch 51/100
+56570/56570 - 41s - loss: 0.8820 - accuracy: 0.6962 - val_loss: 10.0400 - val_accuracy: 0.3049
+
+Epoch 00051: val_loss did not improve from 4.59749
+Epoch 52/100
+56570/56570 - 41s - loss: 0.8825 - accuracy: 0.6969 - val_loss: 11.4743 - val_accuracy: 0.3109
+
+Epoch 00052: val_loss did not improve from 4.59749
+Epoch 53/100
+56570/56570 - 41s - loss: 0.8828 - accuracy: 0.6967 - val_loss: 11.6349 - val_accuracy: 0.3123
+
+Epoch 00053: val_loss did not improve from 4.59749
+Epoch 54/100
+56570/56570 - 41s - loss: 0.8825 - accuracy: 0.6967 - val_loss: 10.6281 - val_accuracy: 0.3118
+
+Epoch 00054: val_loss did not improve from 4.59749
+Epoch 55/100
+56570/56570 - 41s - loss: 0.8826 - accuracy: 0.6967 - val_loss: 12.2285 - val_accuracy: 0.3063
+
+Epoch 00055: val_loss did not improve from 4.59749
+Epoch 56/100
+56570/56570 - 41s - loss: 0.8818 - accuracy: 0.6970 - val_loss: 11.7100 - val_accuracy: 0.3089
+
+Epoch 00056: val_loss did not improve from 4.59749
+Epoch 57/100
+56570/56570 - 41s - loss: 0.8822 - accuracy: 0.6977 - val_loss: 10.9216 - val_accuracy: 0.3037
+
+Epoch 00057: val_loss did not improve from 4.59749
+Epoch 58/100
+56570/56570 - 41s - loss: 0.8811 - accuracy: 0.6974 - val_loss: 10.8448 - val_accuracy: 0.3057
+
+Epoch 00058: val_loss did not improve from 4.59749
+Epoch 59/100
+56570/56570 - 41s - loss: 0.8811 - accuracy: 0.6970 - val_loss: 12.4108 - val_accuracy: 0.3145
+
+Epoch 00059: val_loss did not improve from 4.59749
+Epoch 60/100
+56570/56570 - 41s - loss: 0.8806 - accuracy: 0.6976 - val_loss: 10.9775 - val_accuracy: 0.3216
+
+Epoch 00060: val_loss did not improve from 4.59749
+Epoch 61/100
+56570/56570 - 41s - loss: 0.8797 - accuracy: 0.6976 - val_loss: 11.3317 - val_accuracy: 0.3099
+
+Epoch 00061: val_loss did not improve from 4.59749
+Epoch 62/100
+56570/56570 - 41s - loss: 0.8822 - accuracy: 0.6970 - val_loss: 12.0760 - val_accuracy: 0.3111
+
+Epoch 00062: val_loss did not improve from 4.59749
+Epoch 63/100
+56570/56570 - 41s - loss: 0.8812 - accuracy: 0.6971 - val_loss: 12.1953 - val_accuracy: 0.3097
+
+Epoch 00063: val_loss did not improve from 4.59749
+Epoch 64/100
+56570/56570 - 41s - loss: 0.8812 - accuracy: 0.6978 - val_loss: 11.7222 - val_accuracy: 0.3123
+
+Epoch 00064: val_loss did not improve from 4.59749
+Epoch 65/100
+56570/56570 - 41s - loss: 0.8797 - accuracy: 0.6982 - val_loss: 12.1417 - val_accuracy: 0.3159
+
+Epoch 00065: val_loss did not improve from 4.59749
+Epoch 66/100
+56570/56570 - 41s - loss: 0.8820 - accuracy: 0.6978 - val_loss: 11.3917 - val_accuracy: 0.3066
+
+Epoch 00066: val_loss did not improve from 4.59749
+Epoch 67/100
+56570/56570 - 41s - loss: 0.8805 - accuracy: 0.6971 - val_loss: 11.5305 - val_accuracy: 0.3155
+
+Epoch 00067: val_loss did not improve from 4.59749
+Epoch 68/100
+56570/56570 - 41s - loss: 0.8819 - accuracy: 0.6972 - val_loss: 11.6174 - val_accuracy: 0.3114
+
+Epoch 00068: val_loss did not improve from 4.59749
+Epoch 69/100
+56570/56570 - 42s - loss: 0.8819 - accuracy: 0.6972 - val_loss: 11.7352 - val_accuracy: 0.3192
+
+Epoch 00069: val_loss did not improve from 4.59749
+Epoch 70/100
+56570/56570 - 42s - loss: 0.8799 - accuracy: 0.6970 - val_loss: 11.1397 - val_accuracy: 0.3087
+
+Epoch 00070: val_loss did not improve from 4.59749
+Epoch 71/100
+56570/56570 - 42s - loss: 0.8851 - accuracy: 0.6971 - val_loss: 12.2956 - val_accuracy: 0.3041
+
+Epoch 00071: val_loss did not improve from 4.59749
+Epoch 72/100
+56570/56570 - 42s - loss: 0.8812 - accuracy: 0.6981 - val_loss: 11.5414 - val_accuracy: 0.3004
+
+Epoch 00072: val_loss did not improve from 4.59749
+Epoch 73/100
+56570/56570 - 42s - loss: 0.8808 - accuracy: 0.6987 - val_loss: 11.1314 - val_accuracy: 0.3057
+
+Epoch 00073: val_loss did not improve from 4.59749
+Epoch 74/100
+56570/56570 - 42s - loss: 0.8807 - accuracy: 0.6981 - val_loss: 11.3893 - val_accuracy: 0.3120
+
+Epoch 00074: val_loss did not improve from 4.59749
+Epoch 75/100
+56570/56570 - 42s - loss: 0.8807 - accuracy: 0.6978 - val_loss: 11.7158 - val_accuracy: 0.3093
+
+Epoch 00075: val_loss did not improve from 4.59749
+Epoch 76/100
+56570/56570 - 42s - loss: 0.8797 - accuracy: 0.6985 - val_loss: 11.7429 - val_accuracy: 0.3135
+
+Epoch 00076: val_loss did not improve from 4.59749
+Epoch 77/100
+56570/56570 - 42s - loss: 0.8805 - accuracy: 0.6973 - val_loss: 11.3375 - val_accuracy: 0.3086
+
+Epoch 00077: val_loss did not improve from 4.59749
+Epoch 78/100
+56570/56570 - 42s - loss: 0.8789 - accuracy: 0.6977 - val_loss: 12.7887 - val_accuracy: 0.3096
+
+Epoch 00078: val_loss did not improve from 4.59749
+Epoch 79/100
+56570/56570 - 42s - loss: 0.8796 - accuracy: 0.6986 - val_loss: 11.2691 - val_accuracy: 0.3113
+
+Epoch 00079: val_loss did not improve from 4.59749
+Epoch 80/100
+56570/56570 - 42s - loss: 0.8815 - accuracy: 0.6977 - val_loss: 12.5212 - val_accuracy: 0.3075
+
+Epoch 00080: val_loss did not improve from 4.59749
+Epoch 81/100
+56570/56570 - 42s - loss: 0.8811 - accuracy: 0.6975 - val_loss: 11.8103 - val_accuracy: 0.3021
+
+Epoch 00081: val_loss did not improve from 4.59749
+Epoch 82/100
+56570/56570 - 42s - loss: 0.8823 - accuracy: 0.6968 - val_loss: 11.7783 - val_accuracy: 0.3167
+
+Epoch 00082: val_loss did not improve from 4.59749
+Epoch 83/100
+56570/56570 - 42s - loss: 0.8806 - accuracy: 0.6981 - val_loss: 12.3552 - val_accuracy: 0.3215
+
+Epoch 00083: val_loss did not improve from 4.59749
+Epoch 84/100
+56570/56570 - 42s - loss: 0.8895 - accuracy: 0.6942 - val_loss: 12.3239 - val_accuracy: 0.3217
+
+Epoch 00084: val_loss did not improve from 4.59749
+Epoch 85/100
+56570/56570 - 42s - loss: 0.8821 - accuracy: 0.6977 - val_loss: 12.4396 - val_accuracy: 0.3074
+
+Epoch 00085: val_loss did not improve from 4.59749
+Epoch 86/100
+56570/56570 - 42s - loss: 0.8821 - accuracy: 0.6975 - val_loss: 12.2169 - val_accuracy: 0.3149
+
+Epoch 00086: val_loss did not improve from 4.59749
+Epoch 87/100
+56570/56570 - 42s - loss: 0.8808 - accuracy: 0.6977 - val_loss: 12.4411 - val_accuracy: 0.3027
+
+Epoch 00087: val_loss did not improve from 4.59749
+Epoch 88/100
+56570/56570 - 42s - loss: 0.8818 - accuracy: 0.6979 - val_loss: 13.1381 - val_accuracy: 0.3073
+
+Epoch 00088: val_loss did not improve from 4.59749
+Epoch 89/100
+56570/56570 - 42s - loss: 0.8816 - accuracy: 0.6979 - val_loss: 12.6478 - val_accuracy: 0.3113
+
+Epoch 00089: val_loss did not improve from 4.59749
+Epoch 90/100
+56570/56570 - 42s - loss: 0.8837 - accuracy: 0.6976 - val_loss: 13.1263 - val_accuracy: 0.3140
+
+Epoch 00090: val_loss did not improve from 4.59749
+Epoch 91/100
+56570/56570 - 42s - loss: 0.8844 - accuracy: 0.6976 - val_loss: 11.4016 - val_accuracy: 0.3072
+
+Epoch 00091: val_loss did not improve from 4.59749
+Epoch 92/100
+56570/56570 - 45s - loss: 0.8838 - accuracy: 0.6971 - val_loss: 11.2210 - val_accuracy: 0.3254
+
+Epoch 00092: val_loss did not improve from 4.59749
+Epoch 93/100
+56570/56570 - 42s - loss: 0.8839 - accuracy: 0.6980 - val_loss: 12.1987 - val_accuracy: 0.3194
+
+Epoch 00093: val_loss did not improve from 4.59749
+Epoch 94/100
+56570/56570 - 43s - loss: 0.8825 - accuracy: 0.6976 - val_loss: 13.4728 - val_accuracy: 0.3058
+
+Epoch 00094: val_loss did not improve from 4.59749
+Epoch 95/100
+56570/56570 - 42s - loss: 0.8843 - accuracy: 0.6967 - val_loss: 12.0067 - val_accuracy: 0.3206
+
+Epoch 00095: val_loss did not improve from 4.59749
+Epoch 96/100
+56570/56570 - 43s - loss: 0.8837 - accuracy: 0.6973 - val_loss: 12.4899 - val_accuracy: 0.3193
+
+Epoch 00096: val_loss did not improve from 4.59749
+Epoch 97/100
+56570/56570 - 43s - loss: 0.8839 - accuracy: 0.6983 - val_loss: 11.3847 - val_accuracy: 0.3287
+
+Epoch 00097: val_loss did not improve from 4.59749
+Epoch 98/100
+56570/56570 - 44s - loss: 0.8848 - accuracy: 0.6970 - val_loss: 13.4576 - val_accuracy: 0.3208
+
+Epoch 00098: val_loss did not improve from 4.59749
+Epoch 99/100
+56570/56570 - 42s - loss: 0.8848 - accuracy: 0.6969 - val_loss: 13.4205 - val_accuracy: 0.3099
+
+Epoch 00099: val_loss did not improve from 4.59749
+Epoch 100/100
+56570/56570 - 44s - loss: 0.8859 - accuracy: 0.6968 - val_loss: 13.2381 - val_accuracy: 0.3135
+
+Epoch 00100: val_loss did not improve from 4.59749
