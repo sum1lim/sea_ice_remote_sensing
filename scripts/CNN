@@ -57,7 +57,7 @@ def main(args):
     for iter, (train, validation) in enumerate(tr_val_pairs):
         checkpoint_path = f"{result_dir}/cp.ckpt"
         cp_callback = ModelCheckpoint(
-            filepath=checkpoint_path, save_weights_only=True, verbose=1
+            filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
         )
 
         model = CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size)
