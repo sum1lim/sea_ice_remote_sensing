@@ -4,14 +4,13 @@ import yaml
 import numpy as np
 import pandas
 import matplotlib.pyplot as plt
+from collections import Counter
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-from sklearn.utils import shuffle
 from seaborn import heatmap
 from keras.models import Sequential
 from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
-from collections import Counter
 from imblearn.over_sampling import RandomOverSampler
 
 
@@ -97,7 +96,7 @@ def process_data(data_file, dl_config=None):
     Y = dataset[:, 0]
 
     print(f"Before oversampling: {Counter(Y)}", file=sys.stdout)
-    oversample = RandomOverSampler(sampling_strategy="minority")
+    oversample = RandomOverSampler(sampling_strategy="not majority")
     X, Y = oversample.fit_resample(X, Y)
     print(f"After oversampling: {Counter(Y)}", file=sys.stdout)
 
@@ -166,34 +165,3 @@ def tr_val_split(K, X_tr, Y_tr):
     tr_val_pairs = kfold.split(X_tr, Y_tr)
 
     return tr_val_pairs
-
-
-def NN(hidden_layer_size, input_layer_size, output_layer_size):
-    # Construct Neural Network
-    model = Sequential()
-    model.add(Dense(hidden_layer_size, input_dim=input_layer_size, activation="relu"))
-    model.add(Dense(output_layer_size, activation="softmax"))
-
-    model.compile(
-        loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
-    )
-    model.summary()
-
-    return model
-
-
-def CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size):
-    model = Sequential()
-    model.add(
-        Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1))
-    )
-    model.add(Dense(hidden_layer_size, activation="relu"))
-    model.add(MaxPooling1D())
-    model.add(Flatten())
-    model.add(Dense(output_layer_size, activation="softmax"))
-    model.compile(
-        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
-    )
-    model.summary()
-
-    return model

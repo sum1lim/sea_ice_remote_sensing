@@ -6,8 +6,6 @@ from sea_ice_rs.ML_tools import (
     config_parser,
     process_data,
     construct_confusion_matrix,
-    NN,
-    CNN,
 )
 from sklearn.metrics import accuracy_score
 from keras.models import load_model

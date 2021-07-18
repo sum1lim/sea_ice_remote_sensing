@@ -15,9 +15,25 @@ from sea_ice_rs.ML_tools import (
     process_data,
     learning_curve,
     tr_val_split,
-    CNN,
 )
 from keras.callbacks import ModelCheckpoint
+
+
+def CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size):
+    model = Sequential()
+    model.add(
+        Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1))
+    )
+    model.add(Dense(hidden_layer_size, activation="relu"))
+    model.add(MaxPooling1D())
+    model.add(Flatten())
+    model.add(Dense(output_layer_size, activation="softmax"))
+    model.compile(
+        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+    model.summary()
+
+    return model
 
 
 def main(args):
