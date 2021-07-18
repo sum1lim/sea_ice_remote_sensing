@@ -80,6 +80,9 @@ def main(args):
         # Plot the learning curve
         learning_curve(model_summary.history, result_dir, iter)
 
+        if K == 1:
+            break
+
     # stdout redirection closed
     if verbosity == 2:
         log_file.close()

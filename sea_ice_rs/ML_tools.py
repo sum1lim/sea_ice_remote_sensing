@@ -160,17 +160,10 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
 
 
 def tr_val_split(K, X_tr, Y_tr):
-    if K > 1:
-        kfold = StratifiedKFold(n_splits=K, shuffle=False)
-        tr_val_pairs = kfold.split(X_tr, Y_tr)
-    else:
-        X_tr, Y_tr = shuffle(X_tr, Y_tr, random_state=0)
-        tr_val_pairs = [
-            (
-                [i for i in range(int(0.8 * len(X_tr)))],
-                [i for i in range(int(0.8 * len(X_tr)), len(X_tr))],
-            )
-        ]
+    if K < 2:
+        K = 2
+    kfold = StratifiedKFold(n_splits=K, shuffle=False)
+    tr_val_pairs = kfold.split(X_tr, Y_tr)
 
     return tr_val_pairs
 
