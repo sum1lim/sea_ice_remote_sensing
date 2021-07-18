@@ -4,20 +4,20 @@ import sys
 import numpy as np
 from sea_ice_rs.ML_tools import (
     config_parser,
-    claculate_hidden_layer_size,
     process_data,
     construct_confusion_matrix,
     NN,
     CNN,
 )
 from sklearn.metrics import accuracy_score
+from keras.models import load_model
 
 
 def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, hidden_size, verbosity, K, kernel_size = config_parser(args.dl_config)
+    _, _, verbosity, _, _ = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -28,27 +28,18 @@ def main(args):
     # Modify test dataset
     X_te, Y_te, classes = process_data(args.test_data, args.dl_config)
 
-    # Define hidden layer size
-    input_layer_size = X_te.shape[1]
-    output_layer_size = len(np.unique(Y_te))
-    hidden_layer_size = claculate_hidden_layer_size(
-        input_layer_size, output_layer_size, hidden_size
-    )
-
-    # Initiate model
-    if model_type == "NN":
-        model = NN(hidden_layer_size, input_layer_size, output_layer_size)
-    elif model_type == "CNN":
-        model = CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size)
-        # X should be formatted for CNN
+    # Format X if CNN
+    if model_type == "CNN":
         X_te = np.transpose(np.array([np.transpose(X_te)]))
 
     # Call checkpoint
     checkpoint_path = f"{args.result_dir}/cp.ckpt"
-    model.load_weights(checkpoint_path)
+    trained_model = load_model(checkpoint_path)
 
     # Predict the test dataset
-    y_pred = np.argmax(model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1)
+    y_pred = np.argmax(
+        trained_model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1
+    )
     print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
     # Construct confusion matrix
