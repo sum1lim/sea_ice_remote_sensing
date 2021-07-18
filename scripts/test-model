@@ -15,7 +15,7 @@ def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, _, verbosity, _, _ = config_parser(args.dl_config)
+    _, test_data, _, _, verbosity, _, _ = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -24,7 +24,7 @@ def main(args):
         sys.stdout = log_file
 
     # Modify test dataset
-    X_te, Y_te, classes = process_data(args.test_data, args.dl_config)
+    X_te, Y_te, classes = process_data(test_data, args.dl_config)
 
     # Format X if CNN
     if model_type == "CNN":
@@ -51,7 +51,6 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--test-data", type=str, help="CSV file containing test data")
     parser.add_argument(
         "--result-dir",
         type=str,

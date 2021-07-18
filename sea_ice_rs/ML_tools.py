@@ -16,7 +16,7 @@ def config_parser(dl_config):
     """
     Parse the parameters defined in the configuration part.
     """
-    num_epochs, hidden_size, verbosity, K, kernel_size = 100, None, None, 5, None
+    num_epochs, hidden_size, verbosity, K, kernel_size = 100, None, 2, 1, 5
 
     if dl_config:
         stream = open(dl_config, "r")
@@ -26,6 +26,8 @@ def config_parser(dl_config):
 
     if "configuration" in config_dict.keys():
         params = config_dict["configuration"]
+        train_data = params["train_data"]
+        test_data = params["test_data"]
         if "epochs" in params.keys():
             num_epochs = params["epochs"]
         if "hidden_size" in params.keys():
@@ -37,7 +39,7 @@ def config_parser(dl_config):
         if "kernel_size" in params.keys():
             kernel_size = params["kernel_size"]
 
-    return num_epochs, hidden_size, verbosity, K, kernel_size
+    return train_data, test_data, num_epochs, hidden_size, verbosity, K, kernel_size
 
 
 def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_defined=None):
