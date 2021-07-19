@@ -190,7 +190,7 @@ def sampling_probability(mask_dir, images):
         None
 
     min_count = min(dict_of_ppv.values())
-    return {label: min_count / count for label, count in dict_of_ppv.items()}
+    return {label: (min_count / count) / 5 for label, count in dict_of_ppv.items()}
 
 
 def patch_location_map(patch_loc_file):

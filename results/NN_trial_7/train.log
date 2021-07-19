@@ -1,0 +1,414 @@
+Before oversampling: Counter({0.0: 22772, 10.0: 15114, 50.0: 15085, 90.0: 15054, 30.0: 14964, 70.0: 14771, 92.0: 7628, 100.0: 7624})
+After oversampling: Counter({100.0: 22772, 92.0: 22772, 90.0: 22772, 10.0: 22772, 0.0: 22772, 70.0: 22772, 50.0: 22772, 30.0: 22772})
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 17)                323       
+_________________________________________________________________
+dense_1 (Dense)              (None, 8)                 144       
+=================================================================
+Total params: 467
+Trainable params: 467
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/100
+18218/18218 - 9s - loss: 1.5225 - accuracy: 0.4052 - val_loss: 1.4448 - val_accuracy: 0.4390
+
+Epoch 00001: val_loss improved from inf to 1.44482, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 2/100
+18218/18218 - 8s - loss: 1.4198 - accuracy: 0.4450 - val_loss: 1.4015 - val_accuracy: 0.4521
+
+Epoch 00002: val_loss improved from 1.44482 to 1.40153, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 3/100
+18218/18218 - 8s - loss: 1.3891 - accuracy: 0.4549 - val_loss: 1.3869 - val_accuracy: 0.4553
+
+Epoch 00003: val_loss improved from 1.40153 to 1.38687, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 4/100
+18218/18218 - 8s - loss: 1.3756 - accuracy: 0.4590 - val_loss: 1.3690 - val_accuracy: 0.4586
+
+Epoch 00004: val_loss improved from 1.38687 to 1.36904, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 5/100
+18218/18218 - 8s - loss: 1.3674 - accuracy: 0.4619 - val_loss: 1.3624 - val_accuracy: 0.4622
+
+Epoch 00005: val_loss improved from 1.36904 to 1.36235, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 6/100
+18218/18218 - 8s - loss: 1.3610 - accuracy: 0.4650 - val_loss: 1.3574 - val_accuracy: 0.4641
+
+Epoch 00006: val_loss improved from 1.36235 to 1.35741, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 7/100
+18218/18218 - 8s - loss: 1.3548 - accuracy: 0.4698 - val_loss: 1.3607 - val_accuracy: 0.4637
+
+Epoch 00007: val_loss did not improve from 1.35741
+Epoch 8/100
+18218/18218 - 8s - loss: 1.3496 - accuracy: 0.4721 - val_loss: 1.3498 - val_accuracy: 0.4695
+
+Epoch 00008: val_loss improved from 1.35741 to 1.34977, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 9/100
+18218/18218 - 8s - loss: 1.3451 - accuracy: 0.4745 - val_loss: 1.3464 - val_accuracy: 0.4734
+
+Epoch 00009: val_loss improved from 1.34977 to 1.34638, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 10/100
+18218/18218 - 8s - loss: 1.3409 - accuracy: 0.4747 - val_loss: 1.3441 - val_accuracy: 0.4715
+
+Epoch 00010: val_loss improved from 1.34638 to 1.34407, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 11/100
+18218/18218 - 8s - loss: 1.3362 - accuracy: 0.4782 - val_loss: 1.3410 - val_accuracy: 0.4740
+
+Epoch 00011: val_loss improved from 1.34407 to 1.34103, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 12/100
+18218/18218 - 8s - loss: 1.3333 - accuracy: 0.4802 - val_loss: 1.3432 - val_accuracy: 0.4710
+
+Epoch 00012: val_loss did not improve from 1.34103
+Epoch 13/100
+18218/18218 - 8s - loss: 1.3307 - accuracy: 0.4816 - val_loss: 1.3304 - val_accuracy: 0.4796
+
+Epoch 00013: val_loss improved from 1.34103 to 1.33041, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 14/100
+18218/18218 - 8s - loss: 1.3283 - accuracy: 0.4823 - val_loss: 1.3408 - val_accuracy: 0.4739
+
+Epoch 00014: val_loss did not improve from 1.33041
+Epoch 15/100
+18218/18218 - 8s - loss: 1.3256 - accuracy: 0.4852 - val_loss: 1.3306 - val_accuracy: 0.4792
+
+Epoch 00015: val_loss did not improve from 1.33041
+Epoch 16/100
+18218/18218 - 8s - loss: 1.3238 - accuracy: 0.4850 - val_loss: 1.3332 - val_accuracy: 0.4754
+
+Epoch 00016: val_loss did not improve from 1.33041
+Epoch 17/100
+18218/18218 - 8s - loss: 1.3215 - accuracy: 0.4860 - val_loss: 1.3265 - val_accuracy: 0.4810
+
+Epoch 00017: val_loss improved from 1.33041 to 1.32647, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 18/100
+18218/18218 - 8s - loss: 1.3199 - accuracy: 0.4874 - val_loss: 1.3250 - val_accuracy: 0.4819
+
+Epoch 00018: val_loss improved from 1.32647 to 1.32497, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 19/100
+18218/18218 - 8s - loss: 1.3177 - accuracy: 0.4887 - val_loss: 1.3171 - val_accuracy: 0.4832
+
+Epoch 00019: val_loss improved from 1.32497 to 1.31714, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 20/100
+18218/18218 - 8s - loss: 1.3159 - accuracy: 0.4892 - val_loss: 1.3204 - val_accuracy: 0.4820
+
+Epoch 00020: val_loss did not improve from 1.31714
+Epoch 21/100
+18218/18218 - 8s - loss: 1.3143 - accuracy: 0.4894 - val_loss: 1.3225 - val_accuracy: 0.4772
+
+Epoch 00021: val_loss did not improve from 1.31714
+Epoch 22/100
+18218/18218 - 8s - loss: 1.3132 - accuracy: 0.4902 - val_loss: 1.3286 - val_accuracy: 0.4857
+
+Epoch 00022: val_loss did not improve from 1.31714
+Epoch 23/100
+18218/18218 - 8s - loss: 1.3121 - accuracy: 0.4912 - val_loss: 1.3232 - val_accuracy: 0.4797
+
+Epoch 00023: val_loss did not improve from 1.31714
+Epoch 24/100
+18218/18218 - 8s - loss: 1.3109 - accuracy: 0.4915 - val_loss: 1.3146 - val_accuracy: 0.4822
+
+Epoch 00024: val_loss improved from 1.31714 to 1.31461, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 25/100
+18218/18218 - 8s - loss: 1.3096 - accuracy: 0.4916 - val_loss: 1.3127 - val_accuracy: 0.4821
+
+Epoch 00025: val_loss improved from 1.31461 to 1.31265, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 26/100
+18218/18218 - 8s - loss: 1.3086 - accuracy: 0.4915 - val_loss: 1.3149 - val_accuracy: 0.4820
+
+Epoch 00026: val_loss did not improve from 1.31265
+Epoch 27/100
+18218/18218 - 8s - loss: 1.3079 - accuracy: 0.4928 - val_loss: 1.3200 - val_accuracy: 0.4837
+
+Epoch 00027: val_loss did not improve from 1.31265
+Epoch 28/100
+18218/18218 - 8s - loss: 1.3074 - accuracy: 0.4925 - val_loss: 1.3120 - val_accuracy: 0.4833
+
+Epoch 00028: val_loss improved from 1.31265 to 1.31195, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 29/100
+18218/18218 - 8s - loss: 1.3062 - accuracy: 0.4927 - val_loss: 1.3161 - val_accuracy: 0.4809
+
+Epoch 00029: val_loss did not improve from 1.31195
+Epoch 30/100
+18218/18218 - 8s - loss: 1.3062 - accuracy: 0.4934 - val_loss: 1.3221 - val_accuracy: 0.4780
+
+Epoch 00030: val_loss did not improve from 1.31195
+Epoch 31/100
+18218/18218 - 8s - loss: 1.3054 - accuracy: 0.4925 - val_loss: 1.3249 - val_accuracy: 0.4801
+
+Epoch 00031: val_loss did not improve from 1.31195
+Epoch 32/100
+18218/18218 - 8s - loss: 1.3052 - accuracy: 0.4932 - val_loss: 1.3107 - val_accuracy: 0.4834
+
+Epoch 00032: val_loss improved from 1.31195 to 1.31071, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 33/100
+18218/18218 - 8s - loss: 1.3042 - accuracy: 0.4943 - val_loss: 1.3183 - val_accuracy: 0.4792
+
+Epoch 00033: val_loss did not improve from 1.31071
+Epoch 34/100
+18218/18218 - 8s - loss: 1.3033 - accuracy: 0.4938 - val_loss: 1.3179 - val_accuracy: 0.4821
+
+Epoch 00034: val_loss did not improve from 1.31071
+Epoch 35/100
+18218/18218 - 8s - loss: 1.3030 - accuracy: 0.4957 - val_loss: 1.3146 - val_accuracy: 0.4786
+
+Epoch 00035: val_loss did not improve from 1.31071
+Epoch 36/100
+18218/18218 - 8s - loss: 1.3022 - accuracy: 0.4948 - val_loss: 1.3113 - val_accuracy: 0.4834
+
+Epoch 00036: val_loss did not improve from 1.31071
+Epoch 37/100
+18218/18218 - 8s - loss: 1.3020 - accuracy: 0.4952 - val_loss: 1.3102 - val_accuracy: 0.4827
+
+Epoch 00037: val_loss improved from 1.31071 to 1.31019, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 38/100
+18218/18218 - 8s - loss: 1.3010 - accuracy: 0.4943 - val_loss: 1.3169 - val_accuracy: 0.4793
+
+Epoch 00038: val_loss did not improve from 1.31019
+Epoch 39/100
+18218/18218 - 8s - loss: 1.3006 - accuracy: 0.4941 - val_loss: 1.3202 - val_accuracy: 0.4821
+
+Epoch 00039: val_loss did not improve from 1.31019
+Epoch 40/100
+18218/18218 - 8s - loss: 1.3002 - accuracy: 0.4957 - val_loss: 1.3096 - val_accuracy: 0.4817
+
+Epoch 00040: val_loss improved from 1.31019 to 1.30961, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 41/100
+18218/18218 - 8s - loss: 1.3000 - accuracy: 0.4963 - val_loss: 1.3111 - val_accuracy: 0.4831
+
+Epoch 00041: val_loss did not improve from 1.30961
+Epoch 42/100
+18218/18218 - 8s - loss: 1.2991 - accuracy: 0.4965 - val_loss: 1.3102 - val_accuracy: 0.4823
+
+Epoch 00042: val_loss did not improve from 1.30961
+Epoch 43/100
+18218/18218 - 8s - loss: 1.2986 - accuracy: 0.4959 - val_loss: 1.3064 - val_accuracy: 0.4812
+
+Epoch 00043: val_loss improved from 1.30961 to 1.30641, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 44/100
+18218/18218 - 8s - loss: 1.2982 - accuracy: 0.4955 - val_loss: 1.3131 - val_accuracy: 0.4808
+
+Epoch 00044: val_loss did not improve from 1.30641
+Epoch 45/100
+18218/18218 - 8s - loss: 1.2971 - accuracy: 0.4963 - val_loss: 1.3053 - val_accuracy: 0.4822
+
+Epoch 00045: val_loss improved from 1.30641 to 1.30535, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 46/100
+18218/18218 - 8s - loss: 1.2969 - accuracy: 0.4962 - val_loss: 1.3113 - val_accuracy: 0.4833
+
+Epoch 00046: val_loss did not improve from 1.30535
+Epoch 47/100
+18218/18218 - 8s - loss: 1.2967 - accuracy: 0.4958 - val_loss: 1.3045 - val_accuracy: 0.4798
+
+Epoch 00047: val_loss improved from 1.30535 to 1.30450, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 48/100
+18218/18218 - 8s - loss: 1.2959 - accuracy: 0.4977 - val_loss: 1.3095 - val_accuracy: 0.4815
+
+Epoch 00048: val_loss did not improve from 1.30450
+Epoch 49/100
+18218/18218 - 8s - loss: 1.2956 - accuracy: 0.4974 - val_loss: 1.3122 - val_accuracy: 0.4823
+
+Epoch 00049: val_loss did not improve from 1.30450
+Epoch 50/100
+18218/18218 - 8s - loss: 1.2949 - accuracy: 0.4991 - val_loss: 1.3018 - val_accuracy: 0.4829
+
+Epoch 00050: val_loss improved from 1.30450 to 1.30178, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 51/100
+18218/18218 - 8s - loss: 1.2943 - accuracy: 0.4985 - val_loss: 1.3122 - val_accuracy: 0.4840
+
+Epoch 00051: val_loss did not improve from 1.30178
+Epoch 52/100
+18218/18218 - 8s - loss: 1.2934 - accuracy: 0.4989 - val_loss: 1.3118 - val_accuracy: 0.4847
+
+Epoch 00052: val_loss did not improve from 1.30178
+Epoch 53/100
+18218/18218 - 8s - loss: 1.2930 - accuracy: 0.4985 - val_loss: 1.3082 - val_accuracy: 0.4806
+
+Epoch 00053: val_loss did not improve from 1.30178
+Epoch 54/100
+18218/18218 - 8s - loss: 1.2923 - accuracy: 0.4984 - val_loss: 1.3012 - val_accuracy: 0.4872
+
+Epoch 00054: val_loss improved from 1.30178 to 1.30120, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 55/100
+18218/18218 - 8s - loss: 1.2915 - accuracy: 0.4988 - val_loss: 1.3125 - val_accuracy: 0.4780
+
+Epoch 00055: val_loss did not improve from 1.30120
+Epoch 56/100
+18218/18218 - 8s - loss: 1.2910 - accuracy: 0.4998 - val_loss: 1.3065 - val_accuracy: 0.4830
+
+Epoch 00056: val_loss did not improve from 1.30120
+Epoch 57/100
+18218/18218 - 8s - loss: 1.2910 - accuracy: 0.4987 - val_loss: 1.3095 - val_accuracy: 0.4782
+
+Epoch 00057: val_loss did not improve from 1.30120
+Epoch 58/100
+18218/18218 - 8s - loss: 1.2902 - accuracy: 0.5004 - val_loss: 1.3039 - val_accuracy: 0.4838
+
+Epoch 00058: val_loss did not improve from 1.30120
+Epoch 59/100
+18218/18218 - 8s - loss: 1.2894 - accuracy: 0.5008 - val_loss: 1.2970 - val_accuracy: 0.4906
+
+Epoch 00059: val_loss improved from 1.30120 to 1.29701, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 60/100
+18218/18218 - 7s - loss: 1.2897 - accuracy: 0.5008 - val_loss: 1.3040 - val_accuracy: 0.4801
+
+Epoch 00060: val_loss did not improve from 1.29701
+Epoch 61/100
+18218/18218 - 7s - loss: 1.2894 - accuracy: 0.5016 - val_loss: 1.3025 - val_accuracy: 0.4882
+
+Epoch 00061: val_loss did not improve from 1.29701
+Epoch 62/100
+18218/18218 - 7s - loss: 1.2886 - accuracy: 0.5015 - val_loss: 1.3045 - val_accuracy: 0.4910
+
+Epoch 00062: val_loss did not improve from 1.29701
+Epoch 63/100
+18218/18218 - 7s - loss: 1.2882 - accuracy: 0.5014 - val_loss: 1.3017 - val_accuracy: 0.4907
+
+Epoch 00063: val_loss did not improve from 1.29701
+Epoch 64/100
+18218/18218 - 7s - loss: 1.2884 - accuracy: 0.5011 - val_loss: 1.3058 - val_accuracy: 0.4839
+
+Epoch 00064: val_loss did not improve from 1.29701
+Epoch 65/100
+18218/18218 - 7s - loss: 1.2882 - accuracy: 0.5004 - val_loss: 1.2997 - val_accuracy: 0.4809
+
+Epoch 00065: val_loss did not improve from 1.29701
+Epoch 66/100
+18218/18218 - 7s - loss: 1.2876 - accuracy: 0.5019 - val_loss: 1.2948 - val_accuracy: 0.4880
+
+Epoch 00066: val_loss improved from 1.29701 to 1.29477, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 67/100
+18218/18218 - 7s - loss: 1.2871 - accuracy: 0.5023 - val_loss: 1.3005 - val_accuracy: 0.4850
+
+Epoch 00067: val_loss did not improve from 1.29477
+Epoch 68/100
+18218/18218 - 7s - loss: 1.2869 - accuracy: 0.5028 - val_loss: 1.3036 - val_accuracy: 0.4838
+
+Epoch 00068: val_loss did not improve from 1.29477
+Epoch 69/100
+18218/18218 - 7s - loss: 1.2868 - accuracy: 0.5023 - val_loss: 1.2960 - val_accuracy: 0.4863
+
+Epoch 00069: val_loss did not improve from 1.29477
+Epoch 70/100
+18218/18218 - 7s - loss: 1.2863 - accuracy: 0.5036 - val_loss: 1.3023 - val_accuracy: 0.4841
+
+Epoch 00070: val_loss did not improve from 1.29477
+Epoch 71/100
+18218/18218 - 7s - loss: 1.2855 - accuracy: 0.5026 - val_loss: 1.2969 - val_accuracy: 0.4952
+
+Epoch 00071: val_loss did not improve from 1.29477
+Epoch 72/100
+18218/18218 - 7s - loss: 1.2860 - accuracy: 0.5036 - val_loss: 1.3029 - val_accuracy: 0.4829
+
+Epoch 00072: val_loss did not improve from 1.29477
+Epoch 73/100
+18218/18218 - 7s - loss: 1.2846 - accuracy: 0.5041 - val_loss: 1.3026 - val_accuracy: 0.4840
+
+Epoch 00073: val_loss did not improve from 1.29477
+Epoch 74/100
+18218/18218 - 7s - loss: 1.2841 - accuracy: 0.5050 - val_loss: 1.3029 - val_accuracy: 0.4901
+
+Epoch 00074: val_loss did not improve from 1.29477
+Epoch 75/100
+18218/18218 - 8s - loss: 1.2846 - accuracy: 0.5050 - val_loss: 1.3011 - val_accuracy: 0.4787
+
+Epoch 00075: val_loss did not improve from 1.29477
+Epoch 76/100
+18218/18218 - 8s - loss: 1.2841 - accuracy: 0.5050 - val_loss: 1.3047 - val_accuracy: 0.4927
+
+Epoch 00076: val_loss did not improve from 1.29477
+Epoch 77/100
+18218/18218 - 8s - loss: 1.2831 - accuracy: 0.5051 - val_loss: 1.2959 - val_accuracy: 0.4959
+
+Epoch 00077: val_loss did not improve from 1.29477
+Epoch 78/100
+18218/18218 - 8s - loss: 1.2828 - accuracy: 0.5046 - val_loss: 1.3147 - val_accuracy: 0.4822
+
+Epoch 00078: val_loss did not improve from 1.29477
+Epoch 79/100
+18218/18218 - 8s - loss: 1.2830 - accuracy: 0.5044 - val_loss: 1.2952 - val_accuracy: 0.4931
+
+Epoch 00079: val_loss did not improve from 1.29477
+Epoch 80/100
+18218/18218 - 8s - loss: 1.2826 - accuracy: 0.5061 - val_loss: 1.2989 - val_accuracy: 0.4943
+
+Epoch 00080: val_loss did not improve from 1.29477
+Epoch 81/100
+18218/18218 - 7s - loss: 1.2821 - accuracy: 0.5061 - val_loss: 1.3034 - val_accuracy: 0.4914
+
+Epoch 00081: val_loss did not improve from 1.29477
+Epoch 82/100
+18218/18218 - 8s - loss: 1.2811 - accuracy: 0.5055 - val_loss: 1.2959 - val_accuracy: 0.4876
+
+Epoch 00082: val_loss did not improve from 1.29477
+Epoch 83/100
+18218/18218 - 8s - loss: 1.2809 - accuracy: 0.5057 - val_loss: 1.2975 - val_accuracy: 0.4878
+
+Epoch 00083: val_loss did not improve from 1.29477
+Epoch 84/100
+18218/18218 - 8s - loss: 1.2819 - accuracy: 0.5054 - val_loss: 1.2980 - val_accuracy: 0.4930
+
+Epoch 00084: val_loss did not improve from 1.29477
+Epoch 85/100
+18218/18218 - 8s - loss: 1.2808 - accuracy: 0.5059 - val_loss: 1.2897 - val_accuracy: 0.4930
+
+Epoch 00085: val_loss improved from 1.29477 to 1.28966, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 86/100
+18218/18218 - 8s - loss: 1.2806 - accuracy: 0.5058 - val_loss: 1.2957 - val_accuracy: 0.4932
+
+Epoch 00086: val_loss did not improve from 1.28966
+Epoch 87/100
+18218/18218 - 8s - loss: 1.2804 - accuracy: 0.5071 - val_loss: 1.2955 - val_accuracy: 0.4882
+
+Epoch 00087: val_loss did not improve from 1.28966
+Epoch 88/100
+18218/18218 - 8s - loss: 1.2798 - accuracy: 0.5065 - val_loss: 1.3049 - val_accuracy: 0.4841
+
+Epoch 00088: val_loss did not improve from 1.28966
+Epoch 89/100
+18218/18218 - 7s - loss: 1.2794 - accuracy: 0.5067 - val_loss: 1.2935 - val_accuracy: 0.4855
+
+Epoch 00089: val_loss did not improve from 1.28966
+Epoch 90/100
+18218/18218 - 7s - loss: 1.2796 - accuracy: 0.5061 - val_loss: 1.3009 - val_accuracy: 0.4876
+
+Epoch 00090: val_loss did not improve from 1.28966
+Epoch 91/100
+18218/18218 - 7s - loss: 1.2791 - accuracy: 0.5073 - val_loss: 1.2987 - val_accuracy: 0.4860
+
+Epoch 00091: val_loss did not improve from 1.28966
+Epoch 92/100
+18218/18218 - 7s - loss: 1.2792 - accuracy: 0.5062 - val_loss: 1.2940 - val_accuracy: 0.4906
+
+Epoch 00092: val_loss did not improve from 1.28966
+Epoch 93/100
+18218/18218 - 7s - loss: 1.2788 - accuracy: 0.5064 - val_loss: 1.2989 - val_accuracy: 0.4921
+
+Epoch 00093: val_loss did not improve from 1.28966
+Epoch 94/100
+18218/18218 - 7s - loss: 1.2784 - accuracy: 0.5071 - val_loss: 1.2914 - val_accuracy: 0.4956
+
+Epoch 00094: val_loss did not improve from 1.28966
+Epoch 95/100
+18218/18218 - 7s - loss: 1.2785 - accuracy: 0.5088 - val_loss: 1.2973 - val_accuracy: 0.4905
+
+Epoch 00095: val_loss did not improve from 1.28966
+Epoch 96/100
+18218/18218 - 7s - loss: 1.2786 - accuracy: 0.5064 - val_loss: 1.3067 - val_accuracy: 0.4932
+
+Epoch 00096: val_loss did not improve from 1.28966
+Epoch 97/100
+18218/18218 - 7s - loss: 1.2777 - accuracy: 0.5072 - val_loss: 1.2885 - val_accuracy: 0.4979
+
+Epoch 00097: val_loss improved from 1.28966 to 1.28846, saving model to ./results/NN_trial_7/cp.ckpt
+Epoch 98/100
+18218/18218 - 7s - loss: 1.2783 - accuracy: 0.5067 - val_loss: 1.3140 - val_accuracy: 0.4836
+
+Epoch 00098: val_loss did not improve from 1.28846
+Epoch 99/100
+18218/18218 - 7s - loss: 1.2778 - accuracy: 0.5070 - val_loss: 1.3103 - val_accuracy: 0.4885
+
+Epoch 00099: val_loss did not improve from 1.28846
+Epoch 100/100
+18218/18218 - 7s - loss: 1.2779 - accuracy: 0.5067 - val_loss: 1.2935 - val_accuracy: 0.4869
+
+Epoch 00100: val_loss did not improve from 1.28846
