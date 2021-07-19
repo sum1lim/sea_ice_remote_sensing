@@ -1,9 +1,11 @@
 # Reclassify labels into four cleasses: Land, Open Water, <50%, >50%
 # Use only pixel values and GLCM products
+# Epochs = 400
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv
   test_data: ./data/test_dataset/GLCM_norm.csv
+  epochs: 400
   verbosity: 2
   K-fold: 1
   kernel_size: 5
