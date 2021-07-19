@@ -1,5 +1,6 @@
 # Reclassify labels based on https://github.com/asylve/Sea-Ice
 # Use only pixel values and GLCM products
+# Epochs = 200
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv

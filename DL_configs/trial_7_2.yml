@@ -1,11 +1,11 @@
-# Reclassify adjacent labels that show high confusions each other
+# Reclassify labels based on https://github.com/asylve/Sea-Ice
 # Use only pixel values and GLCM products
-# Epochs = 200
+# Epochs = 300
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv
   test_data: ./data/test_dataset/GLCM_norm.csv
-  epochs: 200
+  epochs: 300
   verbosity: 2
   K-fold: 1
   kernel_size: 5
@@ -16,15 +16,14 @@ labels:
     - 2
   10:
     - 20
-    - 30
-  40:
-    - 50
+  30:
+    - 40
+  50:
     - 60
   70:
     - 80
-    - 90
-  91:
-    - 92
+  90:
+    - 91
 
 features:
   # - label

@@ -1,14 +1,13 @@
 # Reclassify adjacent labels that show high confusions each other
 # Use only pixel values and GLCM products
-# Epochs = 200
+# kernel size = 7
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv
   test_data: ./data/test_dataset/GLCM_norm.csv
-  epochs: 200
   verbosity: 2
   K-fold: 1
-  kernel_size: 5
+  kernel_size: 7
 
 labels:
   0:
