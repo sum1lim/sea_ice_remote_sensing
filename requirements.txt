@@ -1,5 +1,11 @@
 kaggle
 opencv-python
 scikit-image
+scikit-learn
 tqdm
 pandas
+tensorflow
+keras
+seaborn
+imblearn
+pyyaml
