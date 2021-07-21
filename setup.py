@@ -18,7 +18,10 @@ setup(
         ./scripts/connect-lines
         ./scripts/centroids
         ./scripts/create-datasets
+        ./scripts/neural-network
         ./scripts/normalize
         ./scripts/GLCM
+        ./scripts/CNN
+        ./scripts/test-model
     """.split(),
 )

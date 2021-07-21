@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+import sys
+import os
+import shutil
+import argparse
+import numpy as np
+from sea_ice_rs.utils import decompose_filepath
+from sea_ice_rs.ML_tools import (
+    config_parser,
+    claculate_hidden_layer_size,
+    process_data,
+    learning_curve,
+    tr_val_split,
+)
+from keras.models import Sequential
+from keras.layers import Dense, Conv1D, MaxPooling1D, Flatten
+from keras.callbacks import ModelCheckpoint
+
+
+def CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size):
+    model = Sequential()
+    model.add(
+        Conv1D(64, kernel_size, activation="relu", input_shape=(input_layer_size, 1))
+    )
+    model.add(Conv1D(64, kernel_size, activation="relu"))
+    model.add(MaxPooling1D())
+    model.add(Flatten())
+    model.add(Dense(hidden_layer_size, activation="relu"))
+    model.add(Dense(output_layer_size, activation="softmax"))
+    model.compile(
+        loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+    )
+    model.summary()
+
+    return model
+
+
+def main(args):
+    # Parse configuration
+    train_data, _, num_epochs, hidden_size, verbosity, K, kernel_size = config_parser(
+        args.dl_config
+    )
+
+    # Set up results directory
+    config_dir, filename, _ = decompose_filepath(args.dl_config)
+    result_dir = os.path.join(
+        ".".join(config_dir.split("/")[:-1]), f"results/CNN_{filename}"
+    )
+    try:
+        os.mkdir(result_dir)
+    except FileExistsError:
+        shutil.rmtree(result_dir)
+        os.mkdir(result_dir)
+
+    # Verbosity == 1 --> sys.stdout
+    # Verbosity == 2 --> .log file
+    if verbosity == 2:
+        log_file = open(f"{result_dir}/train.log", "w")
+        sys.stdout = log_file
+
+    # Modify train dataset
+    X_tr, Y_tr, _ = process_data(train_data, args.dl_config)
+
+    # Define hidden layer size
+    input_layer_size = X_tr.shape[1]
+    output_layer_size = len(np.unique(Y_tr))
+    hidden_layer_size = claculate_hidden_layer_size(
+        input_layer_size, output_layer_size, hidden_size
+    )
+
+    # K-fold classification
+    tr_val_pairs = tr_val_split(K, X_tr, Y_tr)
+
+    for iter, (train, validation) in enumerate(tr_val_pairs):
+        checkpoint_path = f"{result_dir}/cp.ckpt"
+        cp_callback = ModelCheckpoint(
+            filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
+        )
+
+        model = CNN(hidden_layer_size, input_layer_size, output_layer_size, kernel_size)
+
+        # Format X for CNN
+        formatted_X_tr = np.transpose(np.array([np.transpose(X_tr[train])]))
+        formatted_X_val = np.transpose(np.array([np.transpose(X_tr[validation])]))
+
+        # Train the model
+        model_summary = model.fit(
+            x=formatted_X_tr,
+            y=Y_tr[train],
+            epochs=num_epochs,
+            batch_size=5,
+            verbose=verbosity,
+            validation_data=(formatted_X_val, Y_tr[validation]),
+            callbacks=[cp_callback],
+        )
+
+        # Plot the learning curve
+        learning_curve(model_summary.history, result_dir, iter)
+
+        if K == 1:
+            break
+
+    # stdout redirection closed
+    if verbosity == 2:
+        log_file.close()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--dl-config",
+        type=str,
+        help="YAML file containing the configuration for deep learning",
+    )
+
+    args = parser.parse_args()
+    main(args)

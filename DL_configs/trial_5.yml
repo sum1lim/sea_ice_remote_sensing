@@ -1,0 +1,39 @@
+# No merging between classes
+# Use only pixel values
+
+configuration:
+  train_data: ./data/train_dataset/GLCM_norm.csv
+  test_data: ./data/test_dataset/GLCM_norm.csv
+  verbosity: 2
+  epochs: 100
+  K-fold: 1
+  kernel_size: 2
+
+features:
+  # - label
+  # - patch_num
+  # - year
+  # - patch_loc_y
+  # - patch_loc_x
+  # - DOY
+  # - hour
+  # - pix_loc_y
+  # - pix_loc_x
+  - band_8
+  - band_4
+  - band_3
+  # - entropy_8
+  # - entropy_4
+  # - entropy_3
+  # - ASM_8
+  # - ASM_4
+  # - ASM_3
+  # - contrast_8
+  # - contrast_4
+  # - contrast_3
+  # - homogeneity_8
+  # - homogeneity_4
+  # - homogeneity_3
+  # - dissimilarity_8
+  # - dissimilarity_4
+  # - dissimilarity_3
