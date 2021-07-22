@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+import argparse
+
+
+def main(args):
+    None
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--result-dir",
+        type=str,
+        help="Directory path with train results including checkpoint files",
+    )
+    parser.add_argument(
+        "--dl-config",
+        type=str,
+        help="YAML file containing the configuration for deep learning",
+    )
+
+    args = parser.parse_args()
+    main(args)
