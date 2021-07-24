@@ -15,7 +15,7 @@ def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, test_data, _, _, verbosity, _, _ = config_parser(args.dl_config)
+    _, test_data, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -28,7 +28,9 @@ def main(args):
 
     # Format X if CNN
     if model_type == "CNN":
-        X_te = np.transpose(np.array([np.transpose(X_te)]))
+        X_te = np.transpose(
+            np.array([np.transpose(np.pad(X_te, ((0, 0), (0, kernel_size)), "wrap"))])
+        )
 
     # Call checkpoint
     checkpoint_path = f"{args.result_dir}/cp.ckpt"
