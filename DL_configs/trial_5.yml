@@ -7,7 +7,6 @@ configuration:
   verbosity: 2
   epochs: 100
   K-fold: 1
-  kernel_size: 2
 
 features:
   # - label
