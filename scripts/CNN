@@ -87,7 +87,7 @@ def main(args):
         ((0, 0), (0, kernel_size)),
         "wrap",
     )
-    # Training dataset to concatenate after convolution
+    # Training dataset for dense layer to concatenate after convolution
     X_cat = X[0 : X.shape[0], 0 : X.shape[1] - 15]
 
     # Define hidden layer size
