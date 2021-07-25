@@ -60,6 +60,7 @@ def main(args):
 
     # Modify train dataset
     X_tr, Y_tr, _ = process_data(train_data, args.dl_config)
+    # Pad first few features at the end for convolution
     X_tr = np.pad(X_tr, ((0, 0), (0, kernel_size)), "wrap")
 
     # Define hidden layer size

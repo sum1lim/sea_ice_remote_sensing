@@ -27,6 +27,7 @@ def main(args):
     X_te, Y_te, classes = process_data(test_data, args.dl_config)
 
     # Format X if CNN
+    # Pad first few features at the end for convolution
     if model_type == "CNN":
         X_te = np.transpose(
             np.array([np.transpose(np.pad(X_te, ((0, 0), (0, kernel_size)), "wrap"))])
