@@ -25,9 +25,6 @@ def CNN(
     conv_input = Input(shape=(conv_layer_size, 1), name="conv")
     cat_input = Input(shape=(cat_layer_size), name="cat")
 
-    cat_layer = Dense(32, activation="relu")(cat_input)
-    cat_layer = Dropout(0.2)(cat_layer)
-
     conv_layer = Conv1D(
         64, kernel_size, activation="relu", input_shape=(conv_layer_size, 1)
     )(conv_input)
@@ -36,7 +33,7 @@ def CNN(
     conv_layer = Dropout(0.2)(conv_layer)
     conv_layer = Flatten()(conv_layer)
 
-    cat_layer = concatenate([cat_layer, conv_layer])
+    cat_layer = concatenate([cat_input, conv_layer])
 
     hidden_layer = Dense(hidden_layer_size, activation="relu")(cat_layer)
     hidden_layer = Dropout(0.2)(hidden_layer)
@@ -84,7 +81,7 @@ def main(args):
         "wrap",
     )
     # Training dataset for dense layer to concatenate after convolution
-    X_cat = X[0 : X.shape[0], 0 : X.shape[1] - 15]
+    X_cat = X[0 : X.shape[0], 0 : X.shape[1] - 18]
 
     # Define hidden layer size
     input_layer_size = X.shape[1]

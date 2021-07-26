@@ -41,7 +41,7 @@ def main(args):
             ]
         )
         # Test dataset for dense layer to concatenate after convolution
-        X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 15]
+        X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 18]
 
         X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
