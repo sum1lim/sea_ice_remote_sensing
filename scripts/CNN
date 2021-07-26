@@ -28,9 +28,7 @@ def CNN(
     conv_layer = Conv1D(
         64, kernel_size, activation="relu", input_shape=(conv_layer_size, 1)
     )(conv_input)
-    conv_layer = Dropout(0.2)(conv_layer)
     conv_layer = Conv1D(64, kernel_size, activation="relu")(conv_layer)
-    conv_layer = Dropout(0.2)(conv_layer)
     conv_layer = Flatten()(conv_layer)
 
     cat_layer = concatenate([cat_input, conv_layer])
