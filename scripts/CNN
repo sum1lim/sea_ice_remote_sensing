@@ -40,9 +40,10 @@ def CNN(
     )
     conv_layer = Flatten()(conv_layer)
 
-    cat_layer = concatenate([cat_input, conv_layer])
+    if cat_layer_size > 0:
+        conv_layer = concatenate([cat_input, conv_layer])
 
-    hidden_layer = Dense(hidden_layer_size, activation="relu")(cat_layer)
+    hidden_layer = Dense(hidden_layer_size, activation="relu")(conv_layer)
     output_layer = Dense(output_layer_size, activation="softmax")(hidden_layer)
 
     model = Model(inputs=[conv_input, cat_input], outputs=[output_layer])

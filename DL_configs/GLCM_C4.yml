@@ -7,7 +7,7 @@ configuration:
   epochs: 100
   verbosity: 2
   K-fold: 1
-  kernel_size: 3
+  kernel_size: 5
 
 labels:
   0:
