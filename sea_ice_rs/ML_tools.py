@@ -51,6 +51,9 @@ def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_define
     else:
         hidden_layer_size = user_defined
 
+    if hidden_layer_size > 2 * input_layer_size:
+        hidden_layer_size = 2 * input_layer_size
+
     if hidden_layer_size < 2:
         hidden_layer_size = 2
 
