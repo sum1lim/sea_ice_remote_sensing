@@ -6,7 +6,7 @@ configuration:
   test_data: ./data/test_dataset/GLCM_norm.csv
   verbosity: 2
   epochs: 100
-  K-fold: 1
+  K-fold: 10
 
 features:
   - patch_num
