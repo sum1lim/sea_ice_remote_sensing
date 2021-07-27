@@ -7,7 +7,7 @@ import numpy as np
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.ML_tools import (
     config_parser,
-    claculate_hidden_layer_size,
+    calculate_hidden_layer_size,
     process_data,
     learning_curve,
     tr_val_split,
@@ -61,7 +61,7 @@ def main(args):
     # Define hidden layer size
     input_layer_size = X_tr.shape[1]
     output_layer_size = len(np.unique(Y_tr))
-    hidden_layer_size = claculate_hidden_layer_size(
+    hidden_layer_size = calculate_hidden_layer_size(
         input_layer_size, output_layer_size, hidden_size
     )
 
