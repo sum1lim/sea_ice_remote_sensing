@@ -69,7 +69,7 @@ def main(args):
     tr_val_pairs = tr_val_split(K, X_tr, Y_tr)
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
-        checkpoint_path = f"{result_dir}/cp.ckpt"
+        checkpoint_path = f"{result_dir}/ckpt_{iter}"
         cp_callback = ModelCheckpoint(
             filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
         )
@@ -85,7 +85,7 @@ def main(args):
             x=X_tr[train],
             y=one_hot_Y_tr,
             epochs=num_epochs,
-            batch_size=5,
+            batch_size=1000,
             verbose=verbosity,
             validation_data=(X_tr[validation], one_hot_Y_val),
             callbacks=[cp_callback],
