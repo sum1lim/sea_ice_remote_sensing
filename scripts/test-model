@@ -47,7 +47,7 @@ def main(args):
 
     for k in range(K):
         print(
-            f"*************************** Fold #: {k} ***************************",
+            f"*************************** Fold #: {k+1} ***************************",
             file=sys.stdout,
         )
         # Call checkpoint

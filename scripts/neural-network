@@ -70,7 +70,7 @@ def main(args):
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
         print(
-            f"*************************** Fold #: {iter} ***************************",
+            f"*************************** Fold #: {iter+1} ***************************",
             file=sys.stdout,
         )
         checkpoint_path = f"{result_dir}/ckpt_{iter+1}"
