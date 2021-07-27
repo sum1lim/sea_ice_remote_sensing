@@ -107,7 +107,11 @@ def main(args):
     tr_val_pairs = tr_val_split(K, X, Y_tr)
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
-        checkpoint_path = f"{result_dir}/ckpt_{iter}"
+        print(
+            "*************************** Fold #: {iter} ***************************",
+            file=sys.stdout,
+        )
+        checkpoint_path = f"{result_dir}/ckpt_{iter+1}"
         cp_callback = ModelCheckpoint(
             filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
         )

@@ -46,8 +46,12 @@ def main(args):
         X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
     for k in range(K):
+        print(
+            "*************************** Fold #: {k} ***************************",
+            file=sys.stdout,
+        )
         # Call checkpoint
-        checkpoint_path = f"{args.result_dir}/ckpt_{k}"
+        checkpoint_path = f"{args.result_dir}/ckpt_{k+1}"
         trained_model = load_model(checkpoint_path)
 
         # Predict the test dataset
