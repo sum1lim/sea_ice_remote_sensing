@@ -5,7 +5,7 @@
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv
   test_data: ./data/test_dataset/GLCM_norm.csv
-  epochs: 100
+  epochs: 1000
   verbosity: 2
   K-fold: 10
   kernel_size: 5

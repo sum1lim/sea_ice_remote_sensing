@@ -15,7 +15,7 @@ from sea_ice_rs.ML_tools import (
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import np_utils
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):
@@ -77,6 +77,9 @@ def main(args):
         cp_callback = ModelCheckpoint(
             filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
         )
+        es_callback = EarlyStopping(
+            monitor="val_loss", mode="min", verbose=1, patience=50
+        )
 
         model = NN(hidden_layer_size, input_layer_size, output_layer_size)
 
@@ -92,7 +95,7 @@ def main(args):
             batch_size=1000,
             verbose=verbosity,
             validation_data=(X_tr[validation], one_hot_Y_val),
-            callbacks=[cp_callback],
+            callbacks=[cp_callback, es_callback],
         )
 
         # Plot the learning curve

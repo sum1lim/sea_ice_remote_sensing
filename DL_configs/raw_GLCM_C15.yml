@@ -6,7 +6,7 @@ configuration:
   train_data: ./data/train_dataset/GLCM.csv
   test_data: ./data/test_dataset/GLCM.csv
   verbosity: 2
-  epochs: 100
+  epochs: 1000
   K-fold: 10
 
 features:

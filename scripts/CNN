@@ -15,7 +15,7 @@ from sea_ice_rs.ML_tools import (
 from keras import Input
 from keras.models import Model
 from keras.layers import Dense, Conv1D, Flatten, concatenate
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def CNN(
@@ -115,6 +115,9 @@ def main(args):
         cp_callback = ModelCheckpoint(
             filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
         )
+        es_callback = EarlyStopping(
+            monitor="val_loss", mode="min", verbose=1, patience=50
+        )
 
         model = CNN(
             hidden_layer_size,
@@ -139,7 +142,7 @@ def main(args):
                 {"conv": X_conv_val, "cat": X_cat[validation]},
                 Y_tr[validation],
             ),
-            callbacks=[cp_callback],
+            callbacks=[cp_callback, es_callback],
         )
 
         # Plot the learning curve
