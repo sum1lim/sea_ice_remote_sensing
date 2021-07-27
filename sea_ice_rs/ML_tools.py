@@ -120,7 +120,7 @@ def learning_curve(model_hist, result_dir, iter):
     # summarize history for accuracy
     plt.plot(model_hist["accuracy"])
     plt.plot(model_hist["val_accuracy"])
-    plt.title(f"Learning Curve (iteration: {iter+1})")
+    plt.title(f"Learning Curve (Fold #: {iter+1})")
     plt.ylabel("Accuracy")
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
@@ -129,7 +129,7 @@ def learning_curve(model_hist, result_dir, iter):
     # summarize history for loss
     plt.plot(model_hist["loss"])
     plt.plot(model_hist["val_loss"])
-    plt.title(f"Loss Curve (iteration: {iter+1})")
+    plt.title(f"Loss Curve (Fold #: {iter+1})")
     plt.ylabel("Loss")
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
