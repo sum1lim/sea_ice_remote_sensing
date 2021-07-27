@@ -1,0 +1,414 @@
+Before oversampling: Counter({0.0: 22772, 40.0: 22601, 10.0: 22562, 70.0: 22210, 91.0: 15243, 100.0: 7624})
+After oversampling: Counter({100.0: 22772, 91.0: 22772, 70.0: 22772, 10.0: 22772, 0.0: 22772, 40.0: 22772})
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 6)                 24        
+_________________________________________________________________
+dense_1 (Dense)              (None, 6)                 42        
+=================================================================
+Total params: 66
+Trainable params: 66
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/100
+13664/13664 - 6s - loss: 1.4348 - accuracy: 0.3608 - val_loss: 1.4017 - val_accuracy: 0.3764
+
+Epoch 00001: val_loss improved from inf to 1.40167, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 2/100
+13664/13664 - 6s - loss: 1.3692 - accuracy: 0.4064 - val_loss: 1.3520 - val_accuracy: 0.4031
+
+Epoch 00002: val_loss improved from 1.40167 to 1.35203, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 3/100
+13664/13664 - 6s - loss: 1.3170 - accuracy: 0.4311 - val_loss: 1.3327 - val_accuracy: 0.4059
+
+Epoch 00003: val_loss improved from 1.35203 to 1.33273, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 4/100
+13664/13664 - 6s - loss: 1.2904 - accuracy: 0.4330 - val_loss: 1.3112 - val_accuracy: 0.4237
+
+Epoch 00004: val_loss improved from 1.33273 to 1.31119, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 5/100
+13664/13664 - 6s - loss: 1.2729 - accuracy: 0.4379 - val_loss: 1.3015 - val_accuracy: 0.4336
+
+Epoch 00005: val_loss improved from 1.31119 to 1.30153, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 6/100
+13664/13664 - 6s - loss: 1.2632 - accuracy: 0.4409 - val_loss: 1.2936 - val_accuracy: 0.4311
+
+Epoch 00006: val_loss improved from 1.30153 to 1.29360, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 7/100
+13664/13664 - 6s - loss: 1.2582 - accuracy: 0.4434 - val_loss: 1.2911 - val_accuracy: 0.4312
+
+Epoch 00007: val_loss improved from 1.29360 to 1.29107, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 8/100
+13664/13664 - 6s - loss: 1.2551 - accuracy: 0.4465 - val_loss: 1.2993 - val_accuracy: 0.4327
+
+Epoch 00008: val_loss did not improve from 1.29107
+Epoch 9/100
+13664/13664 - 6s - loss: 1.2529 - accuracy: 0.4481 - val_loss: 1.3038 - val_accuracy: 0.4337
+
+Epoch 00009: val_loss did not improve from 1.29107
+Epoch 10/100
+13664/13664 - 6s - loss: 1.2510 - accuracy: 0.4498 - val_loss: 1.2985 - val_accuracy: 0.4326
+
+Epoch 00010: val_loss did not improve from 1.29107
+Epoch 11/100
+13664/13664 - 6s - loss: 1.2498 - accuracy: 0.4505 - val_loss: 1.2990 - val_accuracy: 0.4344
+
+Epoch 00011: val_loss did not improve from 1.29107
+Epoch 12/100
+13664/13664 - 6s - loss: 1.2487 - accuracy: 0.4520 - val_loss: 1.2977 - val_accuracy: 0.4364
+
+Epoch 00012: val_loss did not improve from 1.29107
+Epoch 13/100
+13664/13664 - 6s - loss: 1.2477 - accuracy: 0.4531 - val_loss: 1.2953 - val_accuracy: 0.4338
+
+Epoch 00013: val_loss did not improve from 1.29107
+Epoch 14/100
+13664/13664 - 6s - loss: 1.2467 - accuracy: 0.4534 - val_loss: 1.2940 - val_accuracy: 0.4427
+
+Epoch 00014: val_loss did not improve from 1.29107
+Epoch 15/100
+13664/13664 - 6s - loss: 1.2460 - accuracy: 0.4551 - val_loss: 1.3012 - val_accuracy: 0.4353
+
+Epoch 00015: val_loss did not improve from 1.29107
+Epoch 16/100
+13664/13664 - 6s - loss: 1.2450 - accuracy: 0.4554 - val_loss: 1.3119 - val_accuracy: 0.4369
+
+Epoch 00016: val_loss did not improve from 1.29107
+Epoch 17/100
+13664/13664 - 6s - loss: 1.2443 - accuracy: 0.4556 - val_loss: 1.2978 - val_accuracy: 0.4408
+
+Epoch 00017: val_loss did not improve from 1.29107
+Epoch 18/100
+13664/13664 - 6s - loss: 1.2436 - accuracy: 0.4563 - val_loss: 1.3037 - val_accuracy: 0.4361
+
+Epoch 00018: val_loss did not improve from 1.29107
+Epoch 19/100
+13664/13664 - 6s - loss: 1.2430 - accuracy: 0.4555 - val_loss: 1.3047 - val_accuracy: 0.4395
+
+Epoch 00019: val_loss did not improve from 1.29107
+Epoch 20/100
+13664/13664 - 6s - loss: 1.2420 - accuracy: 0.4566 - val_loss: 1.2969 - val_accuracy: 0.4442
+
+Epoch 00020: val_loss did not improve from 1.29107
+Epoch 21/100
+13664/13664 - 6s - loss: 1.2414 - accuracy: 0.4567 - val_loss: 1.2965 - val_accuracy: 0.4434
+
+Epoch 00021: val_loss did not improve from 1.29107
+Epoch 22/100
+13664/13664 - 6s - loss: 1.2407 - accuracy: 0.4581 - val_loss: 1.2982 - val_accuracy: 0.4441
+
+Epoch 00022: val_loss did not improve from 1.29107
+Epoch 23/100
+13664/13664 - 6s - loss: 1.2401 - accuracy: 0.4585 - val_loss: 1.3005 - val_accuracy: 0.4411
+
+Epoch 00023: val_loss did not improve from 1.29107
+Epoch 24/100
+13664/13664 - 6s - loss: 1.2392 - accuracy: 0.4577 - val_loss: 1.2979 - val_accuracy: 0.4430
+
+Epoch 00024: val_loss did not improve from 1.29107
+Epoch 25/100
+13664/13664 - 6s - loss: 1.2385 - accuracy: 0.4601 - val_loss: 1.2985 - val_accuracy: 0.4400
+
+Epoch 00025: val_loss did not improve from 1.29107
+Epoch 26/100
+13664/13664 - 6s - loss: 1.2379 - accuracy: 0.4593 - val_loss: 1.2966 - val_accuracy: 0.4409
+
+Epoch 00026: val_loss did not improve from 1.29107
+Epoch 27/100
+13664/13664 - 6s - loss: 1.2369 - accuracy: 0.4606 - val_loss: 1.3030 - val_accuracy: 0.4447
+
+Epoch 00027: val_loss did not improve from 1.29107
+Epoch 28/100
+13664/13664 - 6s - loss: 1.2359 - accuracy: 0.4606 - val_loss: 1.3016 - val_accuracy: 0.4433
+
+Epoch 00028: val_loss did not improve from 1.29107
+Epoch 29/100
+13664/13664 - 6s - loss: 1.2353 - accuracy: 0.4598 - val_loss: 1.2937 - val_accuracy: 0.4432
+
+Epoch 00029: val_loss did not improve from 1.29107
+Epoch 30/100
+13664/13664 - 6s - loss: 1.2344 - accuracy: 0.4613 - val_loss: 1.2881 - val_accuracy: 0.4537
+
+Epoch 00030: val_loss improved from 1.29107 to 1.28812, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 31/100
+13664/13664 - 6s - loss: 1.2336 - accuracy: 0.4614 - val_loss: 1.2866 - val_accuracy: 0.4501
+
+Epoch 00031: val_loss improved from 1.28812 to 1.28656, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 32/100
+13664/13664 - 6s - loss: 1.2325 - accuracy: 0.4629 - val_loss: 1.2858 - val_accuracy: 0.4532
+
+Epoch 00032: val_loss improved from 1.28656 to 1.28579, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 33/100
+13664/13664 - 6s - loss: 1.2314 - accuracy: 0.4634 - val_loss: 1.2887 - val_accuracy: 0.4513
+
+Epoch 00033: val_loss did not improve from 1.28579
+Epoch 34/100
+13664/13664 - 6s - loss: 1.2305 - accuracy: 0.4642 - val_loss: 1.2868 - val_accuracy: 0.4619
+
+Epoch 00034: val_loss did not improve from 1.28579
+Epoch 35/100
+13664/13664 - 6s - loss: 1.2299 - accuracy: 0.4649 - val_loss: 1.2848 - val_accuracy: 0.4557
+
+Epoch 00035: val_loss improved from 1.28579 to 1.28479, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 36/100
+13664/13664 - 6s - loss: 1.2290 - accuracy: 0.4650 - val_loss: 1.2808 - val_accuracy: 0.4557
+
+Epoch 00036: val_loss improved from 1.28479 to 1.28080, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 37/100
+13664/13664 - 6s - loss: 1.2279 - accuracy: 0.4658 - val_loss: 1.2883 - val_accuracy: 0.4567
+
+Epoch 00037: val_loss did not improve from 1.28080
+Epoch 38/100
+13664/13664 - 6s - loss: 1.2269 - accuracy: 0.4669 - val_loss: 1.2924 - val_accuracy: 0.4556
+
+Epoch 00038: val_loss did not improve from 1.28080
+Epoch 39/100
+13664/13664 - 6s - loss: 1.2260 - accuracy: 0.4671 - val_loss: 1.2828 - val_accuracy: 0.4594
+
+Epoch 00039: val_loss did not improve from 1.28080
+Epoch 40/100
+13664/13664 - 6s - loss: 1.2251 - accuracy: 0.4681 - val_loss: 1.2819 - val_accuracy: 0.4523
+
+Epoch 00040: val_loss did not improve from 1.28080
+Epoch 41/100
+13664/13664 - 6s - loss: 1.2250 - accuracy: 0.4681 - val_loss: 1.2813 - val_accuracy: 0.4458
+
+Epoch 00041: val_loss did not improve from 1.28080
+Epoch 42/100
+13664/13664 - 6s - loss: 1.2237 - accuracy: 0.4697 - val_loss: 1.2851 - val_accuracy: 0.4572
+
+Epoch 00042: val_loss did not improve from 1.28080
+Epoch 43/100
+13664/13664 - 6s - loss: 1.2231 - accuracy: 0.4702 - val_loss: 1.2784 - val_accuracy: 0.4575
+
+Epoch 00043: val_loss improved from 1.28080 to 1.27843, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 44/100
+13664/13664 - 6s - loss: 1.2224 - accuracy: 0.4697 - val_loss: 1.2768 - val_accuracy: 0.4732
+
+Epoch 00044: val_loss improved from 1.27843 to 1.27682, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 45/100
+13664/13664 - 6s - loss: 1.2220 - accuracy: 0.4691 - val_loss: 1.2790 - val_accuracy: 0.4613
+
+Epoch 00045: val_loss did not improve from 1.27682
+Epoch 46/100
+13664/13664 - 6s - loss: 1.2215 - accuracy: 0.4699 - val_loss: 1.2827 - val_accuracy: 0.4430
+
+Epoch 00046: val_loss did not improve from 1.27682
+Epoch 47/100
+13664/13664 - 6s - loss: 1.2207 - accuracy: 0.4704 - val_loss: 1.2702 - val_accuracy: 0.4515
+
+Epoch 00047: val_loss improved from 1.27682 to 1.27019, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 48/100
+13664/13664 - 6s - loss: 1.2206 - accuracy: 0.4694 - val_loss: 1.2875 - val_accuracy: 0.4629
+
+Epoch 00048: val_loss did not improve from 1.27019
+Epoch 49/100
+13664/13664 - 6s - loss: 1.2198 - accuracy: 0.4703 - val_loss: 1.2743 - val_accuracy: 0.4806
+
+Epoch 00049: val_loss did not improve from 1.27019
+Epoch 50/100
+13664/13664 - 6s - loss: 1.2194 - accuracy: 0.4721 - val_loss: 1.2781 - val_accuracy: 0.4528
+
+Epoch 00050: val_loss did not improve from 1.27019
+Epoch 51/100
+13664/13664 - 6s - loss: 1.2192 - accuracy: 0.4729 - val_loss: 1.2748 - val_accuracy: 0.4621
+
+Epoch 00051: val_loss did not improve from 1.27019
+Epoch 52/100
+13664/13664 - 6s - loss: 1.2190 - accuracy: 0.4722 - val_loss: 1.2722 - val_accuracy: 0.4632
+
+Epoch 00052: val_loss did not improve from 1.27019
+Epoch 53/100
+13664/13664 - 6s - loss: 1.2185 - accuracy: 0.4729 - val_loss: 1.2751 - val_accuracy: 0.4600
+
+Epoch 00053: val_loss did not improve from 1.27019
+Epoch 54/100
+13664/13664 - 6s - loss: 1.2182 - accuracy: 0.4715 - val_loss: 1.2745 - val_accuracy: 0.4640
+
+Epoch 00054: val_loss did not improve from 1.27019
+Epoch 55/100
+13664/13664 - 6s - loss: 1.2181 - accuracy: 0.4743 - val_loss: 1.2671 - val_accuracy: 0.4605
+
+Epoch 00055: val_loss improved from 1.27019 to 1.26711, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 56/100
+13664/13664 - 6s - loss: 1.2174 - accuracy: 0.4719 - val_loss: 1.2844 - val_accuracy: 0.4651
+
+Epoch 00056: val_loss did not improve from 1.26711
+Epoch 57/100
+13664/13664 - 6s - loss: 1.2173 - accuracy: 0.4735 - val_loss: 1.2703 - val_accuracy: 0.4637
+
+Epoch 00057: val_loss did not improve from 1.26711
+Epoch 58/100
+13664/13664 - 6s - loss: 1.2170 - accuracy: 0.4742 - val_loss: 1.2729 - val_accuracy: 0.4582
+
+Epoch 00058: val_loss did not improve from 1.26711
+Epoch 59/100
+13664/13664 - 6s - loss: 1.2166 - accuracy: 0.4739 - val_loss: 1.2668 - val_accuracy: 0.4780
+
+Epoch 00059: val_loss improved from 1.26711 to 1.26685, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 60/100
+13664/13664 - 6s - loss: 1.2161 - accuracy: 0.4737 - val_loss: 1.2675 - val_accuracy: 0.4520
+
+Epoch 00060: val_loss did not improve from 1.26685
+Epoch 61/100
+13664/13664 - 6s - loss: 1.2161 - accuracy: 0.4743 - val_loss: 1.2751 - val_accuracy: 0.4701
+
+Epoch 00061: val_loss did not improve from 1.26685
+Epoch 62/100
+13664/13664 - 6s - loss: 1.2157 - accuracy: 0.4754 - val_loss: 1.2689 - val_accuracy: 0.4638
+
+Epoch 00062: val_loss did not improve from 1.26685
+Epoch 63/100
+13664/13664 - 6s - loss: 1.2156 - accuracy: 0.4753 - val_loss: 1.2717 - val_accuracy: 0.4502
+
+Epoch 00063: val_loss did not improve from 1.26685
+Epoch 64/100
+13664/13664 - 6s - loss: 1.2154 - accuracy: 0.4753 - val_loss: 1.2722 - val_accuracy: 0.4699
+
+Epoch 00064: val_loss did not improve from 1.26685
+Epoch 65/100
+13664/13664 - 6s - loss: 1.2151 - accuracy: 0.4746 - val_loss: 1.2682 - val_accuracy: 0.4670
+
+Epoch 00065: val_loss did not improve from 1.26685
+Epoch 66/100
+13664/13664 - 6s - loss: 1.2150 - accuracy: 0.4755 - val_loss: 1.2712 - val_accuracy: 0.4559
+
+Epoch 00066: val_loss did not improve from 1.26685
+Epoch 67/100
+13664/13664 - 6s - loss: 1.2147 - accuracy: 0.4748 - val_loss: 1.2671 - val_accuracy: 0.4861
+
+Epoch 00067: val_loss did not improve from 1.26685
+Epoch 68/100
+13664/13664 - 6s - loss: 1.2144 - accuracy: 0.4761 - val_loss: 1.2691 - val_accuracy: 0.4532
+
+Epoch 00068: val_loss did not improve from 1.26685
+Epoch 69/100
+13664/13664 - 6s - loss: 1.2142 - accuracy: 0.4766 - val_loss: 1.2685 - val_accuracy: 0.4578
+
+Epoch 00069: val_loss did not improve from 1.26685
+Epoch 70/100
+13664/13664 - 6s - loss: 1.2141 - accuracy: 0.4767 - val_loss: 1.2632 - val_accuracy: 0.4666
+
+Epoch 00070: val_loss improved from 1.26685 to 1.26316, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 71/100
+13664/13664 - 6s - loss: 1.2140 - accuracy: 0.4749 - val_loss: 1.2666 - val_accuracy: 0.4570
+
+Epoch 00071: val_loss did not improve from 1.26316
+Epoch 72/100
+13664/13664 - 6s - loss: 1.2135 - accuracy: 0.4753 - val_loss: 1.2627 - val_accuracy: 0.4633
+
+Epoch 00072: val_loss improved from 1.26316 to 1.26269, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 73/100
+13664/13664 - 6s - loss: 1.2133 - accuracy: 0.4746 - val_loss: 1.2664 - val_accuracy: 0.4744
+
+Epoch 00073: val_loss did not improve from 1.26269
+Epoch 74/100
+13664/13664 - 6s - loss: 1.2129 - accuracy: 0.4750 - val_loss: 1.2631 - val_accuracy: 0.4822
+
+Epoch 00074: val_loss did not improve from 1.26269
+Epoch 75/100
+13664/13664 - 6s - loss: 1.2127 - accuracy: 0.4762 - val_loss: 1.2674 - val_accuracy: 0.4696
+
+Epoch 00075: val_loss did not improve from 1.26269
+Epoch 76/100
+13664/13664 - 6s - loss: 1.2125 - accuracy: 0.4745 - val_loss: 1.2689 - val_accuracy: 0.4448
+
+Epoch 00076: val_loss did not improve from 1.26269
+Epoch 77/100
+13664/13664 - 6s - loss: 1.2120 - accuracy: 0.4775 - val_loss: 1.2654 - val_accuracy: 0.4733
+
+Epoch 00077: val_loss did not improve from 1.26269
+Epoch 78/100
+13664/13664 - 6s - loss: 1.2116 - accuracy: 0.4757 - val_loss: 1.2592 - val_accuracy: 0.4819
+
+Epoch 00078: val_loss improved from 1.26269 to 1.25921, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 79/100
+13664/13664 - 6s - loss: 1.2110 - accuracy: 0.4771 - val_loss: 1.2661 - val_accuracy: 0.4424
+
+Epoch 00079: val_loss did not improve from 1.25921
+Epoch 80/100
+13664/13664 - 6s - loss: 1.2107 - accuracy: 0.4756 - val_loss: 1.2628 - val_accuracy: 0.4929
+
+Epoch 00080: val_loss did not improve from 1.25921
+Epoch 81/100
+13664/13664 - 6s - loss: 1.2102 - accuracy: 0.4770 - val_loss: 1.2653 - val_accuracy: 0.4977
+
+Epoch 00081: val_loss did not improve from 1.25921
+Epoch 82/100
+13664/13664 - 6s - loss: 1.2099 - accuracy: 0.4775 - val_loss: 1.2644 - val_accuracy: 0.4731
+
+Epoch 00082: val_loss did not improve from 1.25921
+Epoch 83/100
+13664/13664 - 6s - loss: 1.2098 - accuracy: 0.4785 - val_loss: 1.2642 - val_accuracy: 0.4677
+
+Epoch 00083: val_loss did not improve from 1.25921
+Epoch 84/100
+13664/13664 - 6s - loss: 1.2090 - accuracy: 0.4788 - val_loss: 1.2599 - val_accuracy: 0.4770
+
+Epoch 00084: val_loss did not improve from 1.25921
+Epoch 85/100
+13664/13664 - 6s - loss: 1.2086 - accuracy: 0.4778 - val_loss: 1.2703 - val_accuracy: 0.4622
+
+Epoch 00085: val_loss did not improve from 1.25921
+Epoch 86/100
+13664/13664 - 6s - loss: 1.2082 - accuracy: 0.4796 - val_loss: 1.2568 - val_accuracy: 0.4803
+
+Epoch 00086: val_loss improved from 1.25921 to 1.25684, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 87/100
+13664/13664 - 6s - loss: 1.2081 - accuracy: 0.4782 - val_loss: 1.2629 - val_accuracy: 0.4794
+
+Epoch 00087: val_loss did not improve from 1.25684
+Epoch 88/100
+13664/13664 - 6s - loss: 1.2077 - accuracy: 0.4802 - val_loss: 1.2569 - val_accuracy: 0.4748
+
+Epoch 00088: val_loss did not improve from 1.25684
+Epoch 89/100
+13664/13664 - 6s - loss: 1.2073 - accuracy: 0.4792 - val_loss: 1.2670 - val_accuracy: 0.4640
+
+Epoch 00089: val_loss did not improve from 1.25684
+Epoch 90/100
+13664/13664 - 6s - loss: 1.2067 - accuracy: 0.4795 - val_loss: 1.2681 - val_accuracy: 0.4778
+
+Epoch 00090: val_loss did not improve from 1.25684
+Epoch 91/100
+13664/13664 - 6s - loss: 1.2067 - accuracy: 0.4796 - val_loss: 1.2612 - val_accuracy: 0.4810
+
+Epoch 00091: val_loss did not improve from 1.25684
+Epoch 92/100
+13664/13664 - 6s - loss: 1.2067 - accuracy: 0.4804 - val_loss: 1.2654 - val_accuracy: 0.4517
+
+Epoch 00092: val_loss did not improve from 1.25684
+Epoch 93/100
+13664/13664 - 6s - loss: 1.2064 - accuracy: 0.4802 - val_loss: 1.2668 - val_accuracy: 0.4841
+
+Epoch 00093: val_loss did not improve from 1.25684
+Epoch 94/100
+13664/13664 - 6s - loss: 1.2062 - accuracy: 0.4807 - val_loss: 1.2570 - val_accuracy: 0.4817
+
+Epoch 00094: val_loss did not improve from 1.25684
+Epoch 95/100
+13664/13664 - 6s - loss: 1.2062 - accuracy: 0.4799 - val_loss: 1.2651 - val_accuracy: 0.4683
+
+Epoch 00095: val_loss did not improve from 1.25684
+Epoch 96/100
+13664/13664 - 6s - loss: 1.2060 - accuracy: 0.4803 - val_loss: 1.2588 - val_accuracy: 0.4780
+
+Epoch 00096: val_loss did not improve from 1.25684
+Epoch 97/100
+13664/13664 - 6s - loss: 1.2061 - accuracy: 0.4806 - val_loss: 1.2560 - val_accuracy: 0.4741
+
+Epoch 00097: val_loss improved from 1.25684 to 1.25601, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 98/100
+13664/13664 - 6s - loss: 1.2056 - accuracy: 0.4814 - val_loss: 1.2683 - val_accuracy: 0.4636
+
+Epoch 00098: val_loss did not improve from 1.25601
+Epoch 99/100
+13664/13664 - 6s - loss: 1.2057 - accuracy: 0.4802 - val_loss: 1.2555 - val_accuracy: 0.4758
+
+Epoch 00099: val_loss improved from 1.25601 to 1.25551, saving model to ./results/NN_spectral_C6/cp.ckpt
+Epoch 100/100
+13664/13664 - 6s - loss: 1.2054 - accuracy: 0.4800 - val_loss: 1.2573 - val_accuracy: 0.4808
+
+Epoch 00100: val_loss did not improve from 1.25551
