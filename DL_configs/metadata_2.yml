@@ -1,5 +1,5 @@
 # No merging between classes
-# Drop unprocessed image indicator features
+# Drop unprocessed non-spectral features
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv

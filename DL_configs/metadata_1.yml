@@ -1,5 +1,5 @@
 # No merging between classes
-# Use all features
+# Use all non-spectal features
 
 configuration:
   train_data: ./data/train_dataset/GLCM_norm.csv
