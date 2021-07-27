@@ -15,7 +15,7 @@ def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, test_data, _, _, verbosity, _, _ = config_parser(args.dl_config)
+    _, test_data, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -27,8 +27,23 @@ def main(args):
     X_te, Y_te, classes = process_data(test_data, args.dl_config)
 
     # Format X if CNN
+    # Pad first few features at the end for convolution
     if model_type == "CNN":
-        X_te = np.transpose(np.array([np.transpose(X_te)]))
+        X_te_conv = np.transpose(
+            [
+                np.transpose(
+                    np.pad(
+                        X_te[0 : X_te.shape[0], X_te.shape[1] - 18 : X_te.shape[1]],
+                        ((0, 0), (0, kernel_size)),
+                        "wrap",
+                    )
+                )
+            ]
+        )
+        # Test dataset for dense layer to concatenate after convolution
+        X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 15]
+
+        X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
     # Call checkpoint
     checkpoint_path = f"{args.result_dir}/cp.ckpt"

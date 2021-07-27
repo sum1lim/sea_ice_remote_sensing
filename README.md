@@ -176,7 +176,7 @@ To normalize the test dataset:
 python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/train_dataset/GLCM.csv
 ```
 
-### 5. 
+### 5. Machine Learning
 
 ## Sources 
 

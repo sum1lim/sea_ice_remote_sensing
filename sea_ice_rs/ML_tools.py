@@ -42,7 +42,7 @@ def config_parser(dl_config):
     return train_data, test_data, num_epochs, hidden_size, verbosity, K, kernel_size
 
 
-def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_defined=None):
+def calculate_hidden_layer_size(input_layer_size, output_layer_size, user_defined=None):
     """
     Calculate the hidden layer size if user did not define the size
     """
@@ -50,6 +50,9 @@ def claculate_hidden_layer_size(input_layer_size, output_layer_size, user_define
         hidden_layer_size = ((input_layer_size + output_layer_size) * 2) // 3
     else:
         hidden_layer_size = user_defined
+
+    if hidden_layer_size > 2 * input_layer_size:
+        hidden_layer_size = 2 * input_layer_size
 
     if hidden_layer_size < 2:
         hidden_layer_size = 2

@@ -5,6 +5,7 @@ import sys
 import pandas as pd
 from sea_ice_rs.utils import decompose_filepath
 
+
 def main(args):
     if os.path.isfile(args.input) == False or os.path.isfile(args.std_data) == False:
         print("File(s) not existing", file=sys.stderr)
