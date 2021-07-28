@@ -4,11 +4,11 @@ import yaml
 import numpy as np
 import pandas
 import matplotlib.pyplot as plt
+import seaborn as sns
 from collections import Counter
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-from seaborn import heatmap
 from imblearn.over_sampling import RandomOverSampler
 
 
@@ -156,8 +156,9 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir, k):
     for i, row in enumerate(cm_counts):
         cm_writer.writerow(np.insert(row, 0, classes[i], axis=0))
 
-    heatmap(cm_percentage, vmin=0, vmax=100)
-    plt.savefig(f"{result_dir}/heat_map_{k+1}.png")
+    sns.set(font_scale=0.5)
+    sns.heatmap(cm_counts, linewidths=1, annot=True, fmt="g")
+    plt.savefig(f"{result_dir}/heat_map_{k+1}.png", dpi=300)
     plt.clf()
 
 
