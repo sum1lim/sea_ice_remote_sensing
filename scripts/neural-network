@@ -15,7 +15,7 @@ from sea_ice_rs.ML_tools import (
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import np_utils
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):
@@ -69,9 +69,16 @@ def main(args):
     tr_val_pairs = tr_val_split(K, X_tr, Y_tr)
 
     for iter, (train, validation) in enumerate(tr_val_pairs):
-        checkpoint_path = f"{result_dir}/cp.ckpt"
+        print(
+            f"*************************** Fold #: {iter+1} ***************************",
+            file=sys.stdout,
+        )
+        checkpoint_path = f"{result_dir}/ckpt_{iter+1}"
         cp_callback = ModelCheckpoint(
-            filepath=checkpoint_path, save_best_only=True, verbose=1, mode="min"
+            filepath=checkpoint_path, save_best_only=True, verbose=verbosity, mode="min"
+        )
+        es_callback = EarlyStopping(
+            monitor="val_loss", mode="min", verbose=verbosity, patience=50
         )
 
         model = NN(hidden_layer_size, input_layer_size, output_layer_size)
@@ -85,10 +92,10 @@ def main(args):
             x=X_tr[train],
             y=one_hot_Y_tr,
             epochs=num_epochs,
-            batch_size=5,
+            batch_size=1000,
             verbose=verbosity,
             validation_data=(X_tr[validation], one_hot_Y_val),
-            callbacks=[cp_callback],
+            callbacks=[cp_callback, es_callback],
         )
 
         # Plot the learning curve
