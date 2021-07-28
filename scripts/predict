@@ -1,19 +1,165 @@
 #!/usr/bin/env python3
 import argparse
+import cv2
+import csv
 
+from datetime import datetime
+from sea_ice_rs.utils import decompose_filepath
+from sea_ice_rs.data_processing import (
+    patch_location_map,
+    GLCM_handler
+)
 
 def main(args):
-    None
+    """Capture image information as 2D array and csv"""
+
+    # Write headers
+    headers = [
+        "patch_num",
+        "year",
+        "patch_loc_y",
+        "patch_loc_x",
+        "DOY",
+        "hour",
+        "pix_loc_y",
+        "pix_loc_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+
+    img_name = decompose_filepath(args.input)[1]
+
+    parent_dir = decompose_filepath(decompose_filepath(args.input)[0])[0]
+
+    dataset_file = f"{parent_dir}/{img_name}.csv"
+
+    dataset = open(dataset_file, "w", newline="")
+    csv_writer = csv.writer(dataset)
+    csv_writer.writerow(headers)
+
+    inImage = cv2.imread(args.input)
+
+    patch_num = img_name.split("-")[0][1:]
+
+    # Extract date information
+    date_info = img_name.split("-")[1]
+    year = int(date_info[0:4])
+    month = int(date_info[4:6])
+    day = int(date_info[6:8])
+    hour = int(date_info[8:10])
+
+    doy = int(datetime(year, month, day).strftime("%j"))
+
+    # Obtain XY corrdinates of patches
+    patch_loc_dict = patch_location_map(args.patch_loc)
+
+    for row in range(inImage.shape[0]):
+            for col in range(inImage.shape[1]):
+                pix_vals = inImage[row][col]
+                sample = [
+                    patch_num,
+                    year,
+                    patch_loc_dict[patch_num][0],
+                    patch_loc_dict[patch_num][1],
+                    doy,
+                    hour,
+                    row,
+                    col,
+                    pix_vals[0],
+                    pix_vals[1],
+                    pix_vals[2],
+                ]
+
+                csv_writer.writerow(sample)
+
+    """GLCM from GLCM.csv to be normalized using standard dataset (trained)
+        Normalize the image dataset
+    
+    """
+
+    # GLCM
+
+    # Input should be the csv, img_dir should be the image
+    GLCM_handler(parent_dir, dataset_file, "jpg", args.input, True)
+
+    # Normalize
+    
+    
+
+    ### Get y_pred as 1d array to be converted to image (need length of row, therefore slice array with the length and make 2d matrix, then manipulate by mapping values)
+
+    # model_type = args.result_dir.split("/")[-1].split("_")[0]
+
+    # # Parse configuration
+    # _, test_data, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
+
+    # # Verbosity == 1 --> sys.stdout
+    # # Verbosity == 2 --> .log file
+    # if verbosity == 2:
+    #     log_file = open(f"{args.result_dir}/test.log", "w")
+    #     sys.stdout = log_file
+
+    # # Modify test dataset
+    # X_te, Y_te, classes = process_data(test_data, args.dl_config)
+
+    # # Format X if CNN
+    # # Pad first few features at the end for convolution
+    # if model_type == "CNN":
+    #     X_te_conv = np.transpose(
+    #         [
+    #             np.transpose(
+    #                 np.pad(
+    #                     X_te[0 : X_te.shape[0], X_te.shape[1] - 18 : X_te.shape[1]],
+    #                     ((0, 0), (0, kernel_size)),
+    #                     "wrap",
+    #                 )
+    #             )
+    #         ]
+    #     )
+    #     # Test dataset for dense layer to concatenate after convolution
+    #     X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 15]
+
+    #     X_te = {"conv": X_te_conv, "cat": X_te_cat}
+
+    # # Call checkpoint
+    # checkpoint_path = f"{args.result_dir}/cp.ckpt"
+    # trained_model = load_model(checkpoint_path)
+
+    # # Predict the test dataset
+    # y_pred = np.argmax(
+    #     trained_model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1
+    # )
+    # print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
+
+    ### Reformat mask image and compare 
+
+    # inMask = cv2.imread(f"{mask_dir}/{filename}-mask.png")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--input", type=str, help="Input image")
+
+    parser.add_argument(
+        "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
+    )
+
+    parser.add_argument(
+        "--std-data", type=str, help="Dataset that provides normalization standard"
+    )
+
+    # Call model using load_model and predict
+    # Be more specific on the checkpoint, one more level
+    # Checkpoint directory instead of result directory
     parser.add_argument(
         "--result-dir",
         type=str,
         help="Directory path with train results including checkpoint files",
     )
+
+    # Config file from DL_config, 
     parser.add_argument(
         "--dl-config",
         type=str,
