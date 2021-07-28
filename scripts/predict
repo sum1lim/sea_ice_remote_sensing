@@ -7,8 +7,10 @@ from datetime import datetime
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import (
     patch_location_map,
-    GLCM_handler
+    GLCM_handler,
+    normalize
 )
+
 
 def main(args):
     """Capture image information as 2D array and csv"""
@@ -28,9 +30,11 @@ def main(args):
         "band_3",
     ]
 
-    img_name = decompose_filepath(args.input)[1]
+    decomposed = decompose_filepath(args.input)
 
-    parent_dir = decompose_filepath(decompose_filepath(args.input)[0])[0]
+    img_name = decomposed[1]
+
+    parent_dir = decompose_filepath(decomposed[0])[0]
 
     dataset_file = f"{parent_dir}/{img_name}.csv"
 
@@ -81,11 +85,17 @@ def main(args):
     # GLCM
 
     # Input should be the csv, img_dir should be the image
-    GLCM_handler(parent_dir, dataset_file, "jpg", args.input, True)
+
+    # GLCM_handler(parent_dir, dataset_file, "jpg", args.input, True)
+    glcm_file = f"{parent_dir}/GLCM.csv"
 
     # Normalize
-    
-    
+
+    df = normalize(glcm_file, args.std_data, decomposed)
+
+    out = parent_dir + "/" + decomposed[1] + "_norm.csv"
+
+    df.to_csv(out, index=False)
 
     ### Get y_pred as 1d array to be converted to image (need length of row, therefore slice array with the length and make 2d matrix, then manipulate by mapping values)
 

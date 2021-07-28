@@ -250,6 +250,20 @@ def glcm_product(GLCM_matrices, product_type):
     )
 
 
+def normalize(input, std_data, decomposed):
+    tr_df = pd.read_csv(std_data)
+
+    minimums = {col: tr_df[col].min() for col in tr_df.columns if col != "label"}
+    maximums = {col: tr_df[col].max() for col in tr_df.columns if col != "label"}
+
+    df = pd.read_csv(input)
+
+    for col in df.columns:
+        if col == "label":
+            continue
+        df[col] = (df[col] - minimums[col]) / (maximums[col] - minimums[col])
+
+    return df
 
 def get_count_of_pixel_classes(d, img):
     """

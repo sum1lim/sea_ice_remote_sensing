@@ -2,8 +2,8 @@
 import argparse
 import os
 import sys
-import pandas as pd
 from sea_ice_rs.utils import decompose_filepath
+from sea_ice_rs.data_processing import normalize
 
 
 def main(args):
@@ -11,23 +11,13 @@ def main(args):
         print("File(s) not existing", file=sys.stderr)
         sys.exit(1)
 
-    tr_df = pd.read_csv(args.std_data)
-
-    minimums = {col: tr_df[col].min() for col in tr_df.columns if col != "label"}
-    maximums = {col: tr_df[col].max() for col in tr_df.columns if col != "label"}
-
     decomposed = decompose_filepath(args.input)
 
-    df = pd.read_csv(args.input)
-
-    for col in df.columns:
-        if col == "label":
-            continue
-        df[col] = (df[col] - minimums[col]) / (maximums[col] - minimums[col])
+    df = normalize(args.input, args.std_data, decomposed)
 
     out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
 
-    df.to_csv(out, index=False)
+    df.to_csv(out, index=False)    
 
 
 if __name__ == "__main__":
