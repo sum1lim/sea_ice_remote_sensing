@@ -15,7 +15,7 @@ def main(args):
     model_type = args.result_dir.split("/")[-1].split("_")[0]
 
     # Parse configuration
-    _, test_data, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
+    _, test_data, _, _, verbosity, K, kernel_size = config_parser(args.dl_config)
 
     # Verbosity == 1 --> sys.stdout
     # Verbosity == 2 --> .log file
@@ -45,18 +45,23 @@ def main(args):
 
         X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
-    # Call checkpoint
-    checkpoint_path = f"{args.result_dir}/cp.ckpt"
-    trained_model = load_model(checkpoint_path)
+    for k in range(K):
+        print(
+            f"*************************** Fold #: {k+1} ***************************",
+            file=sys.stdout,
+        )
+        # Call checkpoint
+        checkpoint_path = f"{args.result_dir}/ckpt_{k+1}"
+        trained_model = load_model(checkpoint_path)
 
-    # Predict the test dataset
-    y_pred = np.argmax(
-        trained_model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1
-    )
-    print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
+        # Predict the test dataset
+        y_pred = np.argmax(
+            trained_model.predict(x=X_te, batch_size=1000, verbose=verbosity), axis=1
+        )
+        print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
 
-    # Construct confusion matrix
-    construct_confusion_matrix(classes, Y_te, y_pred, args.result_dir)
+        # Construct confusion matrix
+        construct_confusion_matrix(classes, Y_te, y_pred, args.result_dir, k)
 
     # stdout redirection closed
     if verbosity == 2:

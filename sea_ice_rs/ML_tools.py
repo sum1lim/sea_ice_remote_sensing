@@ -4,11 +4,11 @@ import yaml
 import numpy as np
 import pandas
 import matplotlib.pyplot as plt
+import seaborn as sns
 from collections import Counter
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
-from seaborn import heatmap
 from imblearn.over_sampling import RandomOverSampler
 
 
@@ -120,24 +120,24 @@ def learning_curve(model_hist, result_dir, iter):
     # summarize history for accuracy
     plt.plot(model_hist["accuracy"])
     plt.plot(model_hist["val_accuracy"])
-    plt.title(f"Learning Curve (iteration: {iter+1})")
+    plt.title(f"Learning Curve (Fold #: {iter+1})")
     plt.ylabel("Accuracy")
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
-    plt.savefig(f"{result_dir}/learning_curve_{iter}.png")
+    plt.savefig(f"{result_dir}/learning_curve_{iter+1}.png")
     plt.clf()
     # summarize history for loss
     plt.plot(model_hist["loss"])
     plt.plot(model_hist["val_loss"])
-    plt.title(f"Loss Curve (iteration: {iter+1})")
+    plt.title(f"Loss Curve (Fold #: {iter+1})")
     plt.ylabel("Loss")
     plt.xlabel("Epoch")
     plt.legend(["Train", "Validation"], loc="upper left")
-    plt.savefig(f"{result_dir}/loss_curve_{iter}.png")
+    plt.savefig(f"{result_dir}/loss_curve_{iter+1}.png")
     plt.clf()
 
 
-def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
+def construct_confusion_matrix(classes, Y_te, y_pred, result_dir, k):
     """
     Construct the confusion matrix and output the results
     """
@@ -150,14 +150,15 @@ def construct_confusion_matrix(classes, Y_te, y_pred, result_dir):
 
     print(cm_percentage, file=sys.stdout)
 
-    cm_csv = open(f"{result_dir}/confusion_matrix.csv", "w", newline="")
+    cm_csv = open(f"{result_dir}/confusion_matrix_{k+1}.csv", "w", newline="")
     cm_writer = csv.writer(cm_csv)
     cm_writer.writerow(np.insert(classes, 0, None, axis=0))
     for i, row in enumerate(cm_counts):
         cm_writer.writerow(np.insert(row, 0, classes[i], axis=0))
 
-    heatmap(cm_percentage, vmin=0, vmax=100)
-    plt.savefig(f"{result_dir}/heat_map.png")
+    sns.set(font_scale=0.5)
+    sns.heatmap(cm_counts, linewidths=1, annot=True, fmt="g")
+    plt.savefig(f"{result_dir}/heat_map_{k+1}.png", dpi=300)
     plt.clf()
 
 
