@@ -178,7 +178,19 @@ python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/
 
 ### 5. Machine Learning
 
-predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat --dl-config ./DL_configs/GLCM_C4_cat.yml --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg
+**Note**: Couldn't seem to get TensorFlow running on Windows or Ubuntu. For now MacOS with a M1 chip seems to work.
+
+#### CNN
+
+#### Neural Network
+
+#### Test Model
+
+```
+predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat --dl-config ./DL_configs/GLCM_C4_cat.yml --mask-dir ./data/arctic-sea-ice-image-masking/Masks --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg
+```
+#### Predict
+
 
 ## Sources 
 

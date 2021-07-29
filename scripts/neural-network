@@ -12,10 +12,10 @@ from sea_ice_rs.ML_tools import (
     learning_curve,
     tr_val_split,
 )
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import np_utils
-from keras.callbacks import ModelCheckpoint
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.utils import np_utils
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):

@@ -12,10 +12,10 @@ from sea_ice_rs.ML_tools import (
     learning_curve,
     tr_val_split,
 )
-from keras import Input
-from keras.models import Model
-from keras.layers import Dense, Conv1D, Flatten, concatenate
-from keras.callbacks import ModelCheckpoint
+from tensorflow.keras import Input
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Conv1D, Flatten, concatenate
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 
 def CNN(
