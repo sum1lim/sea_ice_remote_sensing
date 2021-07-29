@@ -178,6 +178,8 @@ python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/
 
 ### 5. Machine Learning
 
+predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat --dl-config ./DL_configs/GLCM_C4_cat.yml --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg
+
 ## Sources 
 
 [1] R. Ressel, A. Frost and S. Lehner, "A Neural Network-Based Classification for Sea Ice Types on X-Band SAR Images," in IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, vol. 8, no. 7, pp. 3672-3680, July 2015, doi: 10.1109/JSTARS.2015.2436993.

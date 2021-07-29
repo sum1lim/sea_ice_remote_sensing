@@ -166,7 +166,6 @@ def GLCM_handler(parent_dir, csv_file, img_extension, img_dir, single_file=False
                 i += 1
         return
 
-    
     for name, group in tqdm(grouped):
         patch_num = int(name[0])
         year = int(name[1])
@@ -250,7 +249,7 @@ def glcm_product(GLCM_matrices, product_type):
     )
 
 
-def normalize(input, std_data, decomposed):
+def normalize(input, std_data):
     tr_df = pd.read_csv(std_data)
 
     minimums = {col: tr_df[col].min() for col in tr_df.columns if col != "label"}
