@@ -2,10 +2,11 @@
 import argparse
 import cv2
 import csv
-import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import yaml
 
 from datetime import datetime
 from sea_ice_rs.utils import decompose_filepath
@@ -20,6 +21,43 @@ from sea_ice_rs.ML_tools import (
 )
 from tensorflow.keras.models import load_model
 
+def greyscale_mask(inMask, classes):
+    # Get the unique values from mask
+    unique_mask_vals = list(np.unique(inMask))
+
+    # Stream the config 
+    stream = open(args.dl_config, "r")
+    config_dict = yaml.safe_load(stream)
+
+    d = {}
+
+    # Add unique values to the dictionary if not in the config
+    for vals in unique_mask_vals:
+        key_value_exists = any(key == vals for key in config_dict["labels"])
+        for key, value in config_dict["labels"].items():
+            value_exists = any(i == vals for i in value)
+            if(value_exists == True):
+                break
+        if((key_value_exists == False) and (value_exists == False)):
+            d[vals] = 0
+
+    # Add the keys to the dictionary from the config
+    for key, value in config_dict["labels"].items():
+        d[key] = 0
+    
+    # Update with new values in the range of 0 to 255
+    i = 0
+    for key, value in sorted(d.items()):
+        if(i == 0):
+            d[key] = 0
+        else:
+            d[key] = math.ceil(255 / classes) * i 
+        inMask[inMask == key] = d[key] 
+        i += 1
+
+    for key, value in config_dict["labels"].items():
+        for i in value:
+            inMask[inMask == i] = d[key]
 
 def main(args):
     """Capture input image information and save to CSV"""
@@ -111,22 +149,10 @@ def main(args):
     # Save the normalized GLCM csv
     df.to_csv(out, index=False)
 
-    """Show mask image and compare to y_pred"""
-
-    inMask = cv2.imread(f"{args.mask_dir}/{img_name}-mask.png")
-    plt.imshow(inMask)
-    plt.show()
-
     """Get y_pred as 1D array and convert to image so it can be compared"""
 
     # Parse the config
     _, _, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
-
-    # Get the log file
-    # TODO: Remove this line? Don't really need it
-    log_file = open(f"{args.result_dir}/test.log", "w")
-    sys.stdout = log_file
-    log_file.close()
 
     # Format X
     # Pad first few features at the end for convolution
@@ -149,7 +175,7 @@ def main(args):
     X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
     # Call checkpoint
-    checkpoint_path = f"{args.result_dir}/cp.ckpt"
+    checkpoint_path = f"{args.result_dir}"
     trained_model = load_model(checkpoint_path)
 
     # Predict the dataset
@@ -164,12 +190,24 @@ def main(args):
     plt.imshow(two_dim_arr)
     plt.show()
 
-    # TODO: Show the dataset in greyscale
-    # Use from PIL import Image?
-
+    # Show the dataset in greyscale
+    plt.imshow(two_dim_arr,  cmap='gray')
+    plt.show()
+    
     # Show the original input image
     plt.imshow(inImage)
     plt.show()
+
+    """Show mask image with merged classes and compare to y_pred"""
+    inMask = cv2.imread(f"{args.mask_dir}/{img_name}-mask.png")
+    greyscale_mask(inMask, args.classes - 1)
+    plt.imshow(inMask)
+    plt.show()
+
+    """Delete the files that were created because of this scriptt"""
+    os.remove(input_file_csv_name)
+    os.remove(glcm_file_path)
+    os.remove(out)
 
 
 if __name__ == "__main__":
@@ -185,8 +223,6 @@ if __name__ == "__main__":
         "--std-data", type=str, help="Dataset that provides normalization standard"
     )
 
-    # TODO: Be more specific on the checkpoint, one more level
-    # Checkpoint directory instead of result directory
     parser.add_argument(
         "--result-dir",
         type=str,
@@ -201,6 +237,10 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--mask-dir", type=str, help="Directory path with mask images"
+    )
+
+    parser.add_argument(
+        "--classes", type=int, help="Number of classes"
     )
 
     args = parser.parse_args()

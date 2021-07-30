@@ -15,7 +15,7 @@ from sea_ice_rs.ML_tools import (
 from tensorflow.keras import Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Conv1D, Flatten, concatenate
-from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def CNN(

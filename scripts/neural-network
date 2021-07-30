@@ -14,8 +14,8 @@ from sea_ice_rs.ML_tools import (
 )
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.utils import np_utils
-from tensorflow.keras.callbacks import ModelCheckpoint
+from keras.utils import np_utils
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def NN(hidden_layer_size, input_layer_size, output_layer_size):

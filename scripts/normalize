@@ -13,7 +13,7 @@ def main(args):
 
     decomposed = decompose_filepath(args.input)
 
-    df = normalize(args.input, args.std_data, decomposed)
+    df = normalize(args.input, args.std_data)
 
     out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
 

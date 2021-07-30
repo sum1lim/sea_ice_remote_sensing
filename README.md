@@ -6,6 +6,8 @@
 
 **Description**: Get a model and see if it can be applicable to other data.
 
+**Note**: Couldn't seem to get TensorFlow running on Windows or Ubuntu for the ML related scripts. For now MacOS with a M1 chip seems to work.
+
 ## Getting Started
 
 ### Install the Package in a Python Virtual Environment
@@ -178,19 +180,41 @@ python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/
 
 ### 5. Machine Learning
 
-**Note**: Couldn't seem to get TensorFlow running on Windows or Ubuntu. For now MacOS with a M1 chip seems to work.
+***Purpose***: Training, testing, and predicting of the model.
+
+**Note**: The commands below only seem to work on MacOS with M1 chip.
 
 #### CNN
 
+Train 1D-CNN:
+
+```
+CNN --dl-config ./DL_configs/GLCM_C6_cat.yml
+```
+
 #### Neural Network
+
+Train neural network:
+
+```
+neural-network --dl-config ./DL_configs/GLCM_C6_cat.yml
+```
 
 #### Test Model
 
+Test the model:
+
 ```
-predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat --dl-config ./DL_configs/GLCM_C4_cat.yml --mask-dir ./data/arctic-sea-ice-image-masking/Masks --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg
+test-model --dl-config ./DL_configs/GLCM_C6_cat.yml --result-dir ./results/CNN_GLCM_C6_cat
 ```
+
 #### Predict
 
+For an image, run a prediction:
+
+```
+predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat/ckpt_1 --dl-config ./DL_configs/GLCM_C4_cat.yml --mask-dir ./data/arctic-sea-ice-image-masking/Masks --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg --classes 4
+```
 
 ## Sources 
 
