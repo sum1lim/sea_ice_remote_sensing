@@ -59,6 +59,7 @@ def main(args):
             trained_model.predict(x=X_te, batch_size=1000, verbose=verbosity), axis=1
         )
         print(f"Test accuracy: {accuracy_score(Y_te, y_pred)}", file=sys.stdout)
+        print(classification_report(Y_te, y_pred), file=sys.stdout)
 
         # Construct confusion matrix
         construct_confusion_matrix(classes, Y_te, y_pred, args.result_dir, k)
