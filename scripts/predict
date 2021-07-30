@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+import argparse
+import cv2
+import csv
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import yaml
+
+from datetime import datetime
+from sea_ice_rs.utils import decompose_filepath
+from sea_ice_rs.data_processing import (
+    patch_location_map,
+    GLCM_handler,
+    normalize
+)
+from sea_ice_rs.ML_tools import (
+    config_parser,
+    process_data,
+)
+from tensorflow.keras.models import load_model
+
+def greyscale_mask(inMask, classes):
+    # Get the unique values from mask
+    unique_mask_vals = list(np.unique(inMask))
+
+    # Stream the config 
+    stream = open(args.dl_config, "r")
+    config_dict = yaml.safe_load(stream)
+
+    d = {}
+
+    # Add unique values to the dictionary if not in the config
+    for vals in unique_mask_vals:
+        key_value_exists = any(key == vals for key in config_dict["labels"])
+        for key, value in config_dict["labels"].items():
+            value_exists = any(i == vals for i in value)
+            if(value_exists == True):
+                break
+        if((key_value_exists == False) and (value_exists == False)):
+            d[vals] = 0
+
+    # Add the keys to the dictionary from the config
+    for key, value in config_dict["labels"].items():
+        d[key] = 0
+    
+    # Update with new values in the range of 0 to 255
+    i = 0
+    for key, value in sorted(d.items()):
+        if(i == 0):
+            d[key] = 0
+        else:
+            d[key] = math.ceil(255 / classes) * i 
+        inMask[inMask == key] = d[key] 
+        i += 1
+
+    for key, value in config_dict["labels"].items():
+        for i in value:
+            inMask[inMask == i] = d[key]
+
+def main(args):
+    """Capture input image information and save to CSV"""
+
+    headers = [
+        "patch_num",
+        "year",
+        "patch_loc_y",
+        "patch_loc_x",
+        "DOY",
+        "hour",
+        "pix_loc_y",
+        "pix_loc_x",
+        "band_8",
+        "band_4",
+        "band_3",
+    ]
+    
+    # For code that require paths
+    decomposed = decompose_filepath(args.input)
+    parent_dir = decompose_filepath(decomposed[0])[0]
+    img_name = decomposed[1]
+    input_file_csv_name = f"{parent_dir}/{img_name}.csv"
+
+    # Open the csv and begin writing to it
+    input_file_csv = open(input_file_csv_name, "w", newline="")
+    csv_writer = csv.writer(input_file_csv)
+    csv_writer.writerow(headers)
+
+    # Read the image
+    inImage = cv2.imread(args.input)
+
+    # Extract patch_num and date information
+    patch_num = img_name.split("-")[0][1:]
+
+    date_info = img_name.split("-")[1]
+    year = int(date_info[0:4])
+    month = int(date_info[4:6])
+    day = int(date_info[6:8])
+    hour = int(date_info[8:10])
+
+    doy = int(datetime(year, month, day).strftime("%j"))
+
+    # Obtain XY coordinates of patches
+    patch_loc_dict = patch_location_map(args.patch_loc)
+    for row in range(inImage.shape[0]):
+        for col in range(inImage.shape[1]):
+            pix_vals = inImage[row][col]
+            sample = [
+                patch_num,
+                year,
+                patch_loc_dict[patch_num][0],
+                patch_loc_dict[patch_num][1],
+                doy,
+                hour,
+                row,
+                col,
+                pix_vals[0],
+                pix_vals[1],
+                pix_vals[2],
+            ]
+
+            csv_writer.writerow(sample)
+
+    input_file_csv.close()
+
+    """Generate the GLCM csv for the input image csv"""
+
+    GLCM_handler(parent_dir, input_file_csv_name, "jpg", args.input)
+
+    """Normalize the GLCM csv using a standard (trained) dataset"""
+
+    # Get the GLCM csv path
+    glcm_file_path = f"{parent_dir}/GLCM.csv"
+
+    # Normalize
+    df = normalize(glcm_file_path, args.std_data)
+
+    # Add a label column and pad it with two useless classes
+    df['label'] = 0
+    col = df.pop("label")
+    df.insert(0, col.name, col)
+    df.iloc[:math.floor(len(df)/2), 0] = -1
+    df.iloc[math.floor(len(df)/2):, 0] = -2
+
+    # Path to the normalized GLCM csv 
+    out = parent_dir + "/" + decomposed[1] + "_norm.csv"
+
+    # Save the normalized GLCM csv
+    df.to_csv(out, index=False)
+
+    """Get y_pred as 1D array and convert to image so it can be compared"""
+
+    # Parse the config
+    _, _, _, _, verbosity, _, kernel_size = config_parser(args.dl_config)
+
+    # Format X
+    # Pad first few features at the end for convolution
+    X_te, Y_te, classes = process_data(out, args.dl_config)
+
+    X_te_conv = np.transpose(
+        [
+            np.transpose(
+                np.pad(
+                    X_te[0: X_te.shape[0], X_te.shape[1] - 18: X_te.shape[1]],
+                    ((0, 0), (0, kernel_size)),
+                    "wrap",
+                )
+            )
+        ]
+    )
+
+    # Test dataset for dense layer to concatenate after convolution
+    X_te_cat = X_te[0: X_te.shape[0], 0: X_te.shape[1] - 15]
+    X_te = {"conv": X_te_conv, "cat": X_te_cat}
+
+    # Call checkpoint
+    checkpoint_path = f"{args.result_dir}"
+    trained_model = load_model(checkpoint_path)
+
+    # Predict the dataset
+    y_pred = np.argmax(
+        trained_model.predict(x=X_te, batch_size=5, verbose=verbosity), axis=1
+    )
+
+    # Convert the dataset from 1D to 2D
+    two_dim_arr = y_pred.reshape(inImage.shape[0], inImage.shape[1])
+
+    # Show the dataset in color
+    plt.imshow(two_dim_arr)
+    plt.show()
+
+    # Show the dataset in greyscale
+    plt.imshow(two_dim_arr,  cmap='gray')
+    plt.show()
+    
+    # Show the original input image
+    plt.imshow(inImage)
+    plt.show()
+
+    """Show mask image with merged classes and compare to y_pred"""
+    inMask = cv2.imread(f"{args.mask_dir}/{img_name}-mask.png")
+    greyscale_mask(inMask, args.classes - 1)
+    plt.imshow(inMask)
+    plt.show()
+
+    """Delete the files that were created because of this scriptt"""
+    os.remove(input_file_csv_name)
+    os.remove(glcm_file_path)
+    os.remove(out)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--input", type=str, help="Input image")
+
+    parser.add_argument(
+        "--patch-loc", type=str, help="Patch locations ((X, Y) coordinates) CSV file"
+    )
+
+    parser.add_argument(
+        "--std-data", type=str, help="Dataset that provides normalization standard"
+    )
+
+    parser.add_argument(
+        "--result-dir",
+        type=str,
+        help="Directory path with train results including checkpoint files",
+    )
+
+    parser.add_argument(
+        "--dl-config",
+        type=str,
+        help="YAML file containing the configuration for deep learning",
+    )
+
+    parser.add_argument(
+        "--mask-dir", type=str, help="Directory path with mask images"
+    )
+
+    parser.add_argument(
+        "--classes", type=int, help="Number of classes"
+    )
+
+    args = parser.parse_args()
+    main(args)

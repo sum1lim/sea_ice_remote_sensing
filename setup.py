@@ -22,5 +22,6 @@ setup(
         ./scripts/GLCM
         ./scripts/CNN
         ./scripts/test-model
+        ./scripts/predict
     """.split(),
 )
