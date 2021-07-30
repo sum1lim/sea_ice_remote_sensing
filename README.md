@@ -186,9 +186,14 @@ python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/
 
 #### CNN
 
-Train 1D-CNN:
+Train 1D-CNN (To concatenate multi-layer neural network, add features other than spectral data and GLCM products):
 
 ```
+# 1D-CNN
+CNN --dl-config ./DL_configs/GLCM_C6.yml
+```
+```
+# Concatenation of 1D-CNN and multi-layer NN
 CNN --dl-config ./DL_configs/GLCM_C6_cat.yml
 ```
 
