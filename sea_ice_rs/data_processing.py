@@ -92,7 +92,7 @@ def GLCM_band(bordered_img, border_width, band, datapoints):
                 col : col + 2 * border_width + 1,
                 band,
             ],
-            distances=[1],
+            distances=[1, 2, 3],
             angles=[
                 0,
                 half_right_angle,
