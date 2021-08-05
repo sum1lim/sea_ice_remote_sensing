@@ -220,6 +220,14 @@ For an image, run a prediction:
 ```
 predict --patch-loc ./data/AOIs_R_thresh_CL_centroids.csv --std-data ./data/train_dataset/GLCM.csv --result-dir ./results/CNN_GLCM_C4_cat/ckpt_1 --dl-config ./DL_configs/GLCM_C4_cat.yml --mask-dir ./data/arctic-sea-ice-image-masking/Masks --input ./data/arctic-sea-ice-image-masking/Images/P54-2018071616.jpg --classes 4
 ```
+![Figure_4](https://user-images.githubusercontent.com/58998142/128421169-49298419-2d63-4cdd-a121-a5bb25f9d212.png)
+
+Figure 1. Expert Image
+
+![Figure_2](https://user-images.githubusercontent.com/58998142/128421197-01e1bcc8-e85d-4259-850b-f66d2b7406d5.png)
+
+Figure 2. Prediction Image
+
 
 ## Sources 
 
