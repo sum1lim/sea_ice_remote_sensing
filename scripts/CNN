@@ -148,7 +148,7 @@ def main(args):
             x={"conv": X_conv_tr, "cat": X_cat[train]},
             y=Y_tr[train],
             epochs=num_epochs,
-            batch_size=1000,
+            batch_size=1024,
             verbose=verbosity,
             validation_data=(
                 {"conv": X_conv_val, "cat": X_cat[validation]},
