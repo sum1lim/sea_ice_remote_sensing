@@ -17,7 +17,7 @@ def main(args):
 
     out = decomposed[0] + "/" + decomposed[1] + "_norm.csv"
 
-    df.to_csv(out, index=False)    
+    df.to_csv(out, index=False)
 
 
 if __name__ == "__main__":

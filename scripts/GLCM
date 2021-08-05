@@ -3,8 +3,9 @@ import argparse
 from sea_ice_rs.utils import decompose_filepath
 from sea_ice_rs.data_processing import GLCM_handler
 
+
 def main(args):
-    parent_dir, filename, extension = decompose_filepath(args.input)
+    parent_dir, _, _ = decompose_filepath(args.input)
     GLCM_handler(parent_dir, args.input, args.img_extension, args.img_dir)
 
 

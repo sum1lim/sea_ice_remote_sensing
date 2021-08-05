@@ -108,6 +108,7 @@ def GLCM_band(bordered_img, border_width, band, datapoints):
         for (row, col) in datapoints
     ]
 
+
 def GLCM_handler(parent_dir, csv_file_name, img_extension, img_dir):
     GLCM_dataset = open(f"{parent_dir}/GLCM.csv", "w", newline="")
     GLCM_writer = csv.writer(GLCM_dataset)
@@ -132,6 +133,9 @@ def GLCM_handler(parent_dir, csv_file_name, img_extension, img_dir):
             "dissimilarity_8",
             "dissimilarity_4",
             "dissimilarity_3",
+            "correlation_8",
+            "correlation_4",
+            "correlation_3",
         ]
     )
 
@@ -163,6 +167,7 @@ def GLCM_handler(parent_dir, csv_file_name, img_extension, img_dir):
         contrast = glcm_product(GLCM_matrices, "contrast")
         homogeneity = glcm_product(GLCM_matrices, "homogeneity")
         dissimilarity = glcm_product(GLCM_matrices, "dissimilarity")
+        correlation = glcm_product(GLCM_matrices, "correlation")
 
         i = 0
         for idx, item in group.iterrows():
@@ -173,9 +178,11 @@ def GLCM_handler(parent_dir, csv_file_name, img_extension, img_dir):
                 + contrast[i, :].tolist()
                 + homogeneity[i, :].tolist()
                 + dissimilarity[i, :].tolist()
+                + correlation[i, :].tolist()
             )
             GLCM_writer.writerow(GLCM_features)
             i += 1
+
 
 def generate_GLCM(inFile, datapoints):
     inImage = cv2.imread(inFile)
@@ -238,6 +245,7 @@ def normalize(input, std_data):
         df[col] = (df[col] - minimums[col]) / (maximums[col] - minimums[col])
 
     return df
+
 
 def get_count_of_pixel_classes(d, img):
     """
