@@ -37,3 +37,6 @@ features:
   - dissimilarity_8
   - dissimilarity_4
   - dissimilarity_3
+  - correlation_8
+  - correlation_4
+  - correlation_3

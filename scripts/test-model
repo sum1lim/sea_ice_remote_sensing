@@ -7,7 +7,7 @@ from sea_ice_rs.ML_tools import (
     process_data,
     construct_confusion_matrix,
 )
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 from tensorflow.keras.models import load_model
 
 
@@ -33,7 +33,7 @@ def main(args):
             [
                 np.transpose(
                     np.pad(
-                        X_te[0 : X_te.shape[0], X_te.shape[1] - 18 : X_te.shape[1]],
+                        X_te[0 : X_te.shape[0], X_te.shape[1] - 21 : X_te.shape[1]],
                         ((0, 0), (0, kernel_size)),
                         "wrap",
                     )
@@ -41,7 +41,8 @@ def main(args):
             ]
         )
         # Test dataset for dense layer to concatenate after convolution
-        X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 15]
+        X_te_cat = X_te[0 : X_te.shape[0], 0 : X_te.shape[1] - 18]
+        print(X_te.shape)
 
         X_te = {"conv": X_te_conv, "cat": X_te_cat}
 
