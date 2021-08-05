@@ -43,6 +43,12 @@ def CNN(
     conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
         conv_layer
     )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
     conv_layer = Flatten()(conv_layer)
 
     if cat_layer_size > 3:
