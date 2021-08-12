@@ -65,7 +65,6 @@ def main(args):
 
     else:
         sampling(*tr_args)
-
         sampling(*te_args)
 
 

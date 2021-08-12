@@ -43,6 +43,18 @@ def CNN(
     conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
         conv_layer
     )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
+    conv_layer = Conv1D(64, kernel_size, activation="relu", padding="causal")(
+        conv_layer
+    )
     conv_layer = Flatten()(conv_layer)
 
     if cat_layer_size > 3:
@@ -89,12 +101,12 @@ def main(args):
     X, Y_tr, _ = process_data(train_data, args.dl_config)
     # Pad first few features at the end for convolution
     X_conv = np.pad(
-        X[0 : X.shape[0], X.shape[1] - 18 : X.shape[1]],
+        X[0 : X.shape[0], X.shape[1] - 21 : X.shape[1]],
         ((0, 0), (0, kernel_size)),
         "wrap",
     )
     # Training dataset for dense layer to concatenate after convolution
-    X_cat = X[0 : X.shape[0], 0 : X.shape[1] - 15]
+    X_cat = X[0 : X.shape[0], 0 : X.shape[1] - 18]
 
     # Define hidden layer size
     input_layer_size = X.shape[1]
@@ -136,7 +148,7 @@ def main(args):
             x={"conv": X_conv_tr, "cat": X_cat[train]},
             y=Y_tr[train],
             epochs=num_epochs,
-            batch_size=1000,
+            batch_size=1024,
             verbose=verbosity,
             validation_data=(
                 {"conv": X_conv_val, "cat": X_cat[validation]},

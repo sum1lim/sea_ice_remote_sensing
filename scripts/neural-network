@@ -92,7 +92,7 @@ def main(args):
             x=X_tr[train],
             y=one_hot_Y_tr,
             epochs=num_epochs,
-            batch_size=1000,
+            batch_size=1024,
             verbose=verbosity,
             validation_data=(X_tr[validation], one_hot_Y_val),
             callbacks=[cp_callback, es_callback],
