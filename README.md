@@ -184,6 +184,15 @@ python scripts/normalize --input ./data/test_dataset/GLCM.csv --std-data ./data/
 
 **Note**: The commands below only seem to work on MacOS with M1 chip.
 
+#### Neural Network
+
+Train neural network:
+
+```
+neural-network --dl-config ./DL_configs/GLCM_C6_cat.yml
+```
+![Screenshot from 2021-09-15 12-38-28](https://user-images.githubusercontent.com/58998142/133499033-a8baf7c3-fa64-4152-8b65-80451c361ad5.png)
+
 #### CNN
 
 Train 1D-CNN (To concatenate multi-layer neural network, add features other than spectral data and GLCM products):
@@ -192,18 +201,14 @@ Train 1D-CNN (To concatenate multi-layer neural network, add features other than
 # 1D-CNN
 CNN --dl-config ./DL_configs/GLCM_C6.yml
 ```
+![Screenshot from 2021-09-15 12-38-29](https://user-images.githubusercontent.com/58998142/133499115-1151c202-cf3a-48fc-a1ef-d6a67e44e7e7.png)
+![Screenshot from 2021-09-15 12-38-30](https://user-images.githubusercontent.com/58998142/133499126-f3228c1f-9aea-48c7-ba24-61b7ca3f2814.png)
+
 ```
 # Concatenation of 1D-CNN and multi-layer NN
 CNN --dl-config ./DL_configs/GLCM_C6_cat.yml
 ```
-
-#### Neural Network
-
-Train neural network:
-
-```
-neural-network --dl-config ./DL_configs/GLCM_C6_cat.yml
-```
+![Screenshot from 2021-09-15 12-38-31](https://user-images.githubusercontent.com/58998142/133499138-a5faa969-1cd7-4022-831e-a087dc168601.png)
 
 #### Test Model
 
