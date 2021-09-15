@@ -191,7 +191,7 @@ Train neural network:
 ```
 neural-network --dl-config ./DL_configs/GLCM_C6_cat.yml
 ```
-![Screenshot from 2021-09-15 12-38-28](https://user-images.githubusercontent.com/58998142/133499033-a8baf7c3-fa64-4152-8b65-80451c361ad5.png)
+![Screenshot from 2021-09-15 12-45-38](https://user-images.githubusercontent.com/58998142/133499506-057bd04f-f256-463c-b2cc-206dc6858e59.png)
 
 #### CNN
 
@@ -201,14 +201,14 @@ Train 1D-CNN (To concatenate multi-layer neural network, add features other than
 # 1D-CNN
 CNN --dl-config ./DL_configs/GLCM_C6.yml
 ```
-![Screenshot from 2021-09-15 12-38-29](https://user-images.githubusercontent.com/58998142/133499115-1151c202-cf3a-48fc-a1ef-d6a67e44e7e7.png)
-![Screenshot from 2021-09-15 12-38-30](https://user-images.githubusercontent.com/58998142/133499126-f3228c1f-9aea-48c7-ba24-61b7ca3f2814.png)
+![Screenshot from 2021-09-15 12-45-40](https://user-images.githubusercontent.com/58998142/133499469-b1b56521-f5ad-4fd1-b226-d659cbe60c6b.png)
+![Screenshot from 2021-09-15 12-45-42](https://user-images.githubusercontent.com/58998142/133499588-aeee389d-2fcd-43ea-8a52-a28e60088070.png)
 
 ```
 # Concatenation of 1D-CNN and multi-layer NN
 CNN --dl-config ./DL_configs/GLCM_C6_cat.yml
 ```
-![Screenshot from 2021-09-15 12-38-31](https://user-images.githubusercontent.com/58998142/133499138-a5faa969-1cd7-4022-831e-a087dc168601.png)
+![Screenshot from 2021-09-15 12-45-43](https://user-images.githubusercontent.com/58998142/133499617-e9327cb2-1ba6-49d3-a8df-76a5f6d422de.png)
 
 #### Test Model
 
