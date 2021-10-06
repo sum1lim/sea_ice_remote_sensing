@@ -7,6 +7,15 @@
 **Description**: Get a model and see if it can be applicable to other data.
 
 **Note**: Couldn't seem to get TensorFlow running on Windows or Ubuntu for the ML related scripts. For now MacOS with a M1 chip seems to work.
+## Summary of the Project
+- Sea ice concentration classification models generated using Deep Learning architectures
+- Utilized Gray Level Co-occurrence Matrix (GLCM) products for feature engineering
+- Devised the training and test data splitting strategy to mitigate the spatial auto-correlation in training
+- Utilized 1D-CNN to generate convolved features for maximized relationships between optical bands 
+- Devised a deep learning architecture concatenating Multi-layer Neural Network and 1D-CNN
+- Identified the optimum feature selections, architectures and classification scheme for the problem
+- Model assessments based on confusion matrices, accuracy and F1 score
+- 47.65% accuracy on 8-class classification comparable to existing 2D-CNN model’s 55.3% that was tested without consideration of spatial auto-correlation
 
 ## Getting Started
 
